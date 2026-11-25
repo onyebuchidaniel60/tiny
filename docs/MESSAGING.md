@@ -1,5 +1,7 @@
 # Tiny — SMS and Parent Communication Operations
 
+**Current development mode:** `SMS_MODE=mock`; no eSMS calls, sandbox sends or live parent messages are authorized. The provider flow below is the target design and remains disabled until separately approved.
+
 ## 1. MVP communication model
 
 Tiny uses SMS as the parent's primary channel. There is no parent app and no real-time chat promise.

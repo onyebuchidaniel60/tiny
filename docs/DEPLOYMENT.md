@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | Local | Development/unit tests | Synthetic | Emulator/mock | Local developer |
 | CI | Repeatable builds/tests | Synthetic | Mock/emulator | CI identity |
-| Staging | Integration/E2E/protected preview | Synthetic only | eSMS sandbox | Operator grants staging access |
+| Staging | Integration/E2E/protected preview | Synthetic only | Mock SMS/Emulator Suite | Operator grants preview access |
 | Production | Real schools/guardians | Live, minimized | Production only after approval | Not authorized by default |
 
 Never use production pupil or guardian data in staging/demo.
@@ -24,18 +24,24 @@ There is no web frontend in MVP. Early preview is a navigable native Android she
 
 Preview must not connect to production Firestore, live SMS, production AI budgets or real parent numbers.
 
+**Preferred preview route:** Firebase App Distribution. Create `internal-testers` and `judges` groups, add approved emails in the Firebase console, and use the protected `distribution` GitHub environment for manual judge-facing uploads. Never publish a public APK link. Exact setup and permissions are in `CI_ANDROID_BUILD.md`.
+
 ## 3. Firebase staging deployment
+
+**Current constraint:** The project is on Spark/NGN 0. Do not deploy Cloud Functions, activate Blaze or create paid hosting. Functions remain emulator-only until the operator explicitly authorizes a bounded billing change. This section is the future hosted-staging procedure, not current authorization.
 
 - Use a separate staging project where possible.
 - Deploy Firestore rules and indexes before enabling data operations.
-- Deploy Cloud Functions Gen2 in `africa-south1`.
-- Keep `SMS_MODE=sandbox` and test-recipient allowlist enabled.
+- Deploy Cloud Functions Gen2 in `africa-south1` only after explicit Blaze/budget authorization and a completed security review.
+- Keep `SMS_MODE=mock` and the empty recipient allowlist. Do not use eSMS sandbox/production without separate authorization.
 - App Check debug provider only in local emulator; configure proper staging/production attestation.
 - Enable only required APIs/services.
 - Configure quotas and cost alerts; understand alerts are not hard billing caps.
 - Verify callable auth/App Check and webhook HMAC before connecting provider.
 
 ## 4. CI pipeline
+
+**Primary build path:** GitHub Actions Ubuntu runners. Do not install the full Android Studio toolchain on the Windows operator machine. Exact workflow, permissions, signing and App Distribution steps are in `CI_ANDROID_BUILD.md`.
 
 On pull request/commit:
 1. Checkout and set JDK/Node versions from pinned config.
@@ -89,4 +95,4 @@ If production authority is not supplied, stop at verified staging and provide ex
 
 ## 8. Demo vs production
 
-Hackathon demo is staging/sandbox, not production. Use synthetic records. Clearly label provider sandbox/simulated SMS. Never imply real parent delivery or universal on-device AI support.
+Hackathon demo is staging/mock, not production. Use synthetic records. Clearly label mock/simulated SMS and do not imply real parent delivery or universal on-device AI support.

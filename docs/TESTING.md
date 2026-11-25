@@ -1,12 +1,14 @@
 # Tiny — Test Strategy and Acceptance
 
+**Current development mode:** SMS tests use the deterministic mock adapter while `SMS_MODE=mock`. eSMS sandbox tests are deferred and require separate authorization. Firebase Functions are emulator-only under Spark/NGN 0; hosted Functions tests are not available.
+
 ## 1. Test pyramid
 
 1. Unit tests: pure domain logic, validation, state transitions, locale/segment calculations.
 2. Local persistence tests: Room/SQLCipher transaction and outbox durability.
 3. Integration tests: Firebase Emulator Suite, callables, Firestore rules, webhook adapter and scheduled jobs.
 4. UI tests: Compose UI on small-screen and font-scale configurations.
-5. End-to-end tests: teacher/parent sandbox journeys.
+5. End-to-end tests: teacher/parent mock/sandbox journeys (mock first; eSMS sandbox only when authorized).
 6. Physical-device tests: low/mid-range Android performance, real offline behavior and genuine on-device AI.
 7. Security tests: tenant isolation, authorization, webhook signature/replay, secret/PII leakage and abuse limits.
 
@@ -63,7 +65,7 @@
 
 ### E2E-01 — Independent teacher
 
-Sign in → create independent workspace → create two classes → register pupil → add two guardians with different locales → issue verification challenge → parent sandbox JOIN from target phone → download curriculum pack.
+Sign in → create independent workspace → create two classes → register pupil → add two guardians with different locales → issue verification challenge → parent mock JOIN from target phone → download curriculum pack.
 
 ### E2E-02 — Offline lesson and attendance
 
@@ -71,11 +73,11 @@ Download pack → airplane mode → open lesson → mark full roster → submit 
 
 ### E2E-03 — Absence notification
 
-Submit mixed present/late/absent register → verify only absent creates jobs → sandbox send accepted → callback updates status → verify guardian dedupe and localized template.
+Submit mixed present/late/absent register → verify only absent creates jobs → mock adapter records accepted/failed/unknown status → verify guardian dedupe and localized template. eSMS sandbox is a later authorized variant.
 
 ### E2E-04 — Parent-initiated conversation
 
-Send sandbox `TINY <school-code> <message>` → signature verifies → sender resolves to guardian → message appears in teacher inbox → teacher replies → outbound status updates.
+Send mock `TINY <school-code> <message>` through the deterministic adapter → signature/dedupe path exercised → sender resolves to guardian → message appears in teacher inbox → teacher replies → outbound status updates. eSMS sandbox is a later authorized variant.
 
 ### E2E-05 — Progress and digest
 

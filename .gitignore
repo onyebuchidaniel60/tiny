@@ -1,0 +1,40 @@
+# Tiny — local secrets and build artefacts
+# Never commit real credentials, tokens, signing keys or pupil/guardian data.
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Machine-specific Android configuration
+local.properties
+
+# Firebase client configuration — inject locally or via CI, do not commit
+google-services.json
+
+# Emulator and Firebase CLI local state
+.firebase/
+functions/.secret.local
+
+# Signing material
+*.jks
+*.keystore
+
+# Android/Gradle/Node build outputs and caches
+.gradle/
+build/
+app/build/
+captures/
+*.apk
+*.aab
+node_modules/
+functions/node_modules/
+functions/lib/
+
+# IDE files
+.idea/
+*.iml
+
+# OS noise
+.DS_Store
+Thumbs.db

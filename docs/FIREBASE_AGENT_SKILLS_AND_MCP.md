@@ -150,6 +150,8 @@ The Firebase MCP server's built-in `firebase:init` and `firebase:deploy` prompts
 | Phase 5 — functional gate | Use `firestore-security-rules-auditor` and inspect output independently | Validate deployed or emulator rules in the approved non-production environment |
 | Phase 9 — security/release | Re-run security-rules audit; check current Firebase guidance | Production MCP access remains off unless separately authorized; do not deploy by default |
 
+**Independent Phase 1 preparation:** Firebase Agent Skills installation/inspection and Emulator Suite setup with a demo project do not require the real Firebase project. MCP remains disabled until non-production project access and operation scope are authorized.
+
 ## 6. Firebase-specific implementation guardrails
 
 - Skills supplement official product documentation; they do not replace checking current Android SDK documentation and release notes.

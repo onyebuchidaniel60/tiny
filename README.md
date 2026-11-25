@@ -43,13 +43,15 @@ When documents conflict, `PROJECT_SPEC.md` controls product behavior, `ARCHITECT
 
 The required input and authorization inventory is in `OPERATOR_INTAKE.md`. At minimum the operator must supply or approve:
 
-- The target repository and access.
-- One or more genuine UI reference images (or explicitly authorize generation of a reference image).
-- A Firebase project and staging/dev access with billing boundary understood.
-- A compatible Android test handset for verifying true on-device hybrid inference, plus representative low-cost target phones to check Android version and Play Integrity/Google Play services compatibility.
-- eSMS Africa sandbox credentials or approval to use the sandbox; production KYC, spend and sending permissions are separate.
-- Preview distribution access (Firebase App Distribution or an agreed protected APK destination).
-- Demo output location and any redaction requirements.
+- The target repository and access (confirmed: public `main`, direct commit/push authorized).
+- One or more genuine UI reference URLs/images (exact URLs still pending; no generated substitutes without authorization).
+- GitHub Actions Ubuntu build/test access (confirmed as the preferred build path; no full Android Studio installation on Windows).
+- A non-production Firebase project and access when Firebase integration tests begin; Spark/NGN 0 means Cloud Functions remain emulator-only.
+- Firebase App Distribution tester/judge access for the protected preview.
+- A general Android test handset (Samsung Galaxy Note 10+) and, separately, a currently supported Gemini Nano device for genuine on-device AI evidence.
+- Mock SMS adapter approval (confirmed; eSMS sandbox/production remain disabled).
+- Demo output location and redaction requirements (confirmed: `artifacts/demo/`, synthetic data).
+- Credential/configuration register acknowledgement; secrets are delivered securely, never through chat or Git.
 
 The absence of any critical input must be recorded as a blocker in the consolidated intake. Noncritical preferences have documented defaults.
 
@@ -80,6 +82,8 @@ The coding agent's first and only initial task is to read the handoff, inspect t
 
 - Setup: `docs/SETUP.md`
 - Environment and secrets: `docs/CONFIGURATION.md`
+- Credential/configuration register: `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`
+- GitHub Actions Android build and App Distribution: `docs/CI_ANDROID_BUILD.md`
 - API contracts: `docs/API.md`
 - Database/data model: `docs/DATA_MODEL.md`
 - Security and privacy: `docs/SECURITY.md`
@@ -96,7 +100,7 @@ The coding agent's first and only initial task is to read the handoff, inspect t
 
 ## Current build status
 
-**Planning/handoff only. No application code has been implemented.** Reference images, repository access, service credentials and deployment permissions are pending consolidated operator intake. Production release is not authorized by default.
+**Planning/handoff only. No application code has been implemented.** Phase 0 intake is partially confirmed; UI reference links are still pending. Android builds use GitHub Actions Ubuntu runners. Firebase project access is a later integration gate, not a Phase 1 scaffolding blocker. Production release is not authorized by default.
 
 
 ## Firebase development-agent tooling

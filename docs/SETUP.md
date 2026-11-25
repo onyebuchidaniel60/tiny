@@ -5,32 +5,34 @@
 ## 1. Prerequisites
 
 - Git repository with operator-authorized branch and write access.
-- Android Studio and Android SDK matching the Android Gradle Plugin versions selected and pinned during Phase 0/1.
-- JDK required by the pinned AGP; use the Gradle wrapper toolchain.
+- GitHub Actions Ubuntu runners as the primary Android build/test environment; do not install the full Android Studio toolchain on the Windows operator machine. See `CI_ANDROID_BUILD.md`.
+- JDK, Android SDK/build-tools and Gradle versions pinned to the Android Gradle Plugin selected during Phase 1; the GitHub Actions runner installs them.
 - Kotlin/Gradle dependency lock and version catalog.
 - Android physical device (API 26+) or emulator for routine app tests.
 - Separate physically supported Android handset for genuine Firebase on-device AI proof; generic emulator-only evidence is insufficient.
 - Node.js 22 and npm for Firebase Functions.
-- Firebase CLI authenticated to the non-production project with least privilege.
+- Firebase CLI authenticated to the non-production project with least privilege when integration tests begin; Emulator Suite setup can use a demo project before the real project exists.
 - Firebase Emulator Suite for Auth, Firestore and Functions integration tests.
 - GitHub Actions or the approved CI environment.
 
 ## 2. First-time setup sequence
 
 1. Complete root `OPERATOR_INTAKE.md` before code changes.
-2. Confirm reference image files and record exact paths in `REFERENCE_ASSETS.md`.
+2. Confirm the operator-supplied reference URLs/images and record exact sources in `REFERENCE_ASSETS.md`.
 3. Inspect the existing repository and preserve useful work; do not overwrite source, CI or migrations without review.
-4. Create/select a development or staging Firebase project. Do not use production credentials for local development.
-5. Enable Phone Authentication and configure Nigeria (+234) region policy/test numbers.
-6. Create Firestore Standard in `africa-south1` only after billing/region approval.
-7. Configure App Check debug provider for local emulator only.
-8. Enable Firebase AI Logic in the development project and validate quotas.
-9. Configure eSMS sandbox secrets only after account access and sandbox authorization are confirmed.
-10. At the start of Phase 6, attempt `npx skills add benjitaylor/skills --skill stageshow`; inspect and use relevant instructions.
+4. Install/inspect the selected Firebase Agent Skills for OpenCode and verify fresh-session discovery; this does not require a real Firebase project.
+5. Set up the GitHub Actions Ubuntu build workflow and credential/configuration placeholders; no full Android Studio installation on Windows.
+6. Set up Firebase Emulator Suite with a demo project for local/CI tests. Create/select the real development Firebase project only when Firebase integration tests begin; do not use production credentials.
+7. Enable Phone Authentication and configure Nigeria (+234) region policy/test numbers in the non-production project when integration begins.
+8. Create Firestore Standard in `africa-south1` only after billing/region approval and project access.
+9. Configure App Check debug provider for local emulator only.
+10. Enable Firebase AI Logic in the development project and validate free-tier quotas when cloud AI integration begins.
+11. Keep `SMS_MODE=mock`; configure eSMS sandbox secrets only after account access and sandbox authorization are confirmed.
+12. At the start of Phase 6, attempt `npx skills add benjitaylor/skills --skill stageshow`; inspect and use relevant instructions.
 
 ## 3. Android build
 
-The implementation agent creates/repairs a conventional native Android Gradle project with a version catalog and wrapper. Do not use dynamic dependency versions.
+The implementation agent creates/repairs a conventional native Android Gradle project with a version catalog and wrapper. Do not use dynamic dependency versions. The primary build/test path is GitHub Actions on Ubuntu; local Windows commands below are optional and require only the minimal tools, not full Android Studio.
 
 Expected commands (adapt only to the actual wrapper and record selected versions):
 
@@ -65,10 +67,10 @@ Use Firebase Emulator Suite for callables, rules and webhook adapter tests. Neve
 
 ## 5. Local secrets
 
-- Do not add secrets to tracked `.env`, source files, `google-services.json` or build config.
-- Use ignored local environment files or Functions secret emulators for local tests.
-- Include `.env.example` with names and safe placeholders only.
-- Production secrets live in Google Secret Manager/Firebase Functions secrets.
+- Do not add secrets to tracked files, source, `google-services.json`, build config or logs.
+- Use ignored local `.env` files or Functions secret emulators for local tests; never commit `.env`.
+- `.env.example` contains names and safe placeholders only; see `CREDENTIALS_AND_CONFIGURATION_REGISTER.md` for ownership and secure delivery.
+- Production secrets live in Google Secret Manager/Firebase Functions secrets; CI secrets live in GitHub Actions secrets.
 - Rotate any credential accidentally exposed in logs, chat, Git or an artifact.
 
 ## 6. Test data

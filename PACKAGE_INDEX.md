@@ -1,7 +1,8 @@
 # Tiny — Project Handoff Package Index
 
 **Package status:** Complete planning/handoff documentation; no application code included.  
-**Document count:** 26 Markdown files (including the Firebase Agent Skills/MCP guide).  
+**Document count:** 28 Markdown files (including the Firebase Agent Skills/MCP guide, credential register and CI guide).
+
 **Blueprint date:** 25 November 2026  
 **Product:** Tiny — Big impact. Small requirements. Accessible everywhere.
 
@@ -16,6 +17,7 @@
 7. [`OPERATOR_INTAKE.md`](OPERATOR_INTAKE.md) and [`REFERENCE_ASSETS.md`](REFERENCE_ASSETS.md) — complete once, before application code changes.
 8. [`AI_HANDOFF.md`](AI_HANDOFF.md) and [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) — current execution state and checkpoint evidence.
 9. [`docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`](docs/FIREBASE_AGENT_SKILLS_AND_MCP.md) — official Firebase skills, OpenCode setup, MCP scope and authorization policy.
+10. [`docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`](docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md) and [`docs/CI_ANDROID_BUILD.md`](docs/CI_ANDROID_BUILD.md) — secure configuration/credential ownership, GitHub Actions Ubuntu builds and App Distribution/judge access.
 
 ## Root handoff documents
 
@@ -44,6 +46,8 @@
 | `docs/CURRICULUM_AND_LOCALIZATION.md` | NERDC source controls, 5E structure, language set, translation and localization rules |
 | `docs/SETUP.md` | Local development and emulator setup |
 | `docs/CONFIGURATION.md` | Environment variables, secret handling, build flavors and cost guards |
+| `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` | Exact credential/config names, ownership, secure delivery locations, secret/public classification and timing |
+| `docs/CI_ANDROID_BUILD.md` | GitHub Actions Ubuntu build/test permissions, workflow configuration, App Distribution and judge access |
 | `docs/TESTING.md` | Unit, integration, emulator, E2E, security and acceptance test strategy |
 | `docs/DEPLOYMENT.md` | Protected native APK preview, staging, CI, release gates and rollback |
 | `docs/OPERATOR_GUIDE.md` | Operator responsibilities, workspace support, messaging operations and incident handling |
@@ -71,7 +75,7 @@
 
 ## Readiness blockers
 
-The package is ready for an implementation-agent handoff, but **Phase 0 is not complete**. The operator still needs to provide/confirm the repository and permissions, at least one UI reference image (or expressly authorize generated reference imagery), Firebase project/billing/access, a supported physical Android test handset, eSMS sandbox access, protected APK distribution access, demo output path and budget/release boundaries. Production SMS and production release are not authorized by default.
+The package is ready for an implementation-agent handoff, but **Phase 0 is not complete**. Git commit/push to `main` is authorized and the repository remains public. UI reference URLs are still pending. Android builds use GitHub Actions Ubuntu runners, not a local Android Studio toolchain. Firebase project creation/access is a later integration gate and does not block independent Phase 1 scaffolding, Firebase skills installation or Emulator Suite setup. The supplied Samsung Galaxy Note 10+ is a general testing device only, not a Gemini Nano-supported device; on-device AI evidence remains a separate blocked acceptance gate. Firebase App Distribution is the preferred preview route, with tester/judge access still to be configured. eSMS remains mock-only. Cloud/AI/SMS/third-party budgets are NGN 0; production deployment, Blaze, paid hosting and live SMS are not authorized.
 
 ## Integrity of supplied methodology
 

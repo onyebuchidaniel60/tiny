@@ -1,5 +1,7 @@
 # Tiny — Configuration and Environment Variables
 
+**Credential register:** See `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` for exact ownership, secure delivery locations and timing. Safe placeholders are in `.env.example`; real values never belong in Git.
+
 ## 1. Rules
 
 - No secret is stored in source control, Android resources, Gradle BuildConfig, Room, DataStore, Firestore or logs.
@@ -26,15 +28,15 @@
 | `FIREBASE_REGION` | Config | Yes | No | `africa-south1` |
 | `FIRESTORE_DATABASE_ID` | Config | Yes | No | `(default)` unless approved otherwise |
 | `APP_ENV` | Config | Yes | No | `development|staging|production` |
-| `SMS_MODE` | Config | Yes | No | `sandbox` by default; production requires explicit authority |
-| `ESMS_API_KEY` | Secret Manager | SMS only | Yes | eSMS API credential |
-| `ESMS_WEBHOOK_SECRET` | Secret Manager | Webhook only | Yes | HMAC verification secret |
+| `SMS_MODE` | Config | Yes | No | `mock` for current development; `sandbox` or `production` requires explicit authority |
+| `ESMS_API_KEY` | Secret Manager | SMS only | Yes | eSMS API credential; not required while `SMS_MODE=mock` |
+| `ESMS_WEBHOOK_SECRET` | Secret Manager | Webhook only | Yes | HMAC verification secret; not required while `SMS_MODE=mock` |
 | `ESMS_SERVICE_ID` | Config | SMS only | No | Provider's approved shared-keyword service ID |
 | `ESMS_SENDER_KEYWORD` | Config | Yes | No | `TINY` |
 | `SMS_MONTHLY_BUDGET_MINOR` | Config | Yes | No | `0` until approved; integer in selected billing minor unit |
-| `SMS_DAILY_SEGMENT_LIMIT` | Config | Yes | No | Conservative sandbox limit; production set by operator |
+| `SMS_DAILY_SEGMENT_LIMIT` | Config | Yes | No | `0` until approved; sandbox/test limit set by operator |
 | `SMS_ALLOWED_RECIPIENTS` | Restricted config | Sandbox only | Personal data | Approved test numbers; no real parent numbers |
-| `AI_DAILY_CLOUD_LIMIT_PER_USER` | Config | Yes | No | Conservative request cap; set during intake |
+| `AI_DAILY_CLOUD_LIMIT_PER_USER` | Config | Yes | No | Conservative request cap; `PENDING` until AI integration; `0` disables |
 | `AI_MAX_OUTPUT_TOKENS` | Config | Yes | No | Small task cap; target <=256 where model supports |
 | `INVITATION_TTL_DAYS` | Config | Yes | No | `7` |
 | `SYNC_BATCH_LIMIT` | Config | Yes | No | `20` |

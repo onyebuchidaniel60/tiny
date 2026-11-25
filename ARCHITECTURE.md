@@ -163,7 +163,8 @@ Never invoke eSMS directly from the Android client.
 - Android APK/AAB distributed through Firebase App Distribution for protected preview and test.
 - Firebase project with separate development/staging and production projects if available; never point preview at production data.
 - Firebase Emulator Suite for Auth/Firestore/Functions integration tests.
-- GitHub Actions builds APK, runs unit/lint and Functions tests; secrets stored in GitHub Actions secrets only when required.
+- GitHub Actions Ubuntu runners build the APK, run unit/lint and Functions tests; secrets stored in GitHub Actions secrets only when required. Do not install the full Android Studio toolchain on the operator Windows machine.
+- Current operator budget is Spark/NGN 0. Cloud Functions are emulator-only: do not deploy Functions, activate Blaze or introduce paid hosting without explicit operator approval. This is an operational constraint, not a change to the fixed Functions architecture.
 - Production release requires explicit authorization and a completed security/DPIA/provider readiness gate.
 
 ## 12. Architecture constraints and rejected approaches
