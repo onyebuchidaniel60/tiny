@@ -1,18 +1,19 @@
 # Tiny — Reference Assets Register
 
-**Status:** Pending intake. No UI reference image was supplied with the product brief or methodology file.  
-**Rule:** Never claim an absent reference image exists. The agent must request it in the one consolidated Operator Intake or proceed with an agent-generated reference only if the operator explicitly authorizes that option.
+**Status:** Pending intake. No UI reference image or exact interface link has been supplied yet. On 25 November 2026 the operator confirmed that links to existing interfaces will be supplied; the exact URLs, ownership/usage rights and intended screens are still pending.
+
+**Rule:** Never claim an absent reference exists. Inspect only supplied references, record exact URLs/paths and rights, and use generated references only if the operator explicitly authorizes them.
 
 ## Required intake
 
-| Asset ID | Exact filename/path | Source/owner | Intended screen(s) | Rights/usage | Status |
+| Asset ID | Exact URL/filename/path | Source/owner | Intended screen(s) | Rights/usage | Status |
 |---|---|---|---|---|---|
-| REF-001 | Not supplied | Pending operator | Teacher home/navigation | Pending confirmation | BLOCKED |
-| REF-002 | Not supplied | Pending operator | Attendance/class register | Pending confirmation | BLOCKED |
-| REF-003 | Not supplied | Pending operator | Lesson planner/teaching resources | Pending confirmation | Optional |
-| REF-004 | Not supplied | Pending operator | Parent inbox/progress | Pending confirmation | Optional |
+| REF-001 | Pending operator link | Pending operator | Teacher home/navigation | Pending confirmation | BLOCKED |
+| REF-002 | Pending operator link | Pending operator | Attendance/class register | Pending confirmation | BLOCKED |
+| REF-003 | Pending operator link | Pending operator | Lesson planner/teaching resources | Pending confirmation | Optional |
+| REF-004 | Pending operator link | Pending operator | Parent inbox/progress | Pending confirmation | Optional |
 
-The minimum is one genuine reference image. A small cohesive set is preferred if available. Reference images are visual direction only; do not copy third-party marks, logos, proprietary assets or protected text.
+The minimum is one genuine reference source. A small cohesive set is preferred if available. References are visual direction only; do not copy third-party marks, logos, proprietary assets or protected text.
 
 ## Screens to implement from reference principles
 
