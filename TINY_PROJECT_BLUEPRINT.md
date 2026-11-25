@@ -549,6 +549,14 @@ Set `minSdk = 26` (Android 8.0) because the current Firebase AI Logic on-device 
 
 ---
 
+### Developer tooling for implementation (not app runtime)
+
+The OpenCode implementation agent must use the official Firebase Agent Skills as progressive Firebase-specific implementation guidance. Install the selected project-local skills during Phase 1: `firebase-basics`, `firebase-local-env-setup`, `firebase-auth-basics`, `firebase-firestore-standard`, and `firestore-security-rules-auditor`. Inspect their `SKILL.md` files and bundled scripts, verify discovery in a fresh OpenCode session, and preserve the generated skill lockfile when available.
+
+The Firebase MCP server is the recommended companion after non-production Firebase project access is authorized. It uses the local Firebase CLI identity and can expose both read and state-changing Firebase tools. Keep it disabled until the operator authorizes its use; state-changing calls require explicit permission. Restrict feature groups to Tiny's selected Firebase services.
+
+The published `firebase-ai-logic-basics` skill is described as web-app focused; it is not authoritative for Tiny's native Android hybrid-inference integration. Use current Android-specific Firebase AI Logic documentation and verify behavior on a physical supported handset. Full skill selection, installation, MCP configuration and safety policy: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.
+
 # 10. API SPECIFICATION
 
 Canonical request/response contracts are in `docs/API.md`. All callable functions require Firebase Auth and App Check unless explicitly a signed provider webhook. Every request has Zod validation; every business mutation uses idempotency or a version precondition.
@@ -950,6 +958,7 @@ Phases follow the attached `PROPER_VIBE_CODING_WORKFLOW.md`; detailed checkpoint
 
 1. **Phase 0 — One consolidated operator intake:** inspect repository and all instructions read-only; gather missing reference images, Firebase project access, eSMS sandbox/production choice, billing boundary, physical supported Android device, deployment/testing access, demo requirements and authority. Do not modify application code until critical input and reference images are ready.
 2. **Phase 1 — Repository foundation + skeletal Android UI:** establish Gradle project, app shell, routes/navigation, localization scaffolding and labelled placeholders. Build and distribute a protected debug APK through Firebase App Distribution or an equivalent protected artifact. Record exact distribution URL/build number/Git commit. This is the native equivalent of the early preview; no public web UI is added.
+   - Install and inspect the selected official Firebase Agent Skills for OpenCode; verify discovery and preserve the skills lockfile. Configure Firebase MCP only after non-production project access and permissions are authorized; keep state-changing operations approval-gated.
 3. **Phase 2 — Backend/data/auth foundation:** Firebase project, Firestore database and rules, Auth, App Check, Functions 2nd gen, local Room/SQLCipher, emulator setup and health tests.
 4. **Phase 3 — Core domain and APIs:** workspace, membership, class, pupil, guardian, lesson, attendance, progress, messaging, digest and sync commands; deterministic validation and idempotency.
 5. **Phase 4 — Functional frontend integration:** connect screens to repositories and real backend behavior; implement local queue and status/error states.
@@ -1006,6 +1015,9 @@ See [`AI_HANDOFF.md`](AI_HANDOFF.md) for the initial pre-implementation state. I
 | UX route/screen structure defined | PASS |
 | Reference images supplied | **PENDING — required at operator intake** |
 | StageShow install/use rule included | PASS |
+| Official Firebase Agent Skills selected for OpenCode; installation, inspection and fresh-session discovery required in Phase 1 | PASS |
+| Firebase MCP configuration and state-changing-operation approval boundaries defined | PASS |
+| Android hybrid AI implementation explicitly governed by Android-specific Firebase documentation, not the web-focused AI Logic skill | PASS |
 | Operator credentials/account access supplied | **PENDING — Phase 0 intake** |
 | Firebase billing authority/cost ceiling supplied | **PENDING — Phase 0 intake** |
 | eSMS account/KYC/keyword access supplied | **PENDING — sandbox first; production opt-in** |

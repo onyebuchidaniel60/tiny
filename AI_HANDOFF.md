@@ -56,7 +56,7 @@
 
 ## Handoff package validation
 
-- [x] 25 Markdown documents are present in the handoff package.
+- [x] 26 Markdown documents are present in the handoff package (including `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`).
 - [x] The uploaded `PROPER_VIBE_CODING_WORKFLOW_AUTONOMOUS(5).md` is preserved byte-for-byte at `docs/PROPER_VIBE_CODING_WORKFLOW.md` (SHA-256 `11607c448d9803ef27ab69d7e20d53730c2f535fc8b2b97559c9f464b66cacdb`).
 - [x] Internal Markdown links resolve within the package.
 - [x] Markdown fenced code blocks are balanced.
@@ -75,6 +75,18 @@
 - Required UI skill command: `npx skills add benjitaylor/skills --skill stageshow`.
 - Installation/inspection: **Not attempted; must occur at the start of UI work (Phase 6)**.
 - Additional UI skills: optional, evaluate for relevance and trustworthiness.
+- Firebase Agent Skills: required baseline selected; install/inspect in Phase 1 as documented. Firebase MCP: recommended, disabled pending project access and authorization.
+
+## Firebase Agent Skills and MCP status
+
+- Requirement added: use official Firebase Agent Skills as progressive Firebase-specific implementation guidance in OpenCode.
+- Selected baseline IDs: `firebase-basics`, `firebase-local-env-setup`, `firebase-auth-basics`, `firebase-firestore-standard`, `firestore-security-rules-auditor`.
+- Install phase: Phase 1, project-local copied files; inspect selected skill files/scripts, verify fresh-session discovery, preserve lockfile if generated.
+- Optional `firebase-crashlytics` skill requires a product/privacy decision before installation/use.
+- `firebase-ai-logic-basics` is listed by Firebase as web-app focused; it is not authoritative for the native Android Hybrid AI implementation. Use current Android-specific docs instead.
+- Firebase MCP: recommended companion, not yet configured/connected. Keep disabled until operator authorizes non-production project access and bounded tool permissions. State-changing operations require explicit approval.
+- Detailed policy: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.
+- Skill source commit, installed paths, OpenCode discovery check, MCP status and operation scope: **pending implementation Phase 1 / authorized Firebase access**.
 
 ## Documentation status
 
@@ -133,6 +145,7 @@ Preview URL:
 Deployed commit:
 Reference image status:
 StageShow / additional skill status:
+Firebase Agent Skills / MCP status:
 Documentation status:
 Demo video status:
 Known issues:

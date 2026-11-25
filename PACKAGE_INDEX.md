@@ -1,6 +1,7 @@
 # Tiny — Project Handoff Package Index
 
 **Package status:** Complete planning/handoff documentation; no application code included.  
+**Document count:** 26 Markdown files (including the Firebase Agent Skills/MCP guide).  
 **Blueprint date:** 25 November 2026  
 **Product:** Tiny — Big impact. Small requirements. Accessible everywhere.
 
@@ -14,6 +15,7 @@
 6. [`TINY_PROJECT_BLUEPRINT.md`](TINY_PROJECT_BLUEPRINT.md) — complete 30-section consolidated blueprint and final coding-agent start point.
 7. [`OPERATOR_INTAKE.md`](OPERATOR_INTAKE.md) and [`REFERENCE_ASSETS.md`](REFERENCE_ASSETS.md) — complete once, before application code changes.
 8. [`AI_HANDOFF.md`](AI_HANDOFF.md) and [`docs/BUILD_LOG.md`](docs/BUILD_LOG.md) — current execution state and checkpoint evidence.
+9. [`docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`](docs/FIREBASE_AGENT_SKILLS_AND_MCP.md) — official Firebase skills, OpenCode setup, MCP scope and authorization policy.
 
 ## Root handoff documents
 
@@ -48,6 +50,7 @@
 | `docs/TROUBLESHOOTING.md` | Common local, Firebase, sync, AI and messaging failures |
 | `docs/DESIGN_NOTES.md` | Pending reference-image inspection and future visual decisions |
 | `docs/BUILD_LOG.md` | Implementation phase and verification evidence log |
+| `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md` | Official Firebase Agent Skills selection, OpenCode installation, Firebase MCP configuration, permissions and usage guardrails |
 
 ## Confirmed product baseline
 
@@ -73,3 +76,10 @@ The package is ready for an implementation-agent handoff, but **Phase 0 is not c
 ## Integrity of supplied methodology
 
 `docs/PROPER_VIBE_CODING_WORKFLOW.md` is intended to preserve the uploaded methodology exactly. The file must remain unchanged unless the operator supplies a revised methodology.
+
+## Firebase developer tooling baseline
+
+- Install the selected official Firebase Agent Skills for OpenCode during Phase 1; verify skill discovery and preserve the generated lockfile when available.
+- Recommended Firebase MCP server is configured only after non-production Firebase access is authorized; state-changing calls need explicit approval.
+- `firebase-ai-logic-basics` is web-focused and does not replace Android-specific Firebase AI Logic hybrid-inference documentation.
+- See `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.

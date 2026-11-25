@@ -92,7 +92,13 @@ The coding agent's first and only initial task is to read the handoff, inspect t
 - Design evidence: `docs/DESIGN_NOTES.md`
 - Build evidence: `docs/BUILD_LOG.md`
 - Demo production: `DEMO_VIDEO_PLAN.md`
+- Firebase Agent Skills and MCP developer tooling: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`
 
 ## Current build status
 
 **Planning/handoff only. No application code has been implemented.** Reference images, repository access, service credentials and deployment permissions are pending consolidated operator intake. Production release is not authorized by default.
+
+
+## Firebase development-agent tooling
+
+The implementation agent must use the selected official Firebase Agent Skills for OpenCode and should use the Firebase MCP server as a controlled companion once non-production project access is authorized. These are developer tools, not app runtime dependencies. Read [`docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`](docs/FIREBASE_AGENT_SKILLS_AND_MCP.md) for the exact skill set, install/verification workflow, MCP scope and authorization restrictions.

@@ -174,3 +174,14 @@ Never invoke eSMS directly from the Android client.
 - No separate managed relational SQL database (such as Cloud SQL/PostgreSQL), microservices, Cloud Run service, message broker, Redis or search engine in MVP. Room/SQLite is still used locally on Android.
 - No parent-facing app or separate parent web portal.
 - No real voice calls until later.
+
+
+## 12. Firebase developer-agent tooling (not runtime dependencies)
+
+Tiny's implementation agent uses the official Firebase Agent Skills for Firebase-specific guidance and the Firebase MCP server as a controlled tool interface. These developer tools are not packaged into the Android APK and do not alter the application architecture.
+
+- OpenCode project-local skills: `firebase-basics`, `firebase-local-env-setup`, `firebase-auth-basics`, `firebase-firestore-standard`, and `firestore-security-rules-auditor`. Optional Crashlytics skill is added only if Crashlytics is approved. See `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.
+- Firebase MCP: local stdio server using Firebase CLI credentials, disabled until a non-production project and operation permissions are authorized. Restrict exposed feature groups to core/auth/firestore/functions; add messaging only if optional FCM is approved; add crashlytics only if its use is separately approved.
+- MCP read access may be used for authorized non-production inspection/validation. Any state-changing operation (project/app/database creation, Auth user/config mutation, Firestore writes/deletes, deploy, FCM send, backup/config change) requires exact operator authorization.
+- The Firebase Agent Skills catalog's `firebase-ai-logic-basics` entry is described as web-focused. It is not an authority for Tiny's native Android hybrid inference; use current Android-specific Firebase AI Logic documentation and physical-device verification.
+

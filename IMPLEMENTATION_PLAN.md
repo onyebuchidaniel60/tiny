@@ -33,11 +33,18 @@ This plan follows `docs/PROPER_VIBE_CODING_WORKFLOW.md`. Phase boundaries are in
 **Deliverables:** completed intake table and readiness status; no app code changes.  
 **Exit criteria:** all critical product/technical inputs and reference images available; sandbox path validated; budget/authorization boundaries explicit. If a blocker exists, document exact blocker and minimum operator action.
 
+## Firebase development tooling prerequisite
+
+Before Firebase integration work in Phase 2, install and verify the selected official Firebase Agent Skills for OpenCode as defined in `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`. This is developer tooling, not application code. Inspect the selected `SKILL.md` files and scripts, use project-local copied skills, preserve `skills-lock.json` if generated, and verify discovery in a fresh OpenCode session. Do not use the web-focused `firebase-ai-logic-basics` skill as authority for the native Android hybrid AI implementation.
+
+The Firebase MCP server is the recommended companion but must remain disabled until the operator authorizes use against a non-production Firebase project and its allowed operation scope. Configure only the relevant feature groups. Start with read-only inspection/validation; state-changing operations require explicit per-action approval. Detailed setup and restrictions: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.
+
 ## Phase 1 — Repository foundation + skeletal native UI distribution
 
 **Objective:** a navigable, clearly unfinished Android app shell exists and can be installed by approved testers early.
 
 **Tasks:**
+- Install and verify selected official Firebase Agent Skills for OpenCode; inspect the skill instructions/scripts and record the source commit, install path and lockfile status.
 - Create/repair Gradle project with Kotlin, Compose and pinned dependencies.
 - Establish package structure, theme tokens, navigation, route placeholders and localization scaffolding.
 - Implement startup, language selection, auth placeholder, home/classes/lessons/messages/settings navigation.

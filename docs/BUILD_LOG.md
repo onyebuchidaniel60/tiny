@@ -47,3 +47,18 @@
 - Known limitations:
 - Budget/authorization notes:
 - Next phase/task:
+
+
+## Planning update — Firebase Agent Skills and MCP
+
+**Date:** 25 November 2026
+**Status:** Requirements documented; skills not installed and MCP not connected.
+
+- Reviewed the Firebase Agent Skills documentation and official repository, plus Firebase MCP and OpenCode skills/MCP documentation.
+- Added `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md` with selected skill IDs, OpenCode installation/verification, trust/update policy, MCP setup and least-privilege controls.
+- Updated `AGENTS.md`, `ARCHITECTURE.md`, `IMPLEMENTATION_PLAN.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md` and the consolidated blueprint.
+- Selected baseline skills: `firebase-basics`, `firebase-local-env-setup`, `firebase-auth-basics`, `firebase-firestore-standard`, `firestore-security-rules-auditor`.
+- Firebase MCP remains unconfigured/disabled until non-production project access and bounded permissions are authorized.
+- No skills installed, no MCP server connected, no Firebase resource created or modified, and no application code written during this documentation update.
+
+Verification: 26 Markdown files; internal relative links resolve; fenced code blocks are balanced; original workflow SHA-256 unchanged. Updated ZIP integrity is verified after packaging.

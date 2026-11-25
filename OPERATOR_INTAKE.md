@@ -104,6 +104,9 @@ Published provider examples have included setup/monthly keyword charges and per-
 | Payment provider | No | NOT_APPLICABLE | No payment feature |
 | Google AI TTS for demo | Required only if available and free at demo time | PENDING | Check current quota/terms; no paid use without authorization; use genuinely free permitted fallback if unavailable |
 | Other UI skills | Optional | PENDING | Required attempt: `npx skills add benjitaylor/skills --skill stageshow`; optional skills must be relevant/trustworthy |
+| Firebase Agent Skills | Required developer tooling | CONFIRMED BY OPERATOR; installation pending Phase 1 | Install selected official Firebase skills project-locally for OpenCode; inspect content/scripts; copy files; preserve lockfile if generated; no app runtime dependency |
+| Firebase MCP server | Recommended companion; not a hard Phase 0 blocker | PENDING AUTHORIZATION | Configure disabled until non-production Firebase project/access and operation scope are confirmed; use least-privilege CLI identity; state-changing tools require explicit operator approval |
+| OpenCode version / skills discovery | Required to validate tooling | PENDING IMPLEMENTATION | OpenCode is the established coding agent; record `opencode --version`; verify selected skills discover in a fresh session; inspect current MCP config syntax before modifying it |
 
 ## 7. Data protection, budget and release authority
 
