@@ -1,6 +1,6 @@
 # Tiny — Demo Video Plan
 
-**Status:** Planned; video cannot be produced until the real application is implemented and verified.
+**Status:** Produced 26 November 2026. `artifacts/demo/tiny-demo.mp4` — 146.2s, 1920x1080 H.264/AAC, 5,481,700 bytes, SHA-256 `B211C1EB8BBF43B8B2521330AEF2DBA878EEC22B4A6A6F30BDFDB2711CCC40F2`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. On-device Gemini Nano evidence remains blocked.
 
 **Current mode:** mock SMS adapter; cloud AI evidence can proceed, but on-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
 

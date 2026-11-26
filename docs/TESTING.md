@@ -112,8 +112,8 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
 - Backend emulator E2E: **10 passed, 0 failed** covering workspace/class/pupil/guardian/verification, absence job creation, progress approval, teacher reply, mixed sync batch replay, signed inbound SMS dedupe and weekly digest.
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
-- Android debug build: CI `assembleDevDebug` passed; APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
-- Emulator smoke: API 35 install/launch succeeded; 10 screens captured; no Tiny fatal exception in logcat.
+- Android debug build: CI `assembleDevDebug` passed; final APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+- Emulator smoke: API 35 install/launch succeeded; 11 screens captured including the offline AI fallback; no Tiny fatal exception in logcat.
 - Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
 - Not yet run: physical-device install, App Distribution, real Firebase project integration.

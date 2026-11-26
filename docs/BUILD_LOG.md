@@ -1,6 +1,6 @@
 ﻿# Tiny — Build Log
 
-**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, emulator evidence, landing page). Phase 2/3 backend foundations are partially implemented. No production deployment, live SMS or Firebase project resources have been created.
+**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client transport remains mock. No production deployment, live SMS or Firebase project resources have been created.
 
 ## Planning baseline
 
@@ -40,25 +40,25 @@
   - Android unit tests: **24 passed, 0 failed** (`PhoneNormalizer`, `AttendanceRules`, `SmsSegments`, `ProgressRules`, `DigestBuilder`, `SyncRules`, `JsonStrings`).
   - Firestore rules tests: **8 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message access.
   - Backend emulator E2E: **10 passed, 0 failed** (workspace/class/pupil/guardian/verification, attendance absence job, progress approval, teacher reply, mixed sync batch + replay, signed inbound SMS + dedupe, weekly digest).
-  - Android CI build: **successful**; APK **27,897,539 bytes**; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
-  - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings screens.
+  - Android CI build: **successful**; final APK **27,922,939 bytes**; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+  - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings screens.
   - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog; no lint errors remain.
   - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 8/8; backend E2E suite 10/10.
   - Landing page: local link check passed; responsive layout inspected at 1440 px and 390 px; mobile nav toggles correctly; no broken local links; no images without alt.
 - Manual verification: Desktop/mobile screenshots saved at `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png` and `landing-mobile-revealed.png`. References recorded in `REFERENCE_ASSETS.md`.
-- Commit hash: Phase 1 implementation commits through `e7bddb7`; final checkpoint commit to be recorded after the next push.
-- Preview artifact/build URL: GitHub Actions run `45789068836`; artifact `tiny-dev-debug-apk`; APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`. No App Distribution upload.
+- Commit hash: Phase 1 commits through `13b7e60`, `7171891`, `00318fc`, `2776ba1`.
+- Preview artifact/build URL: GitHub Actions run `45809071551`; artifact `tiny-dev-debug-apk`; APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`. No App Distribution upload.
 - Reference image/skill status: REF-001/REF-002 supplied and recorded. StageShow installation attempted; harness removed the `stageshow` skill ID after a server restart, so it was not used and completion is not claimed. Firebase skills installed and visible in the active tool catalog.
-- Documentation updated: `REFERENCE_ASSETS.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/DESIGN_NOTES.md` (pending), this build log and source docs.
+- Documentation updated: `REFERENCE_ASSETS.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/DESIGN_NOTES.md`, this build log and source docs.
 - Known limitations:
   - No physical Android device connected during this checkpoint; Note 10+ is Android 12 and general-testing only, not Gemini Nano-supported.
   - No Firebase project, App Distribution tester access or hosted Functions; Spark/NGN 0 keeps Functions emulator-only.
   - Hausa/Yoruba/Igbo app strings are partial draft resources pending native review; English fallback is active.
   - `syncCommands` now dispatches supported offline commands through the same validated callable handlers, writes accepted/rejected receipts, and replays accepted commands idempotently. The Android client still uses the mock sync engine because no Firebase project is configured.
-  - GitHub Actions and Emulator Suite runtime verification are pending the first push/CI run.
+  - GitHub Actions, Emulator Suite, instrumentation and demo evidence are recorded in later checkpoints.
   - StageShow skill unavailable; landing page used direct design-system discipline.
 - Budget/authorization notes: NGN 0; mock SMS only; no Blaze, paid hosting, real parent messages or production data.
-- Next phase/task: Push Phase 1, run GitHub Actions, fix CI failures, verify the APK artifact, then continue Phase 2 Firebase/emulator/rules testing and Phase 3 domain completion.
+- Next phase/task: Final external-gate report and any operator-authorized follow-up.
 
 ## Phase 2/3/5 checkpoint — 26 November 2026
 
@@ -78,10 +78,10 @@
   - Firestore rules: **8 passed, 0 failed**.
   - Backend E2E: **10 passed, 0 failed**.
   - Compose instrumentation: **1 passed, 0 failed** on API 35 Pixel 5.
-  - GitHub Actions run `45800730704`: **success** for build/test, backend, rules and instrumentation.
+  - GitHub Actions run `45809071551`: **success** for build/test, backend, rules, instrumentation and manual emulator smoke.
 - Manual verification: reviewed demo video frames; identified and fixed the Home zero-classes race before final recapture.
 - Commit hash: `13b7e60`, `7171891`.
-- Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45800730704`.
+- Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551`.
 - Known limitations: Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
 - Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.
 - Next phase/task: final emulator recapture/demo, docs polish, physical-device/App Distribution gates.
@@ -133,15 +133,15 @@
 | Phase | Status | Commit | Preview build/URL | Tests/evidence | Issues |
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
-| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `e7bddb7`, `13b7e60` | CI artifact `tiny-dev-debug-apk` | 24 Android unit tests, 19 Functions tests, 8 rules tests, 10 backend E2E tests, lint, CI build, emulator smoke/screens | App Distribution/judge access pending; physical-device run pending; instrumentation CI rerun pending |
+| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45809071551 | 24 Android unit tests, 19 Functions tests, 8 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
 | 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; live project pending | `13b7e60` | - | Functions build; 8 rules tests; demo project aliases; config/indexes | Real Firebase project/Auth/Firestore integration pending |
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport pending | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Android WorkManager transport needs a configured Firebase project |
-| 4 — Functional Android integration | PARTIAL | Pending | Local APK | Local Room flows, mock attendance/progress/messages | UI/device QA and cloud integration pending |
-| 5 — E2E functionality gate | NOT STARTED | — | — | — | Hosted backend unavailable; on-device AI gate separate |
-| 6 — Reference-led final UI | PARTIAL | Pending | Landing page local preview | Original visual system; desktop/mobile screenshots | App final polish and StageShow unavailable |
-| 7 — Frontend/docs completeness | IN PROGRESS | Pending | — | Landing legal/security/contact pages; docs updates | Full state/accessibility audit pending |
-| 8 - Demo video | PARTIAL - first render reviewed | Pending | `artifacts/demo/tiny-demo.mp4` | 134s 1080p H.264/AAC slideshow from real emulator screenshots; captions/script/notes | Final recapture after startup fix; no motion capture |
-| 9 — Final regression/security/release | NOT STARTED | — | — | — | Production authority not granted; Spark/NGN 0 |
+| 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Cloud integration and broader device QA pending |
+| 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
+| 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
+| 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
+| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1` | `artifacts/demo/tiny-demo.mp4` | 146.2s 1080p H.264/AAC slideshow from real emulator screenshots incl. AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
+| 9 - Final regression/security/release | PARTIAL - release blocked | `2776ba1` | - | Unit/domain/rules/E2E/instrumentation green; rules tightened; secrets scan; zero-spend boundaries | Production authority not granted; Spark/NGN 0; no App Distribution or physical-device release validation |
 
 ## Firebase Agent Skills and MCP status
 

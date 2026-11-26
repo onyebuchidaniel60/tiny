@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:14,927
+An offline-first teacher tool for rural primary schools. Parents use ordinary SMS. Pupils have no account or app.
+
+2
+00:00:14,927 --> 00:00:27,635
+English, Hausa, Yoruba or Igbo. Non-English interface strings are drafts and fall back to English until native review.
+
+3
+00:00:27,635 --> 00:00:38,238
+Cloud sync and live SMS are not connected. The preview runs on synthetic data only.
+
+4
+00:00:38,238 --> 00:00:45,951
+Today's classes, pending sync, parent messages and quick actions in one calm dashboard.
+
+5
+00:00:45,951 --> 00:00:53,250
+A teacher can manage multiple classes, open a roster and add a pupil locally.
+
+6
+00:00:53,250 --> 00:01:07,762
+Only absent pupils create an immediate notification job after server acceptance. Present and late do not.
+
+7
+00:01:07,762 --> 00:01:17,620
+A saved 5E lesson is a teacher-authored scaffold, not a claim of full NERDC coverage.
+
+8
+00:01:17,620 --> 00:01:35,307
+On-device Gemini Nano is unavailable on this emulator. Curated teaching strategies work offline; cloud AI is not configured.
+
+9
+00:01:35,307 --> 00:01:45,555
+In this preview the SMS adapter is mocked, so nothing leaves the device.
+
+10
+00:01:45,555 --> 00:01:55,078
+A teacher replies from Tiny. Provider acceptance is not the same as delivery.
+
+11
+00:01:55,078 --> 00:02:07,146
+The Note 10 plus is a general test device. Gemini Nano requires supported physical hardware.
+
+12
+00:02:07,146 --> 00:02:26,218
+Remaining gates: Firebase access, App Distribution, native translation review and a supported on-device AI device.

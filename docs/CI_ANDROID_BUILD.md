@@ -232,10 +232,10 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: final green run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45800730704` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation); prior manual smoke run `45789068836`.
+- CI run: final green run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation, manual emulator smoke).
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk`; 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
-- Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings captured.
+- APK artifact: `tiny-dev-debug-apk`; 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+- Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings captured.
 - Firestore rules: 8/8 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.
 - No secrets appeared in logs; App Check debug tokens are not committed.

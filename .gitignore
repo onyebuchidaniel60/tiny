@@ -50,3 +50,7 @@ ui-debug.log
 
 # Downloaded CI test-report bundles (evidence is summarized in docs)
 artifacts/instrumentation-ci/
+
+# Demo build intermediates and extracted review frames (final MP4/docs are kept)
+artifacts/demo/build/
+artifacts/demo/frames/

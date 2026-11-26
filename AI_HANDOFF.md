@@ -54,7 +54,7 @@
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
 | Android tests | PASS — 24/24 unit | Domain unit tests incl. JSON outbox escaping |\n| Compose instrumentation | PASS | API 35 Pixel 5: onboarding → Home → Classes → class detail → Attendance |
-| Android build | PASS — CI | GitHub Actions APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9` |
+| Android build | PASS - CI | GitHub Actions APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25` |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
 | Firestore rules | PASS — 8/8 | Emulator tests: unauth/nonmember denial, member reads, write denial, class-scoped pupils/guardians/links/conversations/messages |
@@ -104,7 +104,7 @@
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
 - Unit tests: 24/24 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
-- Local build: `testDevDebugUnitTest assembleDevDebug` successful; CI APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
+- Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
@@ -125,7 +125,7 @@
 ### CI / distribution
 
 - `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
-- GitHub Actions run `45800730704` succeeded: build/test, backend emulator E2E, Firestore rules and Compose instrumentation.
+- GitHub Actions run `45809071551` succeeded: build/test, backend emulator E2E, Firestore rules, Compose instrumentation and manual emulator smoke.
 - App Distribution tester/judge access still pending.
 - GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
@@ -162,7 +162,7 @@
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45800730704` (download and record size/hash after the final manual smoke run).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45809071551` (27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`).
 - GitHub Actions build/test and rules jobs: **success**.
 - Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, captured after the startup seed fix.
 - Compose instrumentation: **success** in CI on API 35 Pixel 5; onboarding, Home, Classes, class detail and Attendance exercised.
@@ -179,18 +179,19 @@
 - [x] GitHub Actions/App Distribution guide
 - [x] Landing page and legal/security/contact pages
 - [x] Phase 1 evidence in this handoff and build log
-- [ ] Final design notes against app screenshots
+- [x] Final design notes against app screenshots
 - [ ] Native translation review
-- [ ] Full README build/preview results after CI run
+- [x] Full README build/preview results after CI run
 
 ## Demo status
 
-- Video: Not produced; requires stable app capture. No physical device connected during this checkpoint.
-- Target length: 90–150 seconds; absolute maximum 180 seconds.
+- Video: `artifacts/demo/tiny-demo.mp4` — 146.2s, 1920x1080 H.264/AAC, 5,481,700 bytes, SHA-256 `B211C1EB8BBF43B8B2521330AEF2DBA878EEC22B4A6A6F30BDFDB2711CCC40F2`.
+- Capture: reviewed screenshot slideshow with narration, not motion screen recording; real emulator screenshots from run `45809071551`.
+- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is within target.
 - Demo data: synthetic only.
-- Demo journeys: offline lesson, local attendance, mock absence job, parent mock message/teacher reply, approved progress/digest, cloud/fallback AI; on-device Nano evidence blocked.
-- Output: `artifacts/demo/`.
-- TTS: check free Google AI option/quota/terms at Phase 8; no charges.
+- Demo journeys: offline lesson, local attendance, optional offline AI fallback, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
+- Output: `artifacts/demo/` (MP4, captions, narration script, production notes).
+- TTS: local Windows SAPI (Microsoft Zira), free/offline; no Google AI TTS credentials or charges.
 
 ## Authorization boundaries
 
