@@ -69,7 +69,7 @@
 | Firestore rules | PASS - 9/9 | Emulator tests incl. class-scoped records and own workspace index |
 | Functions callables/webhooks | IMPLEMENTED — E2E 10/10 | Workspace/class/pupil/guardian/attendance/progress/message callables, signed webhook, digest, sync dispatcher |
 | Firebase project/access | PROJECT CONFIRMED; CLI AUTH BLOCKED | `tiny-b9f29`; no Firebase CLI account yet. See `docs/FIREBASE_INTEGRATION.md` |
-| Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 8/8 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
+| Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
 | Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed; CI APK artifact available |
@@ -112,12 +112,12 @@
 - Progress: validation, draft save, revision reset on approved edit, approval state, digest eligibility.
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
-- Unit tests: 24/24 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
+- Unit tests: 34/34 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
 - Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
-- Firestore rules: 8/8 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class-scoped pupils/guardians/links/conversations/messages).
+- Firestore rules: 9/9 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class-scoped pupils/guardians/links/conversations/messages).
 
 ### Functions / Firebase
 

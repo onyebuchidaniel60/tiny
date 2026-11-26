@@ -71,6 +71,15 @@ tap_text "P4 Blue" || true
 sleep 3
 screenshot "tiny-05-class-detail"
 
+tap_text "Amina Bello" || true
+sleep 3
+screenshot "tiny-05a-progress"
+adb shell input swipe 540 1800 540 500 300 || true
+sleep 1
+screenshot "tiny-05b-family-contacts"
+adb shell input keyevent 4 || true
+sleep 2
+
 tap_text "Mark attendance" || true
 sleep 3
 screenshot "tiny-06-attendance"

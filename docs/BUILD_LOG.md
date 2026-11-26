@@ -38,12 +38,12 @@
   - Added `.env.example`, `.gitignore` and credential/CI documentation.
 - Tests executed and results:
   - Android unit tests: **24 passed, 0 failed** (`PhoneNormalizer`, `AttendanceRules`, `SmsSegments`, `ProgressRules`, `DigestBuilder`, `SyncRules`, `JsonStrings`).
-  - Firestore rules tests: **8 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message access.
+  - Firestore rules tests: **9 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message access.
   - Backend emulator E2E: **10 passed, 0 failed** (workspace/class/pupil/guardian/verification, attendance absence job, progress approval, teacher reply, mixed sync batch + replay, signed inbound SMS + dedupe, weekly digest).
   - Android CI build: **successful**; final APK **31,094,724 bytes**; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
   - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings screens.
   - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog; no lint errors remain.
-  - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 8/8; backend E2E suite 10/10.
+  - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 9/9; backend E2E suite 10/10.
   - Landing page: local link check passed; responsive layout inspected at 1440 px and 390 px; mobile nav toggles correctly; no broken local links; no images without alt.
 - Manual verification: Desktop/mobile screenshots saved at `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png` and `landing-mobile-revealed.png`. References recorded in `REFERENCE_ASSETS.md`.
 - Commit hash: Phase 1 commits through `13b7e60`, `7171891`, `00318fc`, `2776ba1`.
@@ -75,7 +75,7 @@
 - Tests executed and results:
   - Android unit: **24 passed, 0 failed**.
   - Functions domain: **19 passed, 0 failed**; TypeScript build passed.
-  - Firestore rules: **8 passed, 0 failed**.
+  - Firestore rules: **9 passed, 0 failed**.
   - Backend E2E: **10 passed, 0 failed**.
   - Compose instrumentation: **1 passed, 0 failed** on API 35 Pixel 5.
   - GitHub Actions run `45853884690`: **success** for build/test, backend, rules and instrumentation.

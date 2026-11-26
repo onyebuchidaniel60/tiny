@@ -108,7 +108,7 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 ## 6. Phase 1 evidence (26 November 2026)
 
 - Android unit tests: **24 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.
-- Firestore rules tests: **8 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message reads.
+- Firestore rules tests: **9 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message reads.
 - Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
 - Backend emulator E2E: **10 passed, 0 failed** covering workspace/class/pupil/guardian/verification, absence job creation, progress approval, teacher reply, mixed sync batch replay, signed inbound SMS dedupe and weekly digest.
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
