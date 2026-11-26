@@ -133,7 +133,7 @@
   - Created AI Logic service identities and granted `roles/firebaseml.serviceAgent`.
 - App Check:
   - Registered a debug token through the App Check v1beta REST API and exchanged it for a signed token (TTL 3600s).
-  - Revoked the token after testing; debug-token list is empty. The CI artifact containing the raw logcat was deleted and the smoke script now redacts the token.
+  - The first debug token was revoked after testing; the separate private-CI token is stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`. The CI artifact containing the raw logcat was deleted and the smoke script redacts the token.
   - Enforcement remains off; Play Integrity/release fingerprint not configured.
 - AI Logic:
   - `gemini-3.5-flash-lite` proxy request with App Check returned a candidate and usage metadata (22 prompt / 50 candidate / 72 total tokens).
@@ -154,14 +154,15 @@
   - The emulator smoke captured the auth gate, dismissed launcher ANRs, signed in with the test number, and captured `tiny-04-authenticated.png` showing the synthetic remote workspace. Logcat contains no unredacted App Check token.
   - APK artifact: 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
 - Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted; the embedded test number/code is synthetic.
-- Next task: app-level AI Logic with a registered debug token/enforcement-ready build, Functions-emulator client sync, then App Check enforcement/Play Integrity and App Distribution.
+- Next task: Functions-emulator client sync, then App Check enforcement/Play Integrity and App Distribution.
 
 ## App-level AI smoke checkpoint — 26 November 2026
 
 - Added `.github/workflows/firebase-ai-smoke.yml` (manual private build) and `AiLogicLiveTest`.
 - The workflow materializes `google-services.json` and a registered App Check debug token from GitHub secrets, builds an **ephemeral** APK, runs the emulator instrumentation test, and does not upload the APK.
-- Run `45894574508`: **1 test passed, 0 failed** in 2.533s.
+- Run `45894574508`: **1 test passed, 0 failed** in 3.551s (test case 2.653s).
 - Test evidence: SDK tried the on-device provider (`FirebaseAIOnDeviceNotAvailableException`), fell back to cloud, returned text, and reported `Cloud Gemini`; the emulator was asserted not to report on-device `Available`.
+- Final regression run `45898846102` is green; the normal instrumentation job skips `AiLogicLiveTest` when `google-services.json` is absent and runs `TinyNavigationTest` normally.
 - Reports `tiny-firebase-ai-reports` contain no unredacted App Check debug token. The APK was not uploaded.
 - No on-device Gemini Nano claim; the Note 10+ remains unsupported.
 - Next: Functions-emulator client sync, App Check enforcement, Play Integrity/release fingerprint and App Distribution.

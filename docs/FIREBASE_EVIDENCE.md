@@ -162,6 +162,7 @@ No billing was enabled to initialize or test Auth.
 | Firebase-enabled APK | Built with `google-services.json`; Firebase initialized |
 | Emulator smoke | Auth gate captured, then test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace; `tiny-04-authenticated.png` |
 | App-level AI smoke | Manual run `45894574508`: `AiLogicLiveTest` passed; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded |
+| Final regression | Run `45898846102`: all jobs green; normal instrumentation shows the live AI test skipped when Firebase config is absent, and the navigation test passed |
 | Log redaction | The logcat and AI test artifacts contain no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 

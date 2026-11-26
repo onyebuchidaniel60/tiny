@@ -15,13 +15,13 @@
 - **Client config:** `app/google-services.json` present locally and ignored; GitHub secret `GOOGLE_SERVICES_JSON_BASE64` set. Never commit or print the file.
 - **Firestore:** `(default)` created in `africa-south1`, Firestore Native/Standard, delete protection enabled. Rules release `cloud.firestore` updated 2026-11-26 17:26:35 UTC; seven indexes READY. The unnecessary `messages` collection-group index was removed and the deployment succeeded.
 - **APIs enabled:** Firestore, Firebase App Check, Firebase App Distribution, Firebase AI Logic (`firebasevertexai`), Firebase ML (`firebaseml`), Generative Language, Play Integrity, Secure Token and related Firebase services.
-- **App Check:** debug token registered through the v1beta REST API and exchanged successfully (TTL 3600s). The token was revoked after the protocol test; the CI artifact containing the raw logcat was deleted. Enforcement remains off. The local debug-token resource file is ignored by Git.
+- **App Check:** the first debug token was registered through the v1beta REST API and exchanged successfully (TTL 3600s), then revoked. A separate token for the private AI smoke is stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`; the CI artifact containing the old raw logcat was deleted. Enforcement remains off. The local debug-token resource file is ignored by Git.
 - **AI Logic:** P4SA identities created; `roles/firebaseml.serviceAgent` granted. A `gemini-3.5-flash-lite` proxy call with App Check returned a candidate (usage: 22 prompt / 50 candidate / 72 total tokens). The private `AiLogicLiveTest` also passed: on-device provider unavailable, cloud fallback, SDK-reported source `Cloud Gemini`. The direct Gemini endpoint remains blocked through the client key. No on-device claim.
 - **Rules behaviour:** live unauthenticated Firestore `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without App Check, as designed. A synthetic member user can read the workspace/class/pupil (200); a second non-member test user is denied (403).
 - **Auth:** Console setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone enabled with `+2348000000001`/`123456` and `+2348000000002`/`654321`; SMS region allowlist `NG`; no real SMS. REST test sign-in and the app-level test-phone sign-in both succeeded.
 - **App-level bootstrap:** CI run `45891064395` signed in and loaded `Tiny Synthetic E2E` (1 class / 1 pupil) from Firestore. Evidence: `artifacts/emulator/tiny-04-authenticated.png`.
 - **App-level AI:** manual run `45894574508`; `AiLogicLiveTest` 1/1 passed. Ephemeral APK and token were not uploaded; reports contain no token. On-device Nano was not available and not claimed.
-- **CI:** run `45891064395` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens.
+- **CI:** run `45891064395` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens. Final regression run `45898846102` is also green; the live AI test is skipped in the normal instrumentation job when Firebase config is absent.
 - **Not claimed:** App Check enforcement, Play Integrity, Phone Auth SMS, hosted Functions, App Distribution, on-device Gemini Nano.
 
 ## Firebase integration stage (26 November 2026)
@@ -89,7 +89,7 @@
 | Firestore live database | DEPLOYED | `(default)` in `africa-south1`; rules release live; 7 indexes READY; unauthenticated and non-member reads denied |
 | Firebase Auth | VERIFIED - Console initialized | Config subtype `FIREBASE_AUTH`; Phone enabled; synthetic test numbers; SMS region `NG`; app-level sign-in succeeded |
 | App-level Firestore | VERIFIED - bootstrap | Synthetic workspace/class/pupil loaded into the app; member read 200, non-member 403 |
-| App Check | PARTIAL - debug token verified | Registration/exchange succeeded, token revoked; enforcement off; Play Integrity pending |
+| App Check | PARTIAL - debug + private CI token | Exchange succeeded; first token revoked; private CI token in GitHub secrets; enforcement off; Play Integrity pending |
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | VERIFIED — free tier | App-level `AiLogicLiveTest` passed: on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; on-device still pending |

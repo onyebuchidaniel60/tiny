@@ -181,6 +181,8 @@ Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Ac
 
 A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45894574508` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token.
 
+The normal Compose instrumentation job also sees `AiLogicLiveTest`; it skips via a JUnit assumption when `google-services.json` is absent, so the local journey remains green. The private AI job supplies the config and runs the test for real.
+
 The first manual run succeeded and produced:
 - Language screen: `artifacts/emulator/tiny-01-language.png`
 - Welcome: `tiny-02-welcome.png`
@@ -240,6 +242,6 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 - Emulator evidence: Firebase-enabled run captured `tiny-03-auth-gate.png` and `tiny-04-authenticated.png` (Home with `Tiny Synthetic E2E`, 1 class / 1 pupil). Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.
-- App Check debug tokens are never committed; raw CI logcat with a token was deleted and the token was revoked. The smoke script redacts future occurrences.
+- App Check debug tokens are never committed; the raw CI logcat containing the first token was deleted and that token was revoked. A separate private-CI token is stored only in GitHub secrets and used by the non-uploaded AI APK. The smoke script redacts future occurrences.
 - Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.
 

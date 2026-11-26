@@ -16,7 +16,7 @@
 | Firestore database | **CREATED** | `(default)`, `africa-south1`, Firestore Native/Standard, delete protection enabled |
 | Firestore rules | **DEPLOYED** | `cloud.firestore` release updated 2026-11-26 17:26:35 UTC; unauthenticated reads denied |
 | Firestore indexes | **DEPLOYED** | Seven indexes READY; unnecessary `messages` collection-group index removed |
-| App Check | **PARTIAL** | API and debug token registration verified; token revoked after the protocol test; enforcement is **off**; Play Integrity not configured |
+| App Check | **PARTIAL** | API and debug token registration verified; first token revoked after the protocol test; private CI token stored in GitHub secrets; enforcement **off**; Play Integrity not configured |
 | AI Logic | **PROTOCOL VERIFIED** | Gemini Developer API free tier through the Firebase AI Logic proxy with an App Check token; direct `generativelanguage` access remains blocked |
 | Firebase Auth | **INITIALIZED** | Console free-tier setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone provider enabled with two synthetic test numbers |
 | Functions | **EMULATOR ONLY** | Backend E2E 10/10; no deployment |
@@ -129,8 +129,8 @@ The synthetic test workspace is `workspaces/tiny-synthetic-e2e` with member/clas
 
 - Debug provider in debug builds; Play Integrity provider in release builds.
 - App Check API enabled.
-- A debug token was registered during the first protocol test, exchanged successfully, and then **revoked**. No debug token is currently registered.
-- App Check enforcement remains **off**. Test-phone Auth and Firestore bootstrap now work without it; enabling enforcement is the next hardening step, after registering a fresh debug token and verifying app-level AI.
+- The first protocol-test debug token was registered, exchanged successfully, and then **revoked**. A separate token for the private `firebase-ai-smoke` workflow is registered and stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`.
+- App Check enforcement remains **off**. Test-phone Auth, Firestore bootstrap and the private AI smoke work with registered tokens; enabling enforcement is a deliberate next hardening step.
 - Play Integrity still needs a Play Console app link and the release SHA-256 before production. The CI debug keystore produced an `INVALID_CERT_HASH` auth-domain warning; register the CI/release fingerprint before claiming Play Integrity.
 
 ### 4.2 Register a local debug token
