@@ -42,7 +42,7 @@ FONT_SANS_BOLD = "C:/Windows/Fonts/segoeuib.ttf"
 SCENES = [
     {
         "id": "01-intro",
-        "kicker": "Tiny · teacher preview",
+        "kicker": "Tiny  -  teacher preview",
         "title": "Big impact.\nSmall requirements.",
         "body": "An offline-first teacher tool for rural primary schools. Parents use ordinary SMS. Pupils have no account or app.",
         "shot": "tiny-03-home.png",
@@ -220,7 +220,7 @@ def make_frame(scene: dict, index: int, total: int) -> Path:
         draw.rounded_rectangle((1130, 180, 1790, 860), radius=36, fill=FOREST, outline=INK, width=3)
         draw.multiline_text((1190, 280), "Big impact.\nSmall\nrequirements.", font=font(FONT_SERIF, 72), fill=PAPER, spacing=8)
         draw.text((1190, 620), "Accessible everywhere.", font=font(FONT_SERIF_REG, 35), fill=BUTTER)
-    draw.text((100, H - 88), "Tiny preview · no live SMS · no production data", font=font(FONT_SANS_BOLD, 19), fill=INK_SOFT)
+    draw.text((100, H - 88), "Tiny preview  -  no live SMS  -  no production data", font=font(FONT_SANS_BOLD, 19), fill=INK_SOFT)
     draw.text((W - 220, H - 88), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 19), fill=INK_SOFT)
     path = BUILD / f"{scene['id']}.png"
     img.save(path)
@@ -267,7 +267,7 @@ def build() -> None:
     segment_paths = []
     total = 0.0
     for scene, frame, wav, audio_duration in zip(SCENES, frames, audio_files, durations):
-        seg_duration = max(6.0, audio_duration + 1.2)
+        seg_duration = max(6.0, audio_duration + 0.7)
         total += seg_duration
         seg = BUILD / f"{scene['id']}.mp4"
         subprocess.run([
@@ -292,7 +292,7 @@ def build() -> None:
     caption_lines = []
     clock = 0.0
     for i, (scene, audio_duration) in enumerate(zip(SCENES, durations), start=1):
-        seg_duration = max(6.0, audio_duration + 1.2)
+        seg_duration = max(6.0, audio_duration + 0.7)
         start = clock
         end = clock + seg_duration
         def ts(value: float) -> str:

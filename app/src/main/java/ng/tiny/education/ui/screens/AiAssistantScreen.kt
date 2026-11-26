@@ -69,11 +69,9 @@ fun AiAssistantScreen(onBack: () -> Unit) {
         item {
             PaperCard {
                 androidx.compose.foundation.layout.Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(stringResource(R.string.ai_offline_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.weight(1f))
-                        StatusPill(stringResource(R.string.ai_source_offline), TinyForest)
-                    }
+                    Text(stringResource(R.string.ai_offline_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(6.dp))
+                    StatusPill(stringResource(R.string.ai_source_offline), TinyForest)
                     Spacer(Modifier.height(8.dp))
                     Text(stringResource(R.string.ai_offline_body), style = MaterialTheme.typography.bodyMedium)
                     Spacer(Modifier.height(18.dp))
