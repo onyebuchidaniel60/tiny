@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "tiny-functions",
   "version": "0.1.0",
   "private": true,
@@ -12,6 +12,7 @@
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run src/domain",
     "test:rules": "vitest run src/rules.test.ts",
+    "test:emulator": "vitest run src/emulator.e2e.test.ts",
     "test:watch": "vitest"
   },
   "dependencies": {
@@ -23,8 +24,9 @@
     "@firebase/rules-unit-testing": "5.0.2",
     "@types/node": "22.15.30",
     "firebase": "12.19.0",
+    "firebase-functions-test": "3.4.1",
+    "node-mocks-http": "1.17.2",
     "typescript": "5.9.2",
     "vitest": "3.2.4"
   }
 }
-

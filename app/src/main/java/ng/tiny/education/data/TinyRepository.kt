@@ -16,6 +16,7 @@ import ng.tiny.education.core.database.PupilEntity
 import ng.tiny.education.core.database.TinyDatabase
 import ng.tiny.education.core.database.WorkspaceEntity
 import ng.tiny.education.core.domain.AttendanceRules
+import ng.tiny.education.core.domain.JsonStrings
 import ng.tiny.education.core.domain.ProgressDraft
 import ng.tiny.education.core.domain.ProgressRules
 import ng.tiny.education.core.model.ApprovalStatus
@@ -89,7 +90,19 @@ class TinyRepository(
                     ),
                 ),
             )
-            enqueueOutbox(workspaceId, "pupil.register", "{\"pupilId\":\"$pupilId\",\"classId\":\"$classId\"}")
+            enqueueOutbox(
+                workspaceId,
+                "pupil.register",
+                buildString {
+                    append("{\"pupilId\":${JsonStrings.quote(pupilId)}")
+                    append(",\"classId\":${JsonStrings.quote(classId)}")
+                    append(",\"displayName\":${JsonStrings.quote(name)}")
+                    localPupilCode?.trim()?.takeIf { it.isNotEmpty() }?.let {
+                        append(",\"localPupilCode\":${JsonStrings.quote(it)}")
+                    }
+                    append('}')
+                },
+            )
             audit(workspaceId, "pupil.registered", "pupil", pupilId, "Pupil registered locally.")
         }
         pupilId
@@ -174,7 +187,17 @@ class TinyRepository(
             enqueueOutbox(
                 workspaceId = workspaceId,
                 commandType = "attendance.submit",
-                payload = "{\"classId\":\"$classId\",\"schoolDate\":\"$schoolDate\",\"sessionId\":\"$sessionId\"}",
+                payload = buildString {
+                    append("{\"classId\":${JsonStrings.quote(classId)}")
+                    append(",\"schoolDate\":${JsonStrings.quote(schoolDate)}")
+                    append(",\"entries\":[")
+                    append(
+                        statuses.entries.joinToString(",") { (pupilId, status) ->
+                            "{\"pupilId\":${JsonStrings.quote(pupilId)},\"status\":${JsonStrings.quote(status.name.lowercase())}}"
+                        },
+                    )
+                    append("]}")
+                },
             )
             audit(
                 workspaceId,
@@ -224,7 +247,25 @@ class TinyRepository(
                     updatedAt = now,
                 ),
             )
-            enqueueOutbox(workspaceId, "progress.upsert", "{\"progressEntryId\":\"$entryId\"}")
+            enqueueOutbox(
+                workspaceId,
+                "progress.upsert",
+                buildString {
+                    append("{\"pupilId\":${JsonStrings.quote(pupilId)}")
+                    append(",\"classId\":${JsonStrings.quote(classId)}")
+                    append(",\"periodStart\":${JsonStrings.quote(periodStart.toString())}")
+                    append(",\"periodEnd\":${JsonStrings.quote(periodEnd.toString())}")
+                    append(",\"subjectId\":${JsonStrings.quote(subjectId)}")
+                    append(",\"indicator\":${JsonStrings.quote(indicator.name.lowercase())}")
+                    teacherNote?.takeIf { it.isNotBlank() }?.let {
+                        append(",\"teacherNote\":${JsonStrings.quote(it)}")
+                    }
+                    homeActivity?.takeIf { it.isNotBlank() }?.let {
+                        append(",\"homeActivity\":${JsonStrings.quote(it)}")
+                    }
+                    append('}')
+                },
+            )
             audit(workspaceId, "progress.draft_saved", "progress_entry", entryId, "Draft saved; approval reset if edited.")
         }
         entryId
@@ -268,7 +309,17 @@ class TinyRepository(
                 ),
             )
             dao.updateConversation(conversationId, "WAITING_PARENT", now)
-            enqueueOutbox(conversation.workspaceId, "message.reply", "{\"messageId\":\"$messageId\"}")
+            enqueueOutbox(
+                conversation.workspaceId,
+                "message.reply",
+                buildString {
+                    append("{\"conversationId\":${JsonStrings.quote(conversationId)}")
+                    append(",\"body\":${JsonStrings.quote(body.trim())}")
+                    append(",\"locale\":${JsonStrings.quote(guardian.preferredLocale)}")
+                    append(",\"clientMessageId\":${JsonStrings.quote(messageId)}")
+                    append('}')
+                },
+            )
         }
         val result = smsGateway.send(
             SmsMessage(

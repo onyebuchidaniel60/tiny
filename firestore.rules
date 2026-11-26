@@ -28,6 +28,17 @@ service cloud.firestore {
       );
     }
 
+    function sharesAssignedClass(workspaceId, classIds) {
+      return isMember(workspaceId) && (
+        isAdmin(workspaceId)
+        || classIds.hasAny(get(memberPath(workspaceId)).data.assignedClassIds)
+      );
+    }
+
+    function conversationClass(workspaceId, conversationId) {
+      return get(/databases/$(database)/documents/workspaces/$(workspaceId)/conversations/$(conversationId)).data.classId;
+    }
+
     // User-private profile and command receipts. The client may read its own
     // profile; all writes are server-only.
     match /users/{uid} {
@@ -102,11 +113,11 @@ service cloud.firestore {
         allow write: if false;
       }
 
-      // Guardian contact data and conversations are restricted to admins in
-      // the read baseline until class-linked conversation rules are tightened
-      // and emulator-tested before a pilot.
+      // Guardian contact data is readable by an administrator or a teacher
+      // assigned to at least one class the guardian is linked to. The server
+      // maintains `classIds` when a guardian-pupil link is created.
       match /guardians/{guardianId} {
-        allow read: if isAdmin(workspaceId);
+        allow read: if sharesAssignedClass(workspaceId, resource.data.classIds);
         allow write: if false;
       }
 
@@ -120,15 +131,18 @@ service cloud.firestore {
       }
 
       match /pupilGuardianLinks/{linkId} {
-        allow read: if isAdmin(workspaceId);
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, resource.data.classId);
         allow write: if false;
       }
 
       match /conversations/{conversationId} {
-        allow read: if isAdmin(workspaceId);
+        allow read: if isMember(workspaceId)
+          && (isAdmin(workspaceId) || canAccessClass(workspaceId, resource.data.classId));
         allow write: if false;
         match /messages/{messageId} {
-          allow read: if isAdmin(workspaceId);
+          allow read: if isMember(workspaceId)
+            && (isAdmin(workspaceId) || canAccessClass(workspaceId, conversationClass(workspaceId, conversationId)));
           allow write: if false;
         }
       }

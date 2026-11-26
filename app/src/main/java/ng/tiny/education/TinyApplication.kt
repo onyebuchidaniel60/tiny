@@ -1,6 +1,7 @@
 package ng.tiny.education
 
 import android.app.Application
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,13 +21,18 @@ class TinyApplication : Application() {
         super.onCreate()
         container = AppContainer(this)
         container.applicationScope.launch {
-            container.repository.seedDemoData()
+            try {
+                container.repository.seedDemoData()
+            } finally {
+                container.seedReady.complete(Unit)
+            }
         }
     }
 }
 
 class AppContainer(application: Application) {
     val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    val seedReady = CompletableDeferred<Unit>()
     private val keyProvider = DatabaseKeyProvider(application)
     private val database = TinyDatabase.build(application, keyProvider)
     val preferences = PreferencesRepository(application)

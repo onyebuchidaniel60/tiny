@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from 'node:crypto';
-import { onCall, type CallableRequest } from 'firebase-functions/v2/https';
+import { FieldValue } from 'firebase-admin/firestore';
+import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { absencePupilIds, sessionDocumentId, validateAttendance } from './domain/attendance';
 import { canNotifyGuardian, dedupeGuardiansByPhone, guardianPhoneKey, verificationCode, verificationCodeHash } from './domain/guardian';
@@ -81,6 +82,9 @@ const createClassroomCommand = workspaceCommand.extend({
 const registerPupilCommand = workspaceCommand.extend({
   payload: z.object({
     classId: z.string().min(3),
+    // Optional client-generated identifier lets offline registration use a
+    // stable document id instead of creating a duplicate on every retry.
+    pupilId: z.string().regex(/^pupil_[A-Za-z0-9-]{6,80}$/).optional(),
     displayName: z.string().min(1).max(120),
     localPupilCode: z.string().max(40).optional(),
   }),
@@ -372,15 +376,21 @@ export const registerPupil = onCall(callableOptions, wrap(async (request) => {
   const uid = requireAuth(request);
   const command = parse(registerPupilCommand, request.data);
   await requireClassAccess(command.workspaceId, uid, command.payload.classId);
-  const pupilId = `pupil_${randomUUID()}`;
+  const pupilId = command.payload.pupilId ?? `pupil_${randomUUID()}`;
   await db.runTransaction(async (transaction) => {
     const classRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.classrooms).doc(command.payload.classId);
     const classSnap = await transaction.get(classRef);
     if (!classSnap.exists) throw new DomainError('RESOURCE_NOT_FOUND', 'Class not found.');
+    const pupilRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.pupils).doc(pupilId);
+    const existingPupil = await transaction.get(pupilRef);
+    if (existingPupil.exists && asRecord(existingPupil.data()).classId !== command.payload.classId) {
+      throw new DomainError('VERSION_CONFLICT', 'This pupil id already belongs to another class.');
+    }
     const now = new Date();
-    transaction.set(db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.pupils).doc(pupilId), {
+    transaction.set(pupilRef, {
       pupilId,
       workspaceId: command.workspaceId,
+      classId: command.payload.classId,
       displayName: command.payload.displayName,
       localPupilCode: command.payload.localPupilCode ?? null,
       enrollmentStatus: 'active',
@@ -459,6 +469,7 @@ export const linkGuardianToPupil = onCall(callableOptions, wrap(async (request) 
   await db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.links).doc(linkId).set({
     linkId,
     workspaceId: command.workspaceId,
+    classId,
     pupilId: command.payload.pupilId,
     guardianId: command.payload.guardianId,
     relationshipLabel: command.payload.relationshipLabel,
@@ -467,6 +478,14 @@ export const linkGuardianToPupil = onCall(callableOptions, wrap(async (request) 
     createdByUid: uid,
     createdAt: new Date(),
   }, { merge: true });
+  // Denormalised class/pupil scope for Firestore rules. Rules cannot run
+  // collection queries, so the guardian document carries the classes it is
+  // linked to and the teacher's membership carries assigned classes.
+  await db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.guardians).doc(command.payload.guardianId).update({
+    classIds: FieldValue.arrayUnion(classId),
+    pupilIds: FieldValue.arrayUnion(command.payload.pupilId),
+    updatedAt: new Date(),
+  });
   return { ok: true, outcome: 'accepted', linkId };
 }));
 
@@ -576,6 +595,7 @@ export const submitAttendanceSession = onCall(callableOptions, wrap(async (reque
         notificationJobId: jobRef.id,
         workspaceId: command.workspaceId,
         type: 'absence',
+        classId: command.payload.classId,
         guardianId: guardian.guardianId,
         pupilIds: [guardian.pupilId],
         locale: guardian.locale,
@@ -726,21 +746,35 @@ export const sendTeacherMessage = onCall(callableOptions, wrap(async (request) =
   return { ok: true, outcome: 'accepted', messageId, status: 'queued', provider: 'mock' };
 }));
 
+/**
+ * Applies supported offline commands through the same authenticated,
+ * membership-checked callable logic used by the direct endpoints. Each command
+ * gets its own receipt; successful receipts make retries idempotent.
+ */
 export const syncCommands = onCall(callableOptions, wrap(async (request) => {
   const uid = requireAuth(request);
   const command = parse(syncCommand, request.data);
   await requireMembership(command.workspaceId, uid);
   const validation = validateSyncBatch(command.payload.commands as SyncCommandRecord[]);
   if (!validation.valid) throw new DomainError('VALIDATION_FAILED', validation.errors.join(' '));
+
+  const handlers: Record<string, (child: CallableRequest) => Promise<unknown>> = {
+    'attendance.submit': (submitAttendanceSession as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'progress.upsert': (createProgressEntry as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'progress.approve': (approveProgressEntry as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'message.reply': (sendTeacherMessage as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'pupil.register': (registerPupil as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+  };
+
   const results = [] as Array<Record<string, unknown>>;
   for (const item of command.payload.commands) {
     const prior = await getWorkspaceReceipt(command.workspaceId, item.idempotencyKey);
-    if (prior) {
+    if (prior && prior.outcome !== 'retryable') {
       results.push({ idempotencyKey: item.idempotencyKey, outcome: 'alreadyApplied', data: { resultRef: prior.resultRef } });
       continue;
     }
-    const supported = ['attendance.submit', 'progress.upsert', 'progress.approve', 'message.reply'];
-    if (!supported.includes(item.commandType)) {
+    const handler = handlers[item.commandType];
+    if (!handler) {
       await writeWorkspaceReceipt(command.workspaceId, {
         idempotencyKey: item.idempotencyKey,
         uid,
@@ -754,22 +788,67 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
       results.push({ idempotencyKey: item.idempotencyKey, outcome: 'rejected', errorCode: 'COMMAND_NOT_SUPPORTED' });
       continue;
     }
-    await writeWorkspaceReceipt(command.workspaceId, {
-      idempotencyKey: item.idempotencyKey,
-      uid,
-      workspaceId: command.workspaceId,
-      commandType: item.commandType,
-      payloadHash: payloadHash(item.payload),
-      outcome: 'retryable',
-      errorCode: 'SYNC_PROCESSOR_PENDING',
-      createdAt: new Date(),
-    });
-    results.push({
-      idempotencyKey: item.idempotencyKey,
-      outcome: 'retryable',
-      errorCode: 'SYNC_PROCESSOR_PENDING',
-      message: 'The offline command processor is scaffolded; use the direct callable in this preview.',
-    });
+
+    const childRequest = {
+      ...request,
+      data: {
+        workspaceId: command.workspaceId,
+        idempotencyKey: item.idempotencyKey,
+        schemaVersion: item.schemaVersion,
+        payload: item.payload,
+      },
+    } as CallableRequest;
+
+    try {
+      const data = await handler(childRequest);
+      const resultRef = typeof data === 'object' && data !== null
+        ? String(asRecord(data).sessionId ?? asRecord(data).progressEntryId ?? asRecord(data).messageId ?? asRecord(data).pupilId ?? '')
+        : '';
+      await writeWorkspaceReceipt(command.workspaceId, {
+        idempotencyKey: item.idempotencyKey,
+        uid,
+        workspaceId: command.workspaceId,
+        commandType: item.commandType,
+        payloadHash: payloadHash(item.payload),
+        outcome: 'accepted',
+        resultRef: resultRef || undefined,
+        createdAt: new Date(),
+      });
+      results.push({ idempotencyKey: item.idempotencyKey, outcome: 'accepted', data });
+    } catch (error) {
+      const { outcome, errorCode, message } = classifySyncFailure(error);
+      if (outcome !== 'retryable') {
+        await writeWorkspaceReceipt(command.workspaceId, {
+          idempotencyKey: item.idempotencyKey,
+          uid,
+          workspaceId: command.workspaceId,
+          commandType: item.commandType,
+          payloadHash: payloadHash(item.payload),
+          outcome,
+          errorCode,
+          createdAt: new Date(),
+        });
+      }
+      results.push({ idempotencyKey: item.idempotencyKey, outcome, errorCode, message });
+    }
   }
   return { ok: true, results };
 }));
+
+function classifySyncFailure(error: unknown): {
+  outcome: 'rejected' | 'conflict' | 'retryable';
+  errorCode: string;
+  message: string;
+} {
+  if (error instanceof HttpsError) {
+    const code = error.code;
+    if (code === 'unavailable' || code === 'resource-exhausted' || code === 'internal' || code === 'deadline-exceeded') {
+      return { outcome: 'retryable', errorCode: code.replace(/-/g, '_').toUpperCase(), message: error.message };
+    }
+    if (code === 'already-exists' || code === 'aborted') {
+      return { outcome: 'conflict', errorCode: code.replace(/-/g, '_').toUpperCase(), message: error.message };
+    }
+    return { outcome: 'rejected', errorCode: code.replace(/-/g, '_').toUpperCase(), message: error.message };
+  }
+  return { outcome: 'retryable', errorCode: 'INTERNAL', message: 'The command could not be applied.' };
+}

@@ -102,6 +102,14 @@ export const esmsInbound = onRequest({ region: REGION, cors: false }, async (req
 
   const conversationId = `${workspaceId}_${guardianId}`;
   const conversationRef = db.collection(COLLECTIONS.workspaces).doc(workspaceId).collection(COLLECTIONS.conversations).doc(conversationId);
+  const links = await db.collection(COLLECTIONS.workspaces).doc(workspaceId).collection(COLLECTIONS.links)
+    .where('guardianId', '==', guardianId)
+    .where('status', '==', 'active')
+    .limit(2)
+    .get();
+  const primaryLink = links.docs[0]?.data();
+  const classId = typeof primaryLink?.classId === 'string' ? primaryLink.classId : null;
+  const linkedPupilId = links.size === 1 && typeof primaryLink?.pupilId === 'string' ? primaryLink.pupilId : null;
   const now = new Date();
   await db.runTransaction(async (transaction) => {
     const conversation = await transaction.get(conversationRef);
@@ -110,7 +118,8 @@ export const esmsInbound = onRequest({ region: REGION, cors: false }, async (req
         conversationId,
         workspaceId,
         guardianId,
-        pupilId: null,
+        pupilId: linkedPupilId,
+        classId,
         channel: 'sms',
         status: 'waiting_teacher',
         lastMessageAt: now,
@@ -124,6 +133,7 @@ export const esmsInbound = onRequest({ region: REGION, cors: false }, async (req
         status: 'waiting_teacher',
         lastMessageAt: now,
         lastMessageDirection: 'inbound',
+        classId: classId ?? conversation.get('classId') ?? null,
         updatedAt: now,
       });
     }
@@ -134,7 +144,7 @@ export const esmsInbound = onRequest({ region: REGION, cors: false }, async (req
       direction: 'inbound',
       senderType: 'guardian',
       guardianId,
-      pupilId: null,
+      pupilId: linkedPupilId,
       body: routedText,
       locale: guardianSnap.data()?.preferredLocale ?? 'en',
       provider: 'esms',
