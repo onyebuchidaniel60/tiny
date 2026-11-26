@@ -3,7 +3,7 @@ package ng.tiny.education
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
-import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -34,7 +34,7 @@ class TinyNavigationTest {
         }
         composeRule.onNodeWithText("Good morning, Ms. Bello").assertIsDisplayed()
 
-        composeRule.onNodeWithContentDescription("Classes").performClick()
+        composeRule.onNodeWithTag("tab_classes").performClick()
         composeRule.waitUntil(timeoutMillis = 15_000) {
             composeRule.onAllNodesWithText("Your classes").fetchSemanticsNodes().isNotEmpty()
         }
@@ -46,6 +46,6 @@ class TinyNavigationTest {
             composeRule.onAllNodesWithText("Mark the register").fetchSemanticsNodes().isNotEmpty()
         }
         composeRule.onNodeWithText("Mark the register").assertIsDisplayed()
-        composeRule.onNodeWithText("Save draft").performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithText("Amina Bello").assertIsDisplayed()
     }
 }

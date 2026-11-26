@@ -176,7 +176,7 @@ function parse<T>(schema: z.ZodSchema<T>, data: unknown): T {
 
 function schoolCode(): string {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from({ length: 8 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join('');
+  return Array.from(randomBytes(8), (byte) => alphabet[byte % alphabet.length]).join('');
 }
 
 function invitationToken(): string {

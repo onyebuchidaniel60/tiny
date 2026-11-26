@@ -7,7 +7,8 @@ export function guardianPhoneKey(workspaceId: string, phoneE164: string, secret:
 }
 
 export function verificationCode(): string {
-  return randomBytes(6).toString('base64url').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from(randomBytes(8), (byte) => alphabet[byte % alphabet.length]).join('');
 }
 
 export function verificationCodeHash(workspaceId: string, guardianId: string, code: string): string {

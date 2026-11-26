@@ -2,7 +2,7 @@
 
 **Security posture:** privacy-first, least privilege, offline-aware, and closed by default for paid or production integrations.  
 
-**Current preview status (26 November 2026):** Synthetic data only; mock SMS; local SQLCipher database; no hosted Firebase project. Firestore rules are a baseline and still require emulator tests/tightening, especially class-linked guardian/conversation reads, before a pilot. No production security certification is claimed.
+**Current preview status (26 November 2026):** Synthetic data only; mock SMS; local SQLCipher database; no hosted Firebase project. Firestore rules are class-scoped for pupils, guardians, links, conversations and messages and pass 8/8 emulator tests; a full review is still required before a pilot. No production security certification is claimed.
 **Scope:** this is an engineering control specification, not a substitute for Nigerian legal advice, a DPIA, controller/processor agreements or a school safeguarding policy.
 
 ## 1. Information classification

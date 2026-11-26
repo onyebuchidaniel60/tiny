@@ -1,6 +1,6 @@
 # Tiny — API Specification
 
-**Implementation status (26 November 2026):** Callable/webhook contracts and type schemas are scaffolded; direct callables cover the main workspace/attendance/progress/message flows. The `syncCommands` offline processor validates batches and writes receipts but does not yet apply every command; it returns a retryable/pending result for supported command types. Emulator runtime integration tests are pending. Do not treat this as production-ready API completion.
+**Implementation status (26 November 2026):** Callable/webhook contracts and type schemas are implemented and emulator-tested for the main workspace/class/pupil/guardian/attendance/progress/message flows. `syncCommands` applies `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, with per-command receipts and idempotent replay. The Android client still uses a mock sync engine because no Firebase project is configured. Bootstrap/pull-change endpoints and production-hardening remain incomplete. Do not treat this as production-ready API completion.
 
 **Version:** 1.0  
 **Backend:** Firebase Cloud Functions 2nd gen, TypeScript, Node.js 22, region `africa-south1`.  
@@ -269,6 +269,8 @@ Request `payload`:
 ```
 
 Max 20. Server processes independently and returns per-command results. One rejected item must not silently cause the client to assume every command failed or succeeded. Any command type not explicitly allowlisted is rejected.
+
+Implemented command types: `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve`, `message.reply`. Each command must carry the complete domain payload (for example attendance `entries`, or the progress observation fields), not just a local row id. Accepted commands receive a workspace receipt; a replayed accepted key returns `alreadyApplied`. Permanent validation/permission failures return `rejected` or `conflict`; provider/transient failures return `retryable` without a terminal receipt.
 
 ## 4. Webhook contracts
 

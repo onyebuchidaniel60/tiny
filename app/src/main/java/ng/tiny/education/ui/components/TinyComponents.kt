@@ -52,6 +52,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import ng.tiny.education.R
 import ng.tiny.education.ui.theme.TinyButter
@@ -117,24 +118,28 @@ fun TinyBottomBar(currentRoute: String?, onNavigate: (TinyTab) -> Unit) {
         NavigationBarItem(
             selected = currentRoute?.startsWith("home") == true,
             onClick = { onNavigate(TinyTab.HOME) },
+            modifier = Modifier.testTag("tab_home"),
             icon = { Icon(Icons.Outlined.Home, contentDescription = stringResource(R.string.nav_home)) },
             label = { Text(stringResource(R.string.nav_home)) },
         )
         NavigationBarItem(
             selected = currentRoute?.startsWith("classes") == true || currentRoute?.startsWith("attendance") == true,
             onClick = { onNavigate(TinyTab.CLASSES) },
+            modifier = Modifier.testTag("tab_classes"),
             icon = { Icon(Icons.Outlined.List, contentDescription = stringResource(R.string.nav_classes)) },
             label = { Text(stringResource(R.string.nav_classes)) },
         )
         NavigationBarItem(
             selected = currentRoute?.startsWith("lessons") == true,
             onClick = { onNavigate(TinyTab.LESSONS) },
+            modifier = Modifier.testTag("tab_lessons"),
             icon = { Icon(Icons.Outlined.Star, contentDescription = stringResource(R.string.nav_lessons)) },
             label = { Text(stringResource(R.string.nav_lessons)) },
         )
         NavigationBarItem(
             selected = currentRoute?.startsWith("messages") == true || currentRoute?.startsWith("conversation") == true,
             onClick = { onNavigate(TinyTab.MESSAGES) },
+            modifier = Modifier.testTag("tab_messages"),
             icon = { Icon(Icons.Outlined.MailOutline, contentDescription = stringResource(R.string.nav_messages)) },
             label = { Text(stringResource(R.string.nav_messages)) },
         )

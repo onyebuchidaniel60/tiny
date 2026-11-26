@@ -1,8 +1,8 @@
-# Tiny — AI Implementation Handoff
+﻿# Tiny — AI Implementation Handoff
 
-**Last updated:** 26 November 2026 (Phase 1 implementation)
+**Last updated:** 26 November 2026 (Phase 1 complete; Phase 2/3 backend verified)
 
-**Current status:** Phase 1 implementation in progress. Android shell, encrypted local data layer, Functions/rules scaffold, CI workflow and landing page exist. No production deployment, live SMS or Firebase project resources have been created.
+**Current status:** Phase 1 local/CI shell and preview are implemented and verified; Phase 2/3 backend/rules foundations are partially implemented. No production deployment, live SMS or Firebase project resources have been created. App Distribution and physical-device/AI gates remain external.
 
 **Current phase:** Phase 1 — repository foundation, skeletal Android app, CI and landing page.
 
@@ -53,14 +53,14 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS — 21/21 | Domain unit tests; emulator smoke captured app launch/screens; no physical-device run |
-| Android build | PASS — CI | GitHub Actions APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD` |
+| Android tests | PASS — 24/24 unit | Domain unit tests incl. JSON outbox escaping; Compose instrumentation journey added and CI-run pending |
+| Android build | PASS — CI | GitHub Actions APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9` |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
-| Firestore rules | PASS — 6/6 | Firestore emulator rules tests (unauthenticated/nonmember denial, member reads, write denial, class scope, guardian admin-only) |
-| Functions callables/webhooks | SCAFFOLDED | Main callables, HMAC webhooks, scheduled digest; full callable E2E still pending |
+| Firestore rules | PASS — 8/8 | Emulator tests: unauth/nonmember denial, member reads, write denial, class-scoped pupils/guardians/links/conversations/messages |
+| Functions callables/webhooks | IMPLEMENTED — E2E 10/10 | Workspace/class/pupil/guardian/attendance/progress/message callables, signed webhook, digest, sync dispatcher |
 | Firebase project/access | PENDING — later integration gate | Not required for current Android shell |
-| Firebase Emulator Suite | PASS — rules; callables pending | Config/rules/indexes working in CI; Functions emulator E2E still pending |
+| Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 8/8 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
 | Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed; CI APK artifact available |
@@ -95,7 +95,7 @@
 
 - Gradle/Kotlin/Compose project with pinned versions: AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, JDK 17.
 - Package structure: `core/model`, `core/database`, `core/security`, `core/preferences`, `core/domain`, `core/network`, `core/sync`, `data`, `ui/theme`, `ui/components`, `ui/screens`.
-- Navigation: onboarding → language → welcome → Home/Classes/Lessons/Messages + detail routes; Settings and Sync.
+- Navigation: onboarding → language → welcome → Home/Classes/Lessons/Messages + detail routes; Settings, Sync, local pupil registration and an honest offline AI fallback screen.
 - Local data: Room entities/DAOs for workspace, class, pupil, guardian, links, attendance, lessons, progress, conversations/messages, outbox, sync cursor, audit.
 - SQLCipher: `net.zetetic:sqlcipher-android:4.20.0`; passphrase generated randomly and wrapped by an Android Keystore AES-GCM key; fails closed if unwrap fails.
 - Demo data: synthetic workspace/classes/pupils/guardians, one submitted attendance session, two lesson plans, progress entries, conversations and a pending outbox command.
@@ -103,8 +103,8 @@
 - Progress: validation, draft save, revision reset on approved edit, approval state, digest eligibility.
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
-- Unit tests: 21/21 pass across phone normalization, attendance, SMS segmentation, progress, digest and sync rules.
-- Local build: `testDevDebugUnitTest assembleDevDebug` successful; CI APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
+- Unit tests: 24/24 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
+- Local build: `testDevDebugUnitTest assembleDevDebug` successful; CI APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
@@ -114,18 +114,18 @@
 
 - `functions/` TypeScript project (Node 22, Firebase Functions 6.5.0, Admin 13.4.0, Zod).
 - Domain modules: phone, access, attendance, guardian, progress, SMS segmentation, digest, sync, AI privacy/schema.
-- 19 Vitest domain tests pass; 6 Firestore rules tests pass in the Firebase emulator; `npm run build` passes.
-- Callables scaffolded: workspace create, invitation, accept, classroom, pupil, guardian, link, verification, attendance submit, progress create/approve, teacher reply, sync batch.
+- 19 Vitest domain tests pass; 8 Firestore rules tests pass in the Firebase emulator; 10 callable/webhook/scheduler/sync E2E tests pass; `npm run build` passes.
+- Callables implemented and E2E-tested: workspace create, invitation, accept, classroom, pupil, guardian, link, verification, attendance submit, progress create/approve, teacher reply, sync batch.
 - Webhooks: HMAC-SHA256 raw-body verification, timing-safe comparison, event dedupe, routing by school code, guardian phone-hash lookup, mock-safe responses.
 - Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
 - `firestore.rules`: default deny; member read baseline; direct writes denied; admin-only guardian/conversation reads. Class-level read restrictions need emulator tests and tightening before pilot.
 - `firebase.json`, `.firebaserc` (`demo-tiny`), `firestore.indexes.json` present.
-- `syncCommands` validates batches/receipts but the full command processor is not complete; direct callables cover main flows. Do not claim full offline sync processing.
+- `syncCommands` dispatches `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client transport remains mock because no Firebase project is configured; do not claim cloud sync from the app.
 
 ### CI / distribution
 
 - `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
-- GitHub Actions run `45784722613` succeeded: build/test, rules tests, and manual emulator evidence.
+- GitHub Actions run `45789068836` succeeded: build/test, rules tests, and manual emulator evidence.
 - App Distribution tester/judge access still pending.
 - GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
@@ -162,7 +162,7 @@
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45784722613` (27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45789068836` (27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`).
 - GitHub Actions build/test and rules jobs: **success**.
 - Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, logcat excluded from commit.
 - App Distribution: not uploaded; no tester group/project.
@@ -218,8 +218,8 @@
 1. On-device Gemini Nano is blocked: Note 10+ is not supported; emulator does not prove physical inference.
 2. Hosted Functions are unavailable under Spark/NGN 0; backend is emulator-only.
 3. Firebase project/App Distribution access is not yet available; no judge-facing build or Firebase integration test.
-4. `syncCommands` command processing is scaffolded, not complete.
-5. Firestore rules are a baseline; class-level guardian/conversation read restrictions need emulator tests before pilot.
+4. The server-side `syncCommands` dispatcher is implemented and emulator-tested, but the Android WorkManager client is still wired to the mock sync engine; it does not send commands to Firestore without a configured Firebase project.
+5. Firestore rules are now class-scoped for pupils, guardians, links, conversations and messages, with 8/8 emulator tests; a full review is still required before any pilot.
 6. App translations are partial draft resources; native review is pending.
 7. No physical device was connected during the checkpoint; general device validation is pending.
 8. StageShow skill was not usable after restart; no claim.
@@ -229,3 +229,4 @@
 ## Resume instruction
 
 Inspect Git status, this file, `OPERATOR_INTAKE.md`, `docs/BUILD_LOG.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`, `docs/CI_ANDROID_BUILD.md`, and the latest commits. Resume by pushing the Phase 1 checkpoint, running GitHub Actions, fixing CI, then continue Phase 2/3. Do not deploy Functions, activate Blaze, send live SMS, use real pupil data or claim on-device AI without a supported device and evidence.
+
