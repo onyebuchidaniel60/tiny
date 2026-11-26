@@ -46,7 +46,7 @@ SCENES = [
         "title": "Big impact.\nSmall requirements.",
         "body": "An offline-first teacher tool for rural primary schools. Parents use ordinary SMS. Pupils have no account or app.",
         "shot": "tiny-03-home.png",
-        "narration": "Tiny is an offline-first teacher tool for rural primary schools. Teachers use the Android phone they already have. Parents use ordinary SMS, and pupils have no account or app.",
+        "narration": "Tiny is an offline-first teacher tool for rural primary schools. Teachers use their Android phone. Parents use ordinary SMS, and pupils have no account or app.",
     },
     {
         "id": "02-language",
@@ -54,15 +54,15 @@ SCENES = [
         "title": "A teacher chooses\nthe language.",
         "body": "English, Hausa, Yoruba or Igbo. Non-English interface strings are drafts and fall back to English until native review.",
         "shot": "tiny-01-language.png",
-        "narration": "Teachers can choose English, Hausa, Yoruba, or Igbo. The non-English interface strings are drafts, and missing text falls back to English until native review.",
+        "narration": "Teachers can choose English, Hausa, Yoruba, or Igbo. Non-English strings are drafts with English fallback until review.",
     },
     {
-        "id": "03-welcome",
-        "kicker": "Honest preview",
-        "title": "Local first.\nNo fake cloud.",
-        "body": "Cloud sync and live SMS are not connected. The preview runs on synthetic data only.",
-        "shot": "tiny-02-welcome.png",
-        "narration": "This build is deliberately honest. Cloud sync and live SMS are not connected. The preview runs on synthetic data only.",
+        "id": "03-firebase",
+        "kicker": "Firebase verified",
+        "title": "Sign-in and sync.\nNo fake claims.",
+        "body": "A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. Cloud AI reports its SDK source. SMS stays mocked.",
+        "shot": "tiny-04-authenticated.png",
+        "narration": "Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. Cloud AI reports its source. SMS stays mocked.",
     },
     {
         "id": "04-home",
@@ -78,7 +78,7 @@ SCENES = [
         "title": "More than one\nclass.",
         "body": "A teacher can manage more than one class, open a roster, add a class or add a pupil locally.",
         "shot": "tiny-04-classes.png",
-        "narration": "A teacher can manage more than one class, view the roster, and add a class or pupil locally.",
+        "narration": "Manage more than one class, open a roster, and add a class or pupil locally.",
     },
     {
         "id": "06-attendance",
@@ -92,17 +92,17 @@ SCENES = [
         "id": "07-lessons",
         "kicker": "5E lessons",
         "title": "A plan that opens\nwithout signal.",
-        "body": "A saved 5E lesson is a teacher-authored scaffold, not a claim of full NERDC coverage.",
+        "body": "A saved 5E lesson opens offline. It is a teacher-authored scaffold, not a claim of full NERDC coverage.",
         "shot": "tiny-07-lessons.png",
-        "narration": "A saved 5E lesson opens without internet. It is a teacher-authored scaffold, not a claim of full NERDC coverage.",
+        "narration": "A saved 5E lesson opens offline. It is a teacher-authored scaffold, not full NERDC coverage.",
     },
     {
         "id": "08-ai",
         "kicker": "Optional AI",
         "title": "Help that never\nblocks the lesson.",
-        "body": "On-device Gemini Nano is unavailable on this emulator. Curated teaching strategies work offline; cloud AI is not configured.",
+        "body": "On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports its source. Curated strategies still work offline.",
         "shot": "tiny-07a-ai-fallback.png",
-        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable, and cloud AI is not configured. Tiny falls back to reviewed teaching strategies that work offline. The core lesson never depends on a model.",
+        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable, so the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.",
     },
     {
         "id": "08-messages",
@@ -110,7 +110,7 @@ SCENES = [
         "title": "Parents reply\nby ordinary SMS.",
         "body": "In this preview the SMS adapter is mocked, so nothing leaves the device.",
         "shot": "tiny-08-messages.png",
-        "narration": "Parent conversations arrive through the SMS adapter. In this preview the adapter is mocked, so nothing leaves the device.",
+        "narration": "Parent messages arrive through the SMS adapter. In this preview it is mocked, so nothing leaves the device.",
     },
     {
         "id": "09-conversation",
@@ -126,15 +126,15 @@ SCENES = [
         "title": "One pupil.\nSeveral guardians.",
         "body": "Link a guardian endpoint, verify it in person and record opt-in. A shared endpoint is reused for siblings.",
         "shot": "tiny-05b-family-contacts.png",
-        "narration": "A pupil can have more than one guardian. Link an endpoint, verify it in person, and record opt-in before any child-specific SMS. A shared family contact is reused for siblings.",
+        "narration": "A pupil can have more than one guardian. Verify an endpoint in person and record opt-in before any child-specific SMS. A shared family contact is reused for siblings.",
     },
     {
         "id": "11-final",
         "kicker": "The next gates",
         "title": "Big impact.\nSmall requirements.",
-        "body": "Remaining gates: Firebase CLI/project setup, App Distribution, native translation review and a supported on-device AI device.",
+        "body": "Remaining gates: App Distribution, App Check enforcement/Play Integrity, native translation review and a supported on-device AI device.",
         "shot": None,
-        "narration": "Tiny is not finished. The remaining gates are Firebase project setup, App Distribution, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.",
+        "narration": "Tiny is not finished. Remaining gates are App Distribution, App Check enforcement and Play Integrity, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.",
     },
 ]
 
@@ -319,6 +319,7 @@ def build() -> None:
 - Platform: Windows ffmpeg + Pillow + Windows SAPI (Microsoft Zira Desktop).
 - TTS: local, free, offline fallback. No Google AI TTS credentials/paid service were used.
 - Capture limitation: this is a reviewed screenshot slideshow with narration, not motion screen recording. It does not claim real parent SMS delivery or on-device Gemini Nano inference.
+- Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed.
 - Synthetic data only; no real pupil/guardian data.
 - Rendered duration: {total:.1f}s.
 - Output: `artifacts/demo/tiny-demo.mp4`.

@@ -215,12 +215,12 @@
 
 ## Demo status
 
-- Video: `artifacts/demo/tiny-demo.mp4` — 149.5s, 1920x1080 H.264/AAC, 5,558,830 bytes, SHA-256 `6285088CB30CB0741FBD075951F80592205F2B5ED33530F1C2B9879A657459FB`.
-- Capture: reviewed screenshot slideshow with narration, not motion screen recording; real emulator screenshots from run `45809071551`.
-- **Disclosure:** the demo predates the Firebase-enabled build. It demonstrates the local/offline product and mock SMS flows; it does not show live Firebase Auth, Firestore sync, App Check enforcement or a cloud AI response. A post-Auth demo refresh is pending.
-- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is within target.
+- Video: `artifacts/demo/tiny-demo.mp4` — 147.3s, 1920x1080 H.264/AAC, 5,532,465 bytes, SHA-256 `85F36BA1938DF2B5801AC6805C549F45086C431D609DA8DFF7CAAF7D26544A68`.
+- Capture: reviewed screenshot slideshow with narration, not motion screen recording. Uses the pre-Firebase product screens plus the authenticated `tiny-04-authenticated.png` Firebase scene; test-phone Auth and cloud AI fallback are shown/enounced honestly.
+- **Disclosure:** the product-flow screens remain from the earlier emulator run. The Firebase scene is backed by separate live evidence (run `45891064395` for Auth/Firestore and `45894574508` for cloud AI). The demo does not show App Check enforcement or on-device Nano.
+- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is 147.3s, within target.
 - Demo data: synthetic only.
-- Demo journeys: offline lesson, local attendance, optional offline AI fallback, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
+- Demo journeys: sign-in/Firestore verification, offline lesson, local attendance, cloud AI fallback with honest source, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
 - Output: `artifacts/demo/` (MP4, captions, narration script, production notes).
 - TTS: local Windows SAPI (Microsoft Zira), free/offline; no Google AI TTS credentials or charges.
 
