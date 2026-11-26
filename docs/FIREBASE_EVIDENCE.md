@@ -50,6 +50,26 @@ HTTP 403
 
 The same result occurred with and without an App Check token. This is the expected denial for an unauthenticated request; no document was read and nothing was written.
 
+### Authenticated rules check (real test-phone sign-in)
+
+A synthetic workspace was seeded through the owner-authenticated Admin/REST path (not through the app) with these clearly marked documents:
+
+- `workspaces/tiny-synthetic-e2e`
+- `workspaces/tiny-synthetic-e2e/members/{testUserA}`
+- `workspaces/tiny-synthetic-e2e/classes/p4-blue`
+- `workspaces/tiny-synthetic-e2e/pupils/synthetic-pupil-001`
+- `users/{testUserA}/workspaces/tiny-synthetic-e2e`
+
+Two synthetic users were created through Firebase test phone numbers (`+2348000000001` and `+2348000000002`). Results with their real ID tokens:
+
+| Caller | Workspace | Class | Pupil |
+|---|---|---|---|
+| Member test user A | 200 | 200 | 200 |
+| Non-member test user B | 403 | 403 | 403 |
+| Unauthenticated | 403 | — | — |
+
+No client writes were attempted or allowed. The documents contain synthetic names only; no real pupil/guardian data.
+
 ## 4. App Check
 
 | Check | Result |
@@ -97,41 +117,45 @@ Short response excerpt:
 
 After removing the temporary `generativelanguage.googleapis.com` target from the Android API key, the proxy still succeeded and a direct `generativelanguage.googleapis.com` request returned HTTP 403. This is the intended posture: the app key uses the Firebase AI Logic proxy, and the raw Gemini endpoint is not open through the client key.
 
-This is protocol-level evidence. The Android UI has not yet made a live AI Logic call because phone Auth is not initialized.
+This is protocol-level evidence. The Android UI has not yet made a live AI Logic call; the app-level AI path still needs a registered debug token or enforcement-ready build, and on-device inference is separately blocked.
 
 ## 6. Authentication
 
 | Check | Result |
 |---|---|
-| Admin config | `GET /admin/v2/projects/tiny-b9f29/config` → HTTP 404 `CONFIGURATION_NOT_FOUND` |
-| Public initialization | `POST /v2/projects/tiny-b9f29/identityPlatform:initializeAuth` → HTTP 400 `BILLING_NOT_ENABLED` |
-| User import | Fails with `CONFIGURATION_NOT_FOUND`; no users imported |
-| Test phone numbers | Not configured; no real SMS requested or sent |
-| Console | **Authentication → Get started** is the required one-time free-tier action |
-| App-level result | Firebase-enabled APK correctly stops at the phone sign-in gate |
+| Console initialization | Completed by the operator on 26 November 2026 (Spark/free-tier path; no billing) |
+| Admin config | `GET /admin/v2/projects/tiny-b9f29/config` returns `projects/1072757481941/config`, subtype `FIREBASE_AUTH` |
+| Phone provider | Enabled |
+| Test phone numbers | `+2348000000001` → `123456`; `+2348000000002` → `654321` (synthetic only) |
+| SMS region policy | `allowlistOnly.allowedRegions: ["NG"]` |
+| Real SMS | Not enabled; no real SMS requested or sent |
+| REST test sign-in | `sendVerificationCode` + `signInWithPhoneNumber` with the test code created a synthetic user and returned a 3600-second ID token |
+| App-level sign-in | CI emulator smoke entered the synthetic number/code and reached the authenticated Home screen; `artifacts/emulator/tiny-04-authenticated.png` |
+| App-level Firestore bootstrap | After adding the synthetic user workspace index, the app loaded `Tiny Synthetic E2E` with 1 class / 1 pupil from Firestore; same screenshot |
+| Play Integrity/reCAPTCHA | Logcat shows `INVALID_CERT_HASH` from the reCAPTCHA/auth-domain path because the CI debug keystore differs from the registered local SHA; test-phone auth still succeeded. Register the CI/release fingerprint before claiming Play Integrity |
+| Auth UID | Synthetic test user; no real identity is used |
 
-No billing was enabled to bypass this gate.
+No billing was enabled to initialize or test Auth.
 
 ## 7. CI and emulator evidence
 
 | Item | Result |
 |---|---|
-| Run | `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` |
+| Run | `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` (latest auth/bootstrap smoke) |
 | Build/test | Success |
 | Backend emulator E2E | 10/10 |
 | Firestore rules | 9/9 |
 | Android unit tests | 34/34 |
 | Compose instrumentation | Success |
 | Firebase-enabled APK | Built with `google-services.json`; Firebase initialized |
-| Emulator smoke | Correctly displayed the phone-auth gate; `artifacts/emulator/tiny-03-auth-gate.png` captured; the prior scripted journey did not run |
-| Log redaction | The new logcat artifact contains no unredacted App Check debug token |
+| Emulator smoke | Auth gate captured, then test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace; `tiny-04-authenticated.png` |
+| Log redaction | The logcat artifact contains no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked |
 
 ## 8. Not verified / not claimed
 
-- Firebase Auth initialization, test-phone sign-in, or any real user account.
-- Firestore client reads/writes for an authenticated user.
 - App-level AI Logic generation or SDK-reported inference source.
 - App Check enforcement or Play Integrity attestation.
 - On-device Gemini Nano inference; the Note 10+ is unsupported.
 - Hosted Cloud Functions, live SMS, App Distribution, production deployment.
+- Real parent/guardian communication or real pupil data.

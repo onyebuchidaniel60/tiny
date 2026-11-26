@@ -46,7 +46,7 @@ The required input and authorization inventory is in `OPERATOR_INTAKE.md`. At mi
 - The target repository and access (confirmed: public `main`, direct commit/push authorized).
 - One or more genuine UI reference URLs/images (confirmed: REF-001 Atelio Studio visual direction and REF-002 PASS structure; reference-only, original Tiny identity).
 - GitHub Actions Ubuntu build/test access (confirmed as the preferred build path; no full Android Studio installation on Windows).
-- A non-production Firebase project and access (confirmed: `tiny-b9f29`; CLI authenticated; Spark/NGN 0 means Cloud Functions remain emulator-only). Firebase Auth still needs the one-time Console initialization.
+- A non-production Firebase project and access (confirmed: `tiny-b9f29`; CLI authenticated; Auth initialized with synthetic test numbers; Spark/NGN 0 means Cloud Functions remain emulator-only).
 - Firebase App Distribution tester/judge access for the protected preview.
 - A general Android test handset (Samsung Galaxy Note 10+, Android 12) and, separately, a currently supported Gemini Nano device for genuine on-device AI evidence. No second physical device is available.
 - Mock SMS adapter approval (confirmed; eSMS sandbox/production remain disabled).
@@ -126,13 +126,13 @@ npx --yes serve landing
 
 ## Current build status
 
-**Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **34 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464`. The Firebase-enabled APK correctly stops at the phone-auth gate because Firebase Auth is not initialized yet. App Distribution/judge access and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
+**Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **34 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395`. The emulator signs in with a synthetic test phone number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). App Distribution/judge access and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
 
 A reviewed 149.5-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording.
 
 ## Firebase integration stage
 
-Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; free-tier App Check and AI Logic APIs are enabled. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. **Firebase Authentication is still uninitialized:** on Spark the public identityPlatform API returns `BILLING_NOT_ENABLED`, so the operator must perform the one-time Console **Authentication → Get started** action. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`.
+Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; Auth is initialized; Phone Auth uses two synthetic test numbers; and the Android emulator signs in and loads a synthetic Firestore workspace. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. Remaining hardening: app-level AI Logic, App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`.
 
 
 ## Firebase development-agent tooling

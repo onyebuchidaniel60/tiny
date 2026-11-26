@@ -2,7 +2,7 @@
 
 **Project:** `tiny-b9f29` (dedicated non-production project; project ID is public).
 **Budget:** Spark / NGN 0. Billing is disabled. Do not upgrade to Blaze.
-**Cloud Functions:** Gen2 deployment requires Blaze, so callables, webhooks and scheduled jobs remain emulator-only. Firestore, Auth (subject to the Console gate below), App Check and Firebase AI Logic are used on Spark within free quotas.
+**Cloud Functions:** Gen2 deployment requires Blaze, so callables, webhooks and scheduled jobs remain emulator-only. Firestore, Auth, App Check and Firebase AI Logic are used on Spark within free quotas.
 
 ## 1. Current status (26 November 2026)
 
@@ -18,22 +18,27 @@
 | Firestore indexes | **DEPLOYED** | Seven indexes READY; unnecessary `messages` collection-group index removed |
 | App Check | **PARTIAL** | API and debug token registration verified; token revoked after the protocol test; enforcement is **off**; Play Integrity not configured |
 | AI Logic | **PROTOCOL VERIFIED** | Gemini Developer API free tier through the Firebase AI Logic proxy with an App Check token; direct `generativelanguage` access remains blocked |
-| Firebase Auth | **BLOCKED — CONSOLE ACTION** | Project has no Auth configuration; public `initializeAuth` rejects Spark with `BILLING_NOT_ENABLED` |
+| Firebase Auth | **INITIALIZED** | Console free-tier setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone provider enabled with two synthetic test numbers |
 | Functions | **EMULATOR ONLY** | Backend E2E 10/10; no deployment |
-| App-level Auth/Firestore/AI | **NOT YET VERIFIED** | The Firebase-enabled CI APK correctly stops at the phone-auth gate |
+| App-level Auth/Firestore | **VERIFIED** | Test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace (1 class / 1 pupil) |
+| App-level AI | **NOT YET VERIFIED** | Needs a registered debug token or enforcement-ready build; no on-device claim |
 
-**Only immediate blocker:** initialize Firebase Authentication in the Firebase Console. See section 2. Do not enable billing to work around it.
+**Next verification work:** app-level AI Logic, App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. No immediate operator approval is required for the remaining emulator/protocol work; production remains unauthorized.
 
-## 2. Operator action: initialize Firebase Authentication (required)
+## 2. Authentication initialization (completed 26 November 2026)
 
-The public Identity Platform API cannot initialize Auth on a Spark project:
+The operator completed the one-time Console **Authentication → Get started** action. The public Identity Platform API had rejected Spark with `BILLING_NOT_ENABLED`; the Console used the free-tier Firebase Auth path. No billing was enabled.
 
-```text
-POST https://identitytoolkit.googleapis.com/v2/projects/tiny-b9f29/identityPlatform:initializeAuth
-HTTP 400 BILLING_NOT_ENABLED
-```
+Configuration now verified:
 
-The Firebase Console uses a separate free-tier provisioning path. Perform this one-time action in a signed-in browser:
+- Config name: `projects/1072757481941/config`.
+- Subtype: `FIREBASE_AUTH`.
+- Phone provider enabled.
+- Test phone numbers: `+2348000000001` → `123456`, `+2348000000002` → `654321`.
+- SMS region policy: allowlist with `NG` only.
+- Real SMS remains disabled; no real message was sent.
+
+For a future environment, the steps were:
 
 1. Open <https://console.firebase.google.com/project/tiny-b9f29/authentication>.
 2. Select **Get started**.
@@ -41,33 +46,33 @@ The Firebase Console uses a separate free-tier provisioning path. Perform this o
 4. Confirm the page shows the **Users** and **Sign-in method** tabs.
 5. Do **not** enable billing, upgrade to Blaze, or add a payment method.
 
-After this action, the agent can verify and continue:
+Verify through the Admin API with an OAuth access token (never commit the token):
 
 ```powershell
-# Read the Auth config through the Admin API.
-$token = (gcloud auth print-access-token)  # or an equivalent OAuth access token
-curl.exe -s -H "Authorization: Bearer $token" `
+curl.exe -s -H "Authorization: Bearer $env:GOOGLE_OAUTH_ACCESS_TOKEN" `
   "https://identitytoolkit.googleapis.com/admin/v2/projects/tiny-b9f29/config"
 ```
 
 Expected: a JSON config with `name: projects/tiny-b9f29/config`, not `CONFIGURATION_NOT_FOUND`.
 
-If the Console itself says billing is required, stop and report it as a material conflict with the Spark/NGN 0 constraint. Do not upgrade or enable paid services.
+If a future Console action demands billing, stop and report it as a material conflict with the Spark/NGN 0 constraint. Do not upgrade or enable paid services.
 
-### 2.1 Enable Phone Auth and synthetic test numbers
+### 2.1 Phone Auth and synthetic test numbers (completed)
 
-After Auth initialization, use the Console (simplest) or the Admin API:
+The Console or Admin API configured:
 
-- Console: **Authentication → Sign-in method → Phone → Enable**.
-- Console: **Authentication → Sign-in method → Phone → Phone numbers for testing**.
-- Add synthetic numbers only, for example:
+- Phone provider enabled.
+- Synthetic numbers only:
 
 ```text
 +2348000000001 -> 123456
 +2348000000002 -> 654321
 ```
 
-Real verification SMS is a Blaze-only feature and is **not authorized**. The app must use Firebase test phone numbers. Never add a real parent or guardian number.
+- SMS region allowlist: `NG`.
+- No real parent/guardian number.
+
+Real verification SMS is a Blaze-only feature and is **not authorized**. Never add a real parent or guardian number.
 
 Admin API alternative (do not put an access token in the repository):
 
@@ -110,6 +115,14 @@ Notes:
 
 Verified rules behaviour on the live database: unauthenticated `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without an App Check token. This is the intended `request.auth == null` denial; it is not a delivery or data-read success.
 
+Authenticated check with two real test-phone users against synthetic documents:
+
+- Member user A: workspace/class/pupil reads return 200.
+- Non-member user B: all three reads return 403.
+- Unauthenticated: 403.
+
+The synthetic test workspace is `workspaces/tiny-synthetic-e2e` with member/class/pupil documents and a user workspace index. It contains synthetic names only. No client writes were attempted; the documents were seeded through the owner-authenticated Admin/REST path solely to test rules.
+
 ## 4. App Check
 
 ### 4.1 What is configured
@@ -117,8 +130,8 @@ Verified rules behaviour on the live database: unauthenticated `GET` on `workspa
 - Debug provider in debug builds; Play Integrity provider in release builds.
 - App Check API enabled.
 - A debug token was registered during the first protocol test, exchanged successfully, and then **revoked**. No debug token is currently registered.
-- App Check enforcement remains **off** for Firestore, Auth and AI Logic until the app-level Auth flow is verified and release fingerprints are configured.
-- Play Integrity still needs a Play Console app link and the release SHA-256 before production.
+- App Check enforcement remains **off**. Test-phone Auth and Firestore bootstrap now work without it; enabling enforcement is the next hardening step, after registering a fresh debug token and verifying app-level AI.
+- Play Integrity still needs a Play Console app link and the release SHA-256 before production. The CI debug keystore produced an `INVALID_CERT_HASH` auth-domain warning; register the CI/release fingerprint before claiming Play Integrity.
 
 ### 4.2 Register a local debug token
 
@@ -196,7 +209,7 @@ https://firebasevertexai.googleapis.com/v1beta/projects/tiny-b9f29/models/gemini
 
 with `x-goog-api-key`, `X-Firebase-AppCheck` and a synthetic English prompt returned a candidate and usage metadata (`promptTokenCount: 22`, `candidatesTokenCount: 50`, `totalTokenCount: 72`). The direct `generativelanguage.googleapis.com` endpoint returned 403 after the temporary key target was removed. This proves the proxy + App Check path, not the Android UI flow.
 
-The on-device path is still unverified. The Samsung Galaxy Note 10+ (Android 12) is not a supported Gemini Nano device; an emulator does not prove physical Nano inference. Never claim on-device inference from configuration or from a cloud response.
+The app-level AI call remains pending: the CI debug provider generates a new unregistered token each run, and AI Logic requires a valid App Check token. Do not weaken App Check or hardcode a registered token into a public artifact. The on-device path is still unverified. The Samsung Galaxy Note 10+ (Android 12) is not a supported Gemini Nano device; an emulator does not prove physical Nano inference. Never claim on-device inference from configuration or from a cloud response.
 
 ## 6. Cloud Functions and client sync
 
@@ -220,7 +233,7 @@ Backend E2E is green (10/10). The live `syncCommands` callable is not deployed a
 
 The build job optionally materializes `app/google-services.json` from the GitHub secret `GOOGLE_SERVICES_JSON_BASE64`. The secret is set. Do not print, commit or attach the decoded file.
 
-Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` — **success**. The emulator smoke run correctly stopped at the phone-auth gate because Auth is not initialized; its screenshots are not a completed journey. The gate screenshot is committed at `artifacts/emulator/tiny-03-auth-gate.png`. The smoke script detects that gate, skips the local journey, and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
+Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` — **success**. The emulator smoke captured the auth gate, signed in with the synthetic test phone number, reached Home, and loaded the synthetic Firestore workspace. Evidence: `artifacts/emulator/tiny-03-auth-gate.png` and `artifacts/emulator/tiny-04-authenticated.png`. The smoke script handles launcher ANRs and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
 
 ## 8. Verification checklist
 
@@ -231,10 +244,10 @@ Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actio
 - [x] App Check debug token registration/exchange verified, then revoked.
 - [x] AI Logic proxy call with App Check verified.
 - [x] Firestore rules deny unauthenticated reads on the live database.
-- [ ] Firebase Auth initialized (Console action).
-- [ ] Phone provider enabled; synthetic test numbers added; no real SMS.
-- [ ] App-level test-phone sign-in succeeds.
-- [ ] Firestore client reads/writes succeed for a signed-in synthetic user.
+- [x] Firebase Auth initialized in the Console (free-tier path, no billing).
+- [x] Phone provider enabled; two synthetic test numbers added; SMS region allowlist `NG`; no real SMS.
+- [x] App-level test-phone sign-in succeeds and reaches Home.
+- [x] App-level Firestore bootstrap reads the synthetic workspace/class/pupil (no client writes).
 - [ ] App-level AI Logic call reports its source correctly.
 - [ ] Callable sync works against the Functions emulator from the Android client.
 - [ ] App Check enforcement enabled after the above.
@@ -245,7 +258,7 @@ Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actio
 
 | Symptom | Cause | Action |
 |---|---|---|
-| `CONFIGURATION_NOT_FOUND` | Auth not initialized | Complete Console **Get started**; do not enable billing |
+| `CONFIGURATION_NOT_FOUND` | Auth was not initialized (historical) | The Console **Get started** action is now complete; verify the Admin config endpoint |
 | `BILLING_NOT_ENABLED` from `initializeAuth` | Public Identity Platform API on Spark | Use the Console action; stop if it demands billing |
 | App Check token registration returns 404 | Wrong project identifier | Use project **number** `1072757481941` and the app ID in the path |
 | AI Logic `USER_PROJECT_DENIED` | Missing AI Logic service-agent role | Grant `roles/firebaseml.serviceAgent` to the `gcp-sa-firebaseml` identity; retry after propagation |

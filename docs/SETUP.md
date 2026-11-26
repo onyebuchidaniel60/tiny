@@ -40,7 +40,7 @@
 4. Install/inspect the selected Firebase Agent Skills for OpenCode and verify fresh-session discovery; this does not require a real Firebase project.
 5. Set up the GitHub Actions Ubuntu build workflow and credential/configuration placeholders; no full Android Studio installation on Windows.
 6. Set up Firebase Emulator Suite with a demo project for local/CI tests. Use the non-production `tiny-b9f29` project for client integration; do not use production credentials.
-7. Initialize Firebase Authentication in the Console, then enable Phone Auth and synthetic test numbers. Real verification SMS is Blaze-only and not authorized.
+7. Firebase Authentication is initialized in the Console; Phone Auth is enabled with synthetic test numbers. Real verification SMS is Blaze-only and not authorized.
 8. Firestore `(default)` is created in `africa-south1` with delete protection; deploy rules/indexes after changes. Do not change region without an architecture decision.
 9. Configure the App Check debug provider for local debug builds; enforcement remains off until Auth is verified.
 10. Firebase AI Logic with the Gemini Developer API free tier is enabled; verify quota and App Check proxy behavior before app-level claims.

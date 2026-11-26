@@ -1,6 +1,6 @@
 # Tiny — Build Log
 
-**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, App Check debug exchange and AI Logic proxy verification. Firebase Auth still needs the one-time Console initialization. No production deployment or live SMS has occurred.
+**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, Auth/test phone numbers, App Check debug exchange and AI Logic proxy verification. The Firebase-enabled emulator signs in and loads a synthetic Firestore workspace. App-level AI and App Check enforcement remain pending. No production deployment or live SMS has occurred.
 
 ## Planning baseline
 
@@ -140,14 +140,21 @@
   - Removed the temporary direct `generativelanguage.googleapis.com` target from the Android key; the proxy still works and the raw endpoint returns 403.
   - This is protocol-level evidence; no Android UI or on-device claim.
 - Auth:
-  - Admin config returns `CONFIGURATION_NOT_FOUND`; public `initializeAuth` returns `BILLING_NOT_ENABLED` on Spark.
-  - No users or test phone numbers; no real SMS. Console **Authentication → Get started** is the only immediate blocker.
+  - Operator completed Console **Authentication → Get started** on 2026-11-26; no billing enabled.
+  - Admin config subtype `FIREBASE_AUTH`; Phone provider enabled; test numbers `+2348000000001`/`123456` and `+2348000000002`/`654321`; SMS region allowlist `NG`.
+  - REST `sendVerificationCode` + `signInWithPhoneNumber` succeeded for both synthetic numbers; no real SMS.
+  - App-level test-phone sign-in succeeded on the CI emulator and reached Home.
+- Authenticated Firestore:
+  - Seeded a clearly marked synthetic workspace/member/class/pupil plus the user workspace index in the non-production project.
+  - Member user A reads workspace/class/pupil (200); non-member user B and unauthenticated callers receive 403. No client writes.
+  - App-level bootstrap loaded `Tiny Synthetic E2E` (1 class / 1 pupil) into the Home screen.
+  - `INVALID_CERT_HASH` appears in the auth-domain/reCAPTCHA path because the CI debug keystore is not the registered local SHA; test-phone auth still succeeded. Register the CI/release fingerprint before claiming Play Integrity.
 - CI:
-  - Run `45877792464` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
-  - The Firebase-enabled emulator smoke correctly showed the phone-auth gate; `artifacts/emulator/tiny-03-auth-gate.png` was captured and the prior scripted journey did not run. The script branches on the gate, skips the journey, and redacts debug tokens; the new artifact contains no unredacted token.
-  - APK artifact: 31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`.
-- Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted.
-- Next task: operator initializes Auth in the Console; then enable Phone/test numbers and run authenticated client/AI/Firestore/Functions-emulator checks.
+  - Run `45891064395` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
+  - The emulator smoke captured the auth gate, dismissed launcher ANRs, signed in with the test number, and captured `tiny-04-authenticated.png` showing the synthetic remote workspace. Logcat contains no unredacted App Check token.
+  - APK artifact: 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
+- Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted; the embedded test number/code is synthetic.
+- Next task: app-level AI Logic with a registered debug token/enforcement-ready build, Functions-emulator client sync, then App Check enforcement/Play Integrity and App Distribution.
 
 ## Operator confirmations received
 
@@ -197,7 +204,7 @@
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
 | 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 34 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, prior emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
-| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore live deployed; Auth Console gate | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes | Firebase Auth initialization pending Console action |
+| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore/Auth live verified | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes; test-phone auth | App Check enforcement/app-level AI pending |
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport implemented | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Live callable sync blocked by Spark/emulator-only |
 | 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Auth-gated cloud flows and broader device QA pending |
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |

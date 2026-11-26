@@ -1,8 +1,8 @@
 # Tiny — Consolidated Operator Intake / Readiness Check
 
-**Status:** Phase 0 intake complete. Firebase project `tiny-b9f29` is confirmed and project-side setup is largely complete: CLI authenticated, dev app and SHA registered, Firestore database/rules/indexes deployed, free-tier APIs enabled, App Check debug exchange and AI Logic proxy verified. **Firebase Authentication must be initialized once in the Firebase Console** (Spark cannot use the public identityPlatform initialization API). App Distribution and on-device Gemini Nano remain separate gates.
+**Status:** Phase 0 intake complete. Firebase project `tiny-b9f29` is configured and tested within Spark/NGN 0: CLI authenticated, dev app/SHA registered, Firestore `(default)`/rules/indexes deployed, Auth initialized, Phone Auth enabled with synthetic test numbers, and test-phone sign-in plus Firestore bootstrap verified in the app. App Check debug exchange and the AI Logic proxy were verified; enforcement and app-level AI remain pending. App Distribution and on-device Gemini Nano remain separate gates.
 
-**Last inspected:** 26 November 2026 — live Firebase project audit, app registration, Firestore deployment and protocol-level App Check/AI Logic checks completed. No billing, live SMS, production deployment or real pupil data.
+**Last inspected:** 26 November 2026 — live Firebase project audit, Auth/test-phone verification, authenticated Firestore bootstrap and protocol-level App Check/AI Logic checks. No billing, live SMS, production deployment or real pupil data.
 
 **Rule:** The agent reads the repository and handoff first, then asks all genuinely missing critical questions in one consolidated intake. Do not ask again for information already provided by the repository, environment, this package or operator response.
 
@@ -69,8 +69,9 @@ Do not claim any missing reference exists. The UI implementation is direct from 
 | Firebase billing account / plan | Yes for hosted Functions | CONFIRMED — Spark, NGN 0 | No Blaze upgrade, billing account, paid model or paid service without explicit operator approval. Billing confirmed disabled. |
 | Cloud Functions Gen2 deployment | Yes for fixed backend | NOT AUTHORIZED — emulator-only | Do not deploy Functions, activate Blaze, introduce paid hosting or replace the backend architecture. Callables/webhooks can be emulator-tested; scheduled digest logic must be invoked locally/unit-tested |
 | Firestore database | Yes | CONFIRMED — deployed | `(default)` created in `africa-south1`, Firestore Native/Standard, delete protection enabled; rules/indexes deployed. Spark free-tier limits apply |
-| Firebase Authentication Phone provider | Yes | BLOCKED — Console initialization | Auth config is missing; public `initializeAuth` returns `BILLING_NOT_ENABLED` on Spark. Operator must open Console → Authentication → **Get started** once. Then enable Phone and synthetic test numbers. Real SMS requires Blaze and is NOT authorized |
-| App Check / Play Integrity | Production required | PARTIAL — debug exchange verified; enforcement off | Debug provider installed; a debug token was registered, exchanged and revoked. Play Integrity needs a Play Console link and release SHA-256. Enforcement must follow Auth verification |
+| Firebase Authentication Phone provider | Yes | CONFIRMED — verified | Console initialized Auth on 2026-11-26; Phone enabled with synthetic test numbers; SMS region allowlist `NG`. REST and app-level test-phone sign-in succeeded. Real SMS requires Blaze and is NOT authorized |
+| App-level Auth/Firestore | Yes | VERIFIED — synthetic test user | Test-phone sign-in reached Home; Firestore bootstrap loaded a synthetic workspace/class/pupil. Member read 200; non-member and unauthenticated reads 403. No client writes |
+| App Check / Play Integrity | Production required | PARTIAL — debug exchange verified; enforcement off | Debug provider installed; a debug token was registered, exchanged and revoked. Play Integrity needs a Play Console link and release SHA-256. Enforcement remains a deliberate next step |
 | Firebase AI Logic Gemini Developer API | Yes for cloud AI demo | PROTOCOL VERIFIED — free tier | AI Logic proxy + App Check returned a Gemini candidate; P4SA role granted. No paid AI. App-level/on-device calls still pending |
 | On-device AI test phone | Yes for proof of on-device path | SEPARATE BLOCKED GATE | Samsung Galaxy Note 10+, Android 12, is the only physical device and is **not** on the current ML Kit Gemini Nano supported-device list. Use for general testing only; do not claim on-device inference. Emulator does not prove physical Nano inference |
 | Representative low-cost pilot phones | Required before pilot | PENDING | No second device available and operator does not intend to purchase one. Use Note 10+ for general testing and emulators/CI for additional coverage; record the pilot-device gap |
@@ -155,9 +156,9 @@ Provider acceptance must never be labelled delivery. Mock/sandbox only unless th
 
 ## 9. Remaining consolidated questions
 
-Only items still missing after the 25 November 2026 inspection and operator confirmations are listed. Answer all that apply in one reply. Do not paste secret values into chat or Markdown.
+Only items still open after the 26 November 2026 checks are listed. Answer all that apply in one reply. Do not paste secret values into chat or Markdown.
 
-1. **Firebase Authentication initialization (required now).** Open <https://console.firebase.google.com/project/tiny-b9f29/authentication>, select **Get started**, and accept the terms. Do not enable billing or Blaze. Confirm when the page shows the Users/Sign-in method tabs. The agent can then enable Phone Auth with synthetic test numbers. If the Console demands billing, stop and report it rather than upgrading.
+1. **Firebase Authentication initialization — completed 26 November 2026.** The operator opened Console → Authentication → **Get started**; no billing was enabled. Phone Auth is enabled with synthetic test numbers and the app-level sign-in/bootstrap is verified. No further action.
 2. **Supported Gemini Nano device (separate acceptance gate).** The Note 10+ is Android 12 and is general-testing only. Confirm whether a currently supported physical device is available. If not, on-device proof remains blocked; cloud/fallback evidence can proceed.
 3. **Optional pilot context.** If known, name the pilot state/LGA/community/schools and target languages. Not required for synthetic development.
 4. **Any additional restrictions.** State any repository/organisation policy that would prevent GitHub Actions on Ubuntu, artifact upload or GitHub Pages publication.

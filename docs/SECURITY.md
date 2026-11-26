@@ -2,7 +2,7 @@
 
 **Security posture:** privacy-first, least privilege, offline-aware, and closed by default for paid or production integrations.  
 
-**Current preview status (26 November 2026):** Synthetic data only; mock SMS; local SQLCipher database. The non-production Firebase project `tiny-b9f29` is configured with Firestore rules/indexes; Functions are not deployed. Firestore rules are class-scoped for pupils, guardians, links, conversations and messages and pass 9/9 emulator tests; live unauthenticated reads are denied. Firebase Auth is not initialized yet, App Check enforcement is off, and the debug token used for the protocol test was revoked. A full review is still required before a pilot. No production security certification is claimed.
+**Current preview status (26 November 2026):** Synthetic data only; mock SMS; local SQLCipher database. The non-production Firebase project `tiny-b9f29` is configured with Firestore rules/indexes and Auth; Functions are not deployed. Firestore rules are class-scoped for pupils, guardians, links, conversations and messages and pass 9/9 emulator tests; live unauthenticated and non-member reads are denied while a synthetic member can read its workspace/class/pupil. Phone Auth uses two synthetic test numbers; no real SMS. App Check enforcement is off and the debug token used for the protocol test was revoked. A full review is still required before a pilot. No production security certification is claimed.
 **Scope:** this is an engineering control specification, not a substitute for Nigerian legal advice, a DPIA, controller/processor agreements or a school safeguarding policy.
 
 ## 1. Information classification

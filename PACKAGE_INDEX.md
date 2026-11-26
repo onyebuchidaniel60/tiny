@@ -77,7 +77,7 @@
 
 ## Readiness blockers
 
-Phase 0 intake is complete. Firebase project `tiny-b9f29` is configured and audited: the CLI is authenticated, the dev app and SHA fingerprints are registered, Firestore `(default)` is deployed in `africa-south1` with rules/indexes, and free-tier App Check and AI Logic are enabled. App Check debug exchange and the AI Logic proxy were verified with synthetic traffic. Firebase Auth still needs the one-time Console **Authentication → Get started** action; see `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
+Phase 0 intake is complete. Firebase project `tiny-b9f29` is configured and tested within Spark/NGN 0: the CLI is authenticated, the dev app and SHA fingerprints are registered, Firestore `(default)` is deployed in `africa-south1` with rules/indexes, Auth is initialized, Phone Auth uses two synthetic test numbers, and the Android emulator signs in and loads a synthetic Firestore workspace. App Check debug exchange and the AI Logic proxy were verified with synthetic traffic. App-level AI, App Check enforcement and Play Integrity remain pending. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
 
 ## Integrity of supplied methodology
 

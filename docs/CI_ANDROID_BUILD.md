@@ -177,7 +177,7 @@ Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Ac
 
 ## 3.1 Manual emulator smoke job
 
-`.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, captures the language screen and welcome, then branches on Firebase configuration. A Firebase-enabled build that reaches the phone-auth gate captures `tiny-03-auth-gate.png` and stops; it does not pretend the local journey ran. A non-Firebase build continues through home, classes, class detail, attendance, lessons, messages, conversation and settings. The job uploads `tiny-emulator-evidence` with redacted logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
+`.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, and handles launcher ANRs. A Firebase-enabled build captures the auth gate, signs in with the synthetic test phone number, waits for the Firestore bootstrap, and captures `tiny-04-authenticated.png`; it does not pretend the local journey ran. A non-Firebase build continues through home, classes, class detail, attendance, lessons, messages, conversation and settings. The job uploads `tiny-emulator-evidence` with redacted logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
 
 The first manual run succeeded and produced:
 - Language screen: `artifacts/emulator/tiny-01-language.png`
@@ -232,10 +232,10 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: latest Firebase-enabled regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). Manual pre-Firebase smoke/demo images came from `45809071551`; the Firebase-enabled smoke run stopped at the auth gate as designed.
+- CI run: latest Firebase-enabled regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation, test-phone auth/bootstrap smoke). Manual pre-Firebase smoke/demo images came from `45809071551`; the Firebase-enabled smoke signs in and loads a synthetic workspace.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk` from run 45877792464; 31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`.
-- Emulator evidence: Firebase-enabled run captured language, welcome and `tiny-03-auth-gate.png`; it stopped at the auth gate instead of faking the local journey. Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
+- APK artifact: `tiny-dev-debug-apk` from run 45891064395; 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
+- Emulator evidence: Firebase-enabled run captured `tiny-03-auth-gate.png` and `tiny-04-authenticated.png` (Home with `Tiny Synthetic E2E`, 1 class / 1 pupil). Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.
 - App Check debug tokens are never committed; raw CI logcat with a token was deleted and the token was revoked. The smoke script redacts future occurrences.
