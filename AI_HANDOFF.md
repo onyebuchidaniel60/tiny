@@ -93,7 +93,7 @@
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | VERIFIED — free tier | App-level `AiLogicLiveTest` passed: on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; on-device still pending |
-| Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed; CI APK artifact available |
+| Protected preview distribution | PENDING — App Distribution preferred | App registered; tester/judge groups still needed; CI APK artifact available |
 | Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
 | On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
 | eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
@@ -101,7 +101,7 @@
 | Production deploy authority | NOT AUTHORIZED | No production resources |
 | Landing page | IMPLEMENTED — local preview | Responsive static page + legal/security/contact; GitHub Pages manual workflow not enabled/published |
 | Demo audience/output | CONFIRMED | Firebase hackathon judges/product evaluators; `artifacts/demo/` |
-| Demo voice/TTS | PENDING | Recheck free tier/terms at Phase 8 |
+| Demo voice/TTS | CONFIRMED - local SAPI | Microsoft Zira offline TTS; no Google AI TTS credentials or charges |
 
 ## Operator confirmations received
 
