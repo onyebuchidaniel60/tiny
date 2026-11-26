@@ -1,8 +1,8 @@
 # Tiny — Demo Video Plan
 
-**Status:** Refreshed 26 November 2026. `artifacts/demo/tiny-demo.mp4` - 147.3s, 1920x1080 H.264/AAC, 5,532,465 bytes, SHA-256 `85F36BA1938DF2B5801AC6805C549F45086C431D609DA8DFF7CAAF7D26544A68`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. Includes the authenticated Firebase test-phone/Firestore scene. On-device Gemini Nano evidence remains blocked.
+**Status:** Refreshed 26 November 2026. `artifacts/demo/tiny-demo.mp4` - 146.0s, 1920x1080 H.264/AAC, 5,513,988 bytes, SHA-256 `823BBE59C5FE81CAACCDD74124093B463A987777B5C188C897E33152F2443B2E`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. Includes the authenticated Firebase test-phone/Firestore scene. On-device Gemini Nano evidence remains blocked.
 
-**Current mode:** mock SMS adapter; cloud AI evidence can proceed, but on-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
+**Current mode:** mock SMS adapter; Auth/Firestore and app-level cloud AI fallback are verified against the non-production project. On-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
 
 **Target duration:** 90–150 seconds.  
 **Hard maximum:** 180 seconds.  
@@ -60,13 +60,13 @@ Default directory: `artifacts/demo/`.
 
 ## Final review checklist
 
-- [ ] Video duration <=180 seconds (target 90–150).
-- [ ] Full rendered file plays from beginning to end.
-- [ ] Audio is present, intelligible and synchronized.
-- [ ] No clipped narration or awkward long silences.
-- [ ] Every narrated function is visible and verified.
-- [ ] Hybrid source evidence is genuine (on-device and cloud).
-- [ ] Mock/simulation is clearly represented accurately.
-- [ ] No real child/guardian data, phone number, secret, token or private URL is exposed.
-- [ ] Captions reviewed if included.
-- [ ] Video, script and production notes are saved and linked in `AI_HANDOFF.md`.
+- [x] Video duration <=180 seconds (target 90-150; rendered 146.0s).
+- [x] Full rendered file plays from beginning to end.
+- [x] Audio is present, intelligible and synchronized.
+- [x] No clipped narration or awkward long silences.
+- [x] Every narrated function is visible and verified, or labelled as separately verified/blocked.
+- [x] Hybrid source evidence is genuine: app-level cloud fallback verified; on-device remains blocked on unsupported hardware.
+- [x] Mock/simulation is clearly represented accurately.
+- [x] No real child/guardian data, phone number, secret, token or private URL is exposed.
+- [x] Captions reviewed if included.
+- [x] Video, script and production notes are saved and linked in `AI_HANDOFF.md`.

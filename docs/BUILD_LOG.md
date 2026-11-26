@@ -82,7 +82,7 @@
 - Manual verification: reviewed demo video frames; identified and fixed the Home zero-classes race before final recapture.
 - Commit hash: `13b7e60`, `7171891`, `00318fc`, `2776ba1`, `0082163`.
 - Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45853884690`.
-- Known limitations: Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
+- Known limitations at that checkpoint (superseded by the Firebase/Auth/AI checkpoints below): Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
 - Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.
 - Next phase/task: final emulator recapture/demo, docs polish, physical-device/App Distribution gates.
 
@@ -214,13 +214,13 @@
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
 | 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 34 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, prior emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
-| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore/Auth live verified | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes; test-phone auth | App Check enforcement/app-level AI pending |
+| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore/Auth live verified | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes; test-phone auth | App Check enforcement/Play Integrity pending |
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport implemented | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Live callable sync blocked by Spark/emulator-only |
 | 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Auth-gated cloud flows and broader device QA pending |
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
 | 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
 | 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
-| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1`, demo refresh | `artifacts/demo/tiny-demo.mp4` | 147.3s 1080p H.264/AAC slideshow from real emulator screenshots incl. authenticated Firebase scene and AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
+| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1`, demo refresh | `artifacts/demo/tiny-demo.mp4` | 146.0s 1080p H.264/AAC slideshow from real emulator screenshots incl. authenticated Firebase scene and AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
 | 9 - Final regression/security/release | PARTIAL - release blocked | `2776ba1` | - | Unit/domain/rules/E2E/instrumentation green; rules tightened; secrets scan; zero-spend boundaries | Production authority not granted; Spark/NGN 0; no App Distribution or physical-device release validation |
 
 ## Firebase Agent Skills and MCP status

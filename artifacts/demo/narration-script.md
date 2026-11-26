@@ -1,6 +1,6 @@
 # Tiny demo narration script
 
-Target: 90–150s; rendered: 147.4s
+Target: 90–150s; rendered: 146.0s
 
 ## Scenes
 
@@ -14,7 +14,7 @@ Teachers can choose English, Hausa, Yoruba, or Igbo. Non-English strings are dra
 
 ### 03. Firebase verified
 
-Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. Cloud AI reports its source. SMS stays mocked.
+Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. SMS stays mocked.
 
 ### 04. Home
 
@@ -34,7 +34,7 @@ A saved 5E lesson opens offline. It is a teacher-authored scaffold, not full NER
 
 ### 08. Optional AI
 
-AI is optional. On this emulator, Gemini Nano is unavailable, so the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.
+AI is optional. On this emulator, Gemini Nano is unavailable. A separate test confirmed the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.
 
 ### 09. Parent SMS
 

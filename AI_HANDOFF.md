@@ -1,6 +1,6 @@
 # Tiny — AI Implementation Handoff
 
-**Last updated:** 26 November 2026 (live Firebase setup checkpoint)
+**Last updated:** 26 November 2026 (Auth, Firestore and app-level AI verification)
 
 **Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. App Check enforcement, Play Integrity and on-device AI remain unverified.
 
@@ -215,10 +215,10 @@
 
 ## Demo status
 
-- Video: `artifacts/demo/tiny-demo.mp4` — 147.3s, 1920x1080 H.264/AAC, 5,532,465 bytes, SHA-256 `85F36BA1938DF2B5801AC6805C549F45086C431D609DA8DFF7CAAF7D26544A68`.
+- Video: `artifacts/demo/tiny-demo.mp4` — 146.0s, 1920x1080 H.264/AAC, 5,513,988 bytes, SHA-256 `823BBE59C5FE81CAACCDD74124093B463A987777B5C188C897E33152F2443B2E`.
 - Capture: reviewed screenshot slideshow with narration, not motion screen recording. Uses the pre-Firebase product screens plus the authenticated `tiny-04-authenticated.png` Firebase scene; test-phone Auth and cloud AI fallback are shown/enounced honestly.
 - **Disclosure:** the product-flow screens remain from the earlier emulator run. The Firebase scene is backed by separate live evidence (run `45891064395` for Auth/Firestore and `45894574508` for cloud AI). The demo does not show App Check enforcement or on-device Nano.
-- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is 147.3s, within target.
+- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is 146.0s, within target.
 - Demo data: synthetic only.
 - Demo journeys: sign-in/Firestore verification, offline lesson, local attendance, cloud AI fallback with honest source, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
 - Output: `artifacts/demo/` (MP4, captions, narration script, production notes).

@@ -7,41 +7,41 @@ An offline-first teacher tool for rural primary schools. Parents use ordinary SM
 English, Hausa, Yoruba or Igbo. Non-English interface strings are drafts and fall back to English until native review.
 
 3
-00:00:23,831 --> 00:00:39,018
-A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. Cloud AI reports its SDK source. SMS stays mocked.
+00:00:23,831 --> 00:00:36,008
+A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. SMS stays mocked.
 
 4
-00:00:39,018 --> 00:00:46,631
+00:00:36,008 --> 00:00:43,621
 Today's classes, pending sync, parent messages and quick actions in one calm dashboard.
 
 5
-00:00:46,631 --> 00:00:53,640
+00:00:43,621 --> 00:00:50,630
 A teacher can manage more than one class, open a roster, add a class or add a pupil locally.
 
 6
-00:00:53,640 --> 00:01:08,052
+00:00:50,630 --> 00:01:05,042
 Only absent pupils create an immediate notification job after server acceptance. Present and late do not.
 
 7
-00:01:08,052 --> 00:01:16,895
+00:01:05,042 --> 00:01:13,886
 A saved 5E lesson opens offline. It is a teacher-authored scaffold, not a claim of full NERDC coverage.
 
 8
-00:01:16,895 --> 00:01:34,767
-On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports its source. Curated strategies still work offline.
+00:01:13,886 --> 00:01:33,412
+On-device Nano is unavailable on this emulator. A separate test confirms the SDK falls back to cloud AI and reports its source; curated strategies still work offline.
 
 9
-00:01:34,767 --> 00:01:44,015
+00:01:33,412 --> 00:01:42,661
 In this preview the SMS adapter is mocked, so nothing leaves the device.
 
 10
-00:01:44,015 --> 00:01:53,438
+00:01:42,661 --> 00:01:52,084
 A teacher replies from Tiny. Provider acceptance is not the same as delivery.
 
 11
-00:01:53,438 --> 00:02:07,450
+00:01:52,084 --> 00:02:06,096
 Link a guardian endpoint, verify it in person and record opt-in. A shared endpoint is reused for siblings.
 
 12
-00:02:07,450 --> 00:02:27,387
+00:02:06,096 --> 00:02:26,032
 Remaining gates: App Distribution, App Check enforcement/Play Integrity, native translation review and a supported on-device AI device.

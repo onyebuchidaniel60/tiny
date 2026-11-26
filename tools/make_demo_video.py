@@ -60,9 +60,9 @@ SCENES = [
         "id": "03-firebase",
         "kicker": "Firebase verified",
         "title": "Sign-in and sync.\nNo fake claims.",
-        "body": "A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. Cloud AI reports its SDK source. SMS stays mocked.",
+        "body": "A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. SMS stays mocked.",
         "shot": "tiny-04-authenticated.png",
-        "narration": "Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. Cloud AI reports its source. SMS stays mocked.",
+        "narration": "Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. SMS stays mocked.",
     },
     {
         "id": "04-home",
@@ -100,9 +100,9 @@ SCENES = [
         "id": "08-ai",
         "kicker": "Optional AI",
         "title": "Help that never\nblocks the lesson.",
-        "body": "On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports its source. Curated strategies still work offline.",
+        "body": "On-device Nano is unavailable on this emulator. A separate test confirms the SDK falls back to cloud AI and reports its source; curated strategies still work offline.",
         "shot": "tiny-07a-ai-fallback.png",
-        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable, so the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.",
+        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable. A separate test confirmed the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.",
     },
     {
         "id": "08-messages",
