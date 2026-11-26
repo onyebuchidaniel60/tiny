@@ -23,7 +23,7 @@ Open the printed local URL. The page also works by opening `landing/index.html` 
 
 ## Deployment
 
-The `landing-pages` GitHub Actions workflow publishes the `landing/` directory to GitHub Pages when the repository Pages source is configured to GitHub Actions and the workflow has `pages: write`/`id-token: write` permissions. If Pages is not enabled, the workflow fails without affecting the Android build; use the local preview or a protected artifact instead.
+The `landing-pages` workflow is manual (`workflow_dispatch`) and publishes `landing/` to GitHub Pages after the repository owner enables Pages with “GitHub Actions” as the source. It was not enabled during the Phase 1 checkpoint, so no public preview URL is claimed. Use the local preview or a protected artifact until then.
 
 ## Content rules
 

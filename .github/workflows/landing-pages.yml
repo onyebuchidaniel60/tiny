@@ -1,11 +1,6 @@
 name: landing-pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'landing/**'
-      - '.github/workflows/landing-pages.yml'
   workflow_dispatch:
 
 permissions:

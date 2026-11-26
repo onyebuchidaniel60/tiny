@@ -56,7 +56,14 @@ jobs:
           distribution: temurin
           java-version: '17' # pin to the selected AGP requirement
 
-      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          fi
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - uses: gradle/actions/setup-gradle@v4
 
