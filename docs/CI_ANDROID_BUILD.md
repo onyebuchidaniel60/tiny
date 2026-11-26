@@ -232,9 +232,9 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: latest Firebase-enabled regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45873038243` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). Manual pre-Firebase smoke/demo images came from `45809071551`; the Firebase-enabled smoke run stopped at the auth gate as designed.
+- CI run: latest Firebase-enabled regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). Manual pre-Firebase smoke/demo images came from `45809071551`; the Firebase-enabled smoke run stopped at the auth gate as designed.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk` from run 45873038243; 31,097,300 bytes; SHA-256 `11E6332EF6B641169A501A006EE4B42285E8589154E9431E24D4EDC93BAE8F24`.
+- APK artifact: `tiny-dev-debug-apk` from run 45877792464; 31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`.
 - Emulator evidence: Firebase-enabled run captured language, welcome and `tiny-03-auth-gate.png`; it stopped at the auth gate instead of faking the local journey. Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.

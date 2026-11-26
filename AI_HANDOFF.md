@@ -19,7 +19,7 @@
 - **AI Logic:** P4SA identities created; `roles/firebaseml.serviceAgent` granted. A `gemini-3.5-flash-lite` proxy call with App Check returned a candidate (usage: 22 prompt / 50 candidate / 72 total tokens). The direct Gemini endpoint remains blocked through the client key. This is protocol-level evidence, not an app-level or on-device claim.
 - **Rules behaviour:** live unauthenticated Firestore `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without App Check, as designed.
 - **Auth:** `CONFIGURATION_NOT_FOUND`; public `initializeAuth` returns `BILLING_NOT_ENABLED`; no users or test numbers. **Console `Get started` is the only blocker.**
-- **CI:** run `45873038243` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The Firebase-enabled emulator smoke correctly stopped at the auth gate; the smoke script now detects that gate and redacts App Check tokens.
+- **CI:** run `45877792464` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The Firebase-enabled emulator smoke correctly stopped at the auth gate; `artifacts/emulator/tiny-03-auth-gate.png` is committed. The smoke script detects the gate, skips the local journey and redacts App Check tokens.
 - **Not claimed:** authenticated client Firestore, app-level AI Logic, Phone Auth SMS, App Check enforcement, Play Integrity, hosted Functions, App Distribution, on-device Gemini Nano.
 
 ## Firebase integration stage (26 November 2026)
@@ -77,8 +77,8 @@
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
 | Android tests | PASS - 34/34 unit | Domain, JSON, sync outcome and durable processor tests |
-| Compose instrumentation | PASS | API 35 Pixel 5 journey in run 45873038243 |
-| Android build | PASS - CI | `tiny-dev-debug-apk` from run 45873038243; Firebase config injected |
+| Compose instrumentation | PASS | API 35 Pixel 5 journey in run 45877792464 |
+| Android build | PASS - CI | `tiny-dev-debug-apk` from run 45877792464; Firebase config injected |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
 | Firestore rules | PASS - 9/9 | Emulator tests incl. class-scoped records and own workspace index |
@@ -188,9 +188,9 @@
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45873038243` (31,097,300 bytes; SHA-256 `11E6332EF6B641169A501A006EE4B42285E8589154E9431E24D4EDC93BAE8F24`).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45877792464` (31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`).
 - GitHub Actions build/test and rules jobs: **success**.
-- Emulator smoke: **correctly stopped at the Firebase phone-auth gate**; the Firebase-enabled build is not a completed local journey. The prior pre-Firebase screenshots remain at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png` and in the demo.
+- Emulator smoke: **correctly stopped at the Firebase phone-auth gate**; `artifacts/emulator/tiny-03-auth-gate.png` is committed. The Firebase-enabled build is not a completed local journey. The prior pre-Firebase screenshots remain at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png` and in the demo.
 - Compose instrumentation: **success** in CI on API 35 Pixel 5 (no Firebase client config injected; local-mode journey).
 - App Distribution: not uploaded; no tester group.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.

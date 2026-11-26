@@ -141,9 +141,9 @@
   - Admin config returns `CONFIGURATION_NOT_FOUND`; public `initializeAuth` returns `BILLING_NOT_ENABLED` on Spark.
   - No users or test phone numbers; no real SMS. Console **Authentication → Get started** is the only immediate blocker.
 - CI:
-  - Run `45873038243` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
-  - The Firebase-enabled emulator smoke correctly showed the phone-auth gate; the prior scripted journey did not run. The script now branches on the gate and skips the journey.
-  - APK artifact: 31,097,300 bytes; SHA-256 `11E6332EF6B641169A501A006EE4B42285E8589154E9431E24D4EDC93BAE8F24`.
+  - Run `45877792464` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
+  - The Firebase-enabled emulator smoke correctly showed the phone-auth gate; `artifacts/emulator/tiny-03-auth-gate.png` was captured and the prior scripted journey did not run. The script branches on the gate, skips the journey, and redacts debug tokens; the new artifact contains no unredacted token.
+  - APK artifact: 31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`.
 - Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted.
 - Next task: operator initializes Auth in the Console; then enable Phone/test numbers and run authenticated client/AI/Firestore/Functions-emulator checks.
 

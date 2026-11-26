@@ -116,15 +116,16 @@ No billing was enabled to bypass this gate.
 
 | Item | Result |
 |---|---|
-| Run | `https://github.com/onyebuchidaniel60/tiny/actions/runs/45873038243` |
+| Run | `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` |
 | Build/test | Success |
 | Backend emulator E2E | 10/10 |
 | Firestore rules | 9/9 |
 | Android unit tests | 34/34 |
 | Compose instrumentation | Success |
 | Firebase-enabled APK | Built with `google-services.json`; Firebase initialized |
-| Emulator smoke | Correctly displayed the phone-auth gate; the prior scripted journey did not run |
-| Security cleanup | The emulator evidence artifact containing the raw debug token was deleted; the token was revoked |
+| Emulator smoke | Correctly displayed the phone-auth gate; `artifacts/emulator/tiny-03-auth-gate.png` captured; the prior scripted journey did not run |
+| Log redaction | The new logcat artifact contains no unredacted App Check debug token |
+| Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked |
 
 ## 8. Not verified / not claimed
 

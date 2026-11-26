@@ -220,7 +220,7 @@ Backend E2E is green (10/10). The live `syncCommands` callable is not deployed a
 
 The build job optionally materializes `app/google-services.json` from the GitHub secret `GOOGLE_SERVICES_JSON_BASE64`. The secret is set. Do not print, commit or attach the decoded file.
 
-Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45873038243` — **success**. The emulator smoke run correctly stopped at the phone-auth gate because Auth is not initialized; its screenshots are not a completed journey. The smoke script now detects that gate, captures `tiny-03-auth-gate.png`, skips the local journey, and redacts the App Check debug token from logcat.
+Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45877792464` — **success**. The emulator smoke run correctly stopped at the phone-auth gate because Auth is not initialized; its screenshots are not a completed journey. The gate screenshot is committed at `artifacts/emulator/tiny-03-auth-gate.png`. The smoke script detects that gate, skips the local journey, and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
 
 ## 8. Verification checklist
 
