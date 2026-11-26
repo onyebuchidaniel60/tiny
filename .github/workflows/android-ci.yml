@@ -220,6 +220,8 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Launch emulator and capture first screen
+        env:
+          TINY_SMOKE_TEST_AUTH: "true"
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 35

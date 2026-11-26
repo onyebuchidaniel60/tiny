@@ -65,6 +65,25 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
   # A Firebase-configured build correctly stops at the phone-auth gate. Do
   # not pretend the local journey ran; capture the gate and stop.
   screenshot "tiny-03-auth-gate"
+  if [ "${TINY_SMOKE_TEST_AUTH:-false}" = "true" ]; then
+    tap_text "Phone number, for example 0803 123 4567" || tap_coord 540 800
+    adb shell input text "08000000001" || true
+    sleep 1
+    tap_text "Send verification code" || tap_coord 540 1050
+    sleep 10
+    dump_ui
+    if grep -q '6-digit code' "$XML" 2>/dev/null; then
+      tap_text "6-digit code" || tap_coord 540 900
+      adb shell input text "123456" || true
+      sleep 1
+      tap_text "Confirm and sign in" || tap_coord 540 1130
+      sleep 15
+    fi
+    screenshot "tiny-04-authenticated"
+    adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
+    echo "Test-phone auth attempted; captured tiny-04-authenticated.png."
+    exit 0
+  fi
   adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
   echo "Firebase auth gate detected; captured tiny-03-auth-gate.png and skipped local journey."
   exit 0
