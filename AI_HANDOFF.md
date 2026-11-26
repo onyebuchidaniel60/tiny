@@ -149,7 +149,7 @@
 - Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
 - `firestore.rules`: default deny; member read baseline; direct writes denied; admin-only guardian/conversation reads. Class-level read restrictions need emulator tests and tightening before pilot.
 - `firebase.json`, `.firebaserc` (`demo-tiny`), `firestore.indexes.json` present.
-- `syncCommands` dispatches `pupil.register`, `class.create`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client has a Firebase Functions transport and WorkManager processor. The project and client config are now present; live callable verification remains unavailable because Functions are emulator-only on Spark and Auth is not initialized.
+- `syncCommands` dispatches `pupil.register`, `class.create`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client has a Firebase Functions transport and WorkManager processor. The project and client config are now present; live callable verification remains unavailable because Functions are emulator-only on Spark.
 
 ### CI / distribution
 
