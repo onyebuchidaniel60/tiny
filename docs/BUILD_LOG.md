@@ -80,7 +80,7 @@
   - Compose instrumentation: **1 passed, 0 failed** on API 35 Pixel 5.
   - GitHub Actions run `45809071551`: **success** for build/test, backend, rules, instrumentation and manual emulator smoke.
 - Manual verification: reviewed demo video frames; identified and fixed the Home zero-classes race before final recapture.
-- Commit hash: `13b7e60`, `7171891`.
+- Commit hash: `13b7e60`, `7171891`, `00318fc`, `2776ba1`, `0082163`.
 - Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551`.
 - Known limitations: Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
 - Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.

@@ -232,7 +232,7 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: final green run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation, manual emulator smoke).
+- CI run: final manual smoke/APK run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation, manual emulator smoke); latest code regression `45814020102` green after the instrumentation Room-wait fix.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
 - APK artifact: `tiny-dev-debug-apk`; 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
 - Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings captured.

@@ -125,7 +125,7 @@
 ### CI / distribution
 
 - `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
-- GitHub Actions run `45809071551` succeeded: build/test, backend emulator E2E, Firestore rules, Compose instrumentation and manual emulator smoke.
+- GitHub Actions run `45809071551` succeeded: build/test, backend emulator E2E, Firestore rules, Compose instrumentation and manual emulator smoke; latest regression run `45814020102` is also green after the Room-data instrumentation wait fix.
 - App Distribution tester/judge access still pending.
 - GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
