@@ -121,15 +121,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            mkdir -p artifacts/emulator
-            adb install -r artifacts/app-dev-debug.apk
-            adb shell am start -n ng.tiny.education.dev.debug/ng.tiny.education.MainActivity
-            sleep 8
-            adb shell screencap -p /sdcard/tiny-language.png
-            adb pull /sdcard/tiny-language.png artifacts/emulator/tiny-language.png
-            adb shell uiautomator dump /sdcard/window.xml || true
-            adb pull /sdcard/window.xml artifacts/emulator/window.xml || true
-            adb logcat -d > artifacts/emulator/logcat.txt || true
+            bash tools/android-emulator-smoke.sh artifacts/app-dev-debug.apk
 
       - name: Upload emulator evidence
         if: always()
