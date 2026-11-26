@@ -4,7 +4,7 @@
 
 Tiny is an offline-first Android teacher-support and parent-engagement platform designed for rural primary schools in Nigeria. Teachers use the Android app on their existing phones. Parents use ordinary SMS; they do not install an app. Pupils have no accounts or student interface.
 
-This repository is an implementation handoff package. It is not authorization to begin production deployment, spend money, send messages to real parents, or process live pupil data. The coding agent must complete `OPERATOR_INTAKE.md` before modifying application code.
+This repository now contains an implementation preview as well as the product handoff. It is not authorization to begin production deployment, spend money, send messages to real parents, or process live pupil data. Current development is mock-only, synthetic-data-only and zero-budget.
 
 ## Source of truth
 
@@ -44,11 +44,11 @@ When documents conflict, `PROJECT_SPEC.md` controls product behavior, `ARCHITECT
 The required input and authorization inventory is in `OPERATOR_INTAKE.md`. At minimum the operator must supply or approve:
 
 - The target repository and access (confirmed: public `main`, direct commit/push authorized).
-- One or more genuine UI reference URLs/images (exact URLs still pending; no generated substitutes without authorization).
+- One or more genuine UI reference URLs/images (confirmed: REF-001 Atelio Studio visual direction and REF-002 PASS structure; reference-only, original Tiny identity).
 - GitHub Actions Ubuntu build/test access (confirmed as the preferred build path; no full Android Studio installation on Windows).
 - A non-production Firebase project and access when Firebase integration tests begin; Spark/NGN 0 means Cloud Functions remain emulator-only.
 - Firebase App Distribution tester/judge access for the protected preview.
-- A general Android test handset (Samsung Galaxy Note 10+) and, separately, a currently supported Gemini Nano device for genuine on-device AI evidence.
+- A general Android test handset (Samsung Galaxy Note 10+, Android 12) and, separately, a currently supported Gemini Nano device for genuine on-device AI evidence. No second physical device is available.
 - Mock SMS adapter approval (confirmed; eSMS sandbox/production remain disabled).
 - Demo output location and redaction requirements (confirmed: `artifacts/demo/`, synthetic data).
 - Credential/configuration register acknowledgement; secrets are delivered securely, never through chat or Git.
@@ -68,15 +68,15 @@ The absence of any critical input must be recorded as a blocker in the consolida
 | App integrity | Firebase App Check + Play Integrity |
 | AI | Firebase AI Logic, Gemini Developer API cloud route + optional on-device SDK |
 | Messaging | eSMS Africa Two-Way SMS; sandbox first |
-| Testing | JUnit, MockK, Turbine, Compose UI tests, Firebase Emulator Suite |
-| CI | GitHub Actions |
-| Preview | Firebase App Distribution or protected APK delivery; no web frontend in MVP |
+| Testing | JUnit, Firebase Emulator Suite, Vitest; Compose UI/instrumentation and physical-device tests pending |
+| CI | GitHub Actions Ubuntu 24.04 |
+| Preview | Firebase App Distribution or protected APK delivery; separate static landing page |
 
 The precise architecture and rationale are in `ARCHITECTURE.md`. Exact versions are pinned during readiness/build after compatibility verification; never use dynamic dependency versions.
 
 ## Start here
 
-The coding agent's first and only initial task is to read the handoff, inspect the repository without modifying it, and complete the consolidated Operator Intake/Readiness Check. It must not start coding until critical inputs and reference images are present and validated. See the `CODING AGENT START POINT` at the end of `TINY_PROJECT_BLUEPRINT.md`.
+Phase 0 intake is complete for the current scope, and Phase 1 implementation is in progress. Read `AI_HANDOFF.md` for exact state, `docs/BUILD_LOG.md` for evidence and `OPERATOR_INTAKE.md` for the remaining Firebase/App Distribution/on-device gates. Do not claim production, live SMS or Gemini Nano completion.
 
 ## Documentation map
 
@@ -96,11 +96,35 @@ The coding agent's first and only initial task is to read the handoff, inspect t
 - Design evidence: `docs/DESIGN_NOTES.md`
 - Build evidence: `docs/BUILD_LOG.md`
 - Demo production: `DEMO_VIDEO_PLAN.md`
+- Landing page: `landing/README.md`
 - Firebase Agent Skills and MCP developer tooling: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`
+
+## Local development
+
+Android (primary path is GitHub Actions; local use requires a JDK 17 + Android SDK command-line installation, not full Android Studio):
+
+```bash
+./gradlew testDevDebugUnitTest assembleDevDebug
+```
+
+Functions:
+
+```bash
+cd functions
+npm ci
+npm run build
+npm test
+```
+
+Landing page:
+
+```powershell
+npx --yes serve landing
+```
 
 ## Current build status
 
-**Planning/handoff only. No application code has been implemented.** Phase 0 intake is partially confirmed; UI reference links are still pending. Android builds use GitHub Actions Ubuntu runners. Firebase project access is a later integration gate, not a Phase 1 scaffolding blocker. Production release is not authorized by default.
+**Phase 1 preview implemented.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules scaffold, CI workflow and responsive landing page are present. Local verification: **21 Android unit tests passed**, **19 Functions tests passed**, **lint passed**, debug APK **27,894,591 bytes**. GitHub Actions/App Distribution/Emulator runtime and a physical device run are still pending. Native translations are draft. Production release is not authorized.
 
 
 ## Firebase development-agent tooling

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Draft interface strings; native review pending. Missing strings fall back to English. -->
+    <string name="language_title">Zaɓi harshenka</string>
+    <string name="language_hausa">Hausa</string>
+    <string name="continue_label">Ci gaba</string>
+    <string name="nav_home">Gida</string>
+    <string name="nav_classes">Azuzuwa</string>
+    <string name="nav_lessons">Darussa</string>
+    <string name="nav_messages">Saƙonni</string>
+    <string name="nav_settings">Saiti</string>
+    <string name="present">Ya halarta</string>
+    <string name="absent">Ba ya nan</string>
+    <string name="late">Ya makara</string>
+    <string name="save">Ajiye</string>
+    <string name="cancel">Soke</string>
+    <string name="settings_title">Saiti</string>
+</resources>

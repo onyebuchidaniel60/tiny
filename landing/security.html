@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Security overview — Tiny</title>
+  <meta name="description" content="A plain-language overview of Tiny's security design, preview boundaries and remaining release gates.">
+  <meta name="theme-color" content="#F7F0E1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html" aria-label="Tiny home">
+        <span class="brand-mark" aria-hidden="true">T<span class="brand-dot"></span></span>
+        <span class="brand-copy"><strong>Tiny</strong><small>Big impact. Small requirements.</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html#approach">Our approach</a>
+        <a href="index.html#status">Build status</a>
+        <a href="index.html">Back to Tiny</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="shell legal-wrap">
+    <p class="eyebrow">Trust · Security overview</p>
+    <h1 class="legal-title">Security is a<br><em>release gate.</em></h1>
+    <p class="legal-lede">Tiny handles children’s educational records and guardian contact data. The design is privacy-first and closed by default, but this page is an engineering overview, not a certification or a claim that production security review is complete.</p>
+
+    <article class="legal-card">
+      <h2>Current preview controls</h2>
+      <ul>
+        <li>Encrypted local Room database using SQLCipher; the passphrase is wrapped by an Android Keystore key.</li>
+        <li>No real pupil or guardian data; deterministic synthetic demo records only.</li>
+        <li>Mock SMS adapter with no provider calls and no spend.</li>
+        <li>No production Firebase project, no live cloud data, no deployed functions.</li>
+        <li>No parent app, parent login or pupil account.</li>
+        <li>All content on this page is static and collects no personal data.</li>
+      </ul>
+
+      <h2>Designed controls for the connected product</h2>
+      <ul>
+        <li>Firebase Auth and App Check on callable commands; Firestore rules deny direct client writes to authoritative records.</li>
+        <li>Workspace and class scope derived from server-side membership, never from client-supplied IDs.</li>
+        <li>Idempotent sync commands, optimistic versions, immutable attendance submissions and append-only corrections.</li>
+        <li>Timing-safe HMAC verification and replay/event dedupe for provider webhooks.</li>
+        <li>No pupil PII in AI prompts; output validation and teacher review before parent sharing.</li>
+        <li>Secrets in Secret Manager/CI secrets, never in Git, the APK or logs.</li>
+      </ul>
+
+      <h2>What is not yet complete</h2>
+      <p>A non-production Firebase project and access, App Distribution tester access, a supported on-device Gemini Nano device, native-language review, DPIA/legal review, provider KYC, production SMS budget and a full penetration/security release review remain external gates.</p>
+
+      <h2>Report a concern</h2>
+      <p>Use the <a href="https://github.com/onyebuchidaniel60/tiny/issues" rel="noopener">public issue tracker</a> for non-sensitive concerns. Do not include real pupil data, phone numbers, secrets or exploit details in a public issue.</p>
+    </article>
+
+    <p class="legal-footnote">Last updated: 26 November 2026 · Engineering overview, not a security certification.</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-bottom">
+      <p>© <span id="year">2026</span> Tiny. Public preview. No live parent SMS in this build.</p>
+      <p><a href="index.html">Return to the Tiny landing page</a></p>
+    </div>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

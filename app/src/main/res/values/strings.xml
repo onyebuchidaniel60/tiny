@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Tiny</string>
+    <string name="app_tagline">Big impact. Small requirements.</string>
+
+    <string name="preview_build">Preview build</string>
+    <string name="preview_notice">This is a local preview. Cloud sync, live SMS and production data are not connected.</string>
+    <string name="preview_data_notice">Sample data only. No real pupil or guardian information is stored.</string>
+    <string name="mock_mode">Mock mode</string>
+    <string name="mock_sync_notice">Sync is simulated on this device. No cloud connection is active.</string>
+    <string name="mock_inbox_notice">Sample conversations. Replies are stored locally and simulated.</string>
+
+    <string name="language_title">Choose your language</string>
+    <string name="language_subtitle">Tiny will use this language for the teacher interface. You can change it later in Settings.</string>
+    <string name="language_english">English</string>
+    <string name="language_hausa">Hausa</string>
+    <string name="language_yoruba">Yoruba</string>
+    <string name="language_igbo">Igbo</string>
+    <string name="language_draft_note">Hausa, Yoruba and Igbo interface strings are draft and pending native review. Missing strings fall back to English.</string>
+    <string name="continue_label">Continue</string>
+    <string name="get_started">Get started</string>
+
+    <string name="welcome_title">Teaching tools that fit the phone you already have.</string>
+    <string name="welcome_body">Prepare lessons, take attendance and keep parents informed — even when the network does not cooperate.</string>
+    <string name="welcome_cta">Explore the preview</string>
+    <string name="welcome_offline">Offline-first</string>
+    <string name="welcome_sms">Parents use SMS</string>
+    <string name="welcome_languages">Four teacher languages</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_classes">Classes</string>
+    <string name="nav_lessons">Lessons</string>
+    <string name="nav_messages">Messages</string>
+    <string name="nav_settings">Settings</string>
+
+    <string name="home_greeting">Good morning, %1$s</string>
+    <string name="home_today">Today at a glance</string>
+    <string name="home_no_attendance">Attendance not started</string>
+    <string name="home_start_attendance">Start attendance</string>
+    <string name="home_pending_sync">Waiting to sync</string>
+    <string name="home_saved_local">Saved on this phone</string>
+    <string name="home_mock_sync">Mock sync complete</string>
+    <string name="home_messages">Parent messages</string>
+    <string name="home_view_messages">Open inbox</string>
+    <string name="home_quick_actions">Quick actions</string>
+    <string name="home_lesson_plan">Open a lesson plan</string>
+    <string name="home_progress">Record progress</string>
+    <string name="home_sample_data">Sample workspace</string>
+    <string name="home_classes_summary">%1$d classes · %2$d pupils</string>
+    <string name="home_absence_note">Only absences trigger an immediate parent message after server acceptance.</string>
+
+    <string name="classes_title">Classes</string>
+    <string name="classes_subtitle">Your assigned classes and pupil records.</string>
+    <string name="class_count">%1$d pupils</string>
+    <string name="mark_attendance">Mark attendance</string>
+    <string name="view_class">View class</string>
+    <string name="class_detail_title">Class details</string>
+    <string name="roster">Roster</string>
+    <string name="add_pupil_placeholder">Pupil registration is scaffolded for the next functional phase.</string>
+    <string name="class_not_found">Class not found.</string>
+
+    <string name="attendance_title">Attendance</string>
+    <string name="attendance_subtitle">Mark every active pupil, then review before submitting.</string>
+    <string name="present">Present</string>
+    <string name="absent">Absent</string>
+    <string name="late">Late</string>
+    <string name="unmarked">Unmarked</string>
+    <string name="submit_attendance">Submit attendance</string>
+    <string name="attendance_incomplete">%1$d pupils still need a status.</string>
+    <string name="attendance_saved">Attendance saved on this phone.</string>
+    <string name="attendance_submitted">Attendance submitted locally and queued.</string>
+    <string name="attendance_review">Review register</string>
+    <string name="attendance_mark_all_present">Mark all present</string>
+    <string name="attendance_summary">%1$d present · %2$d absent · %3$d late</string>
+    <string name="attendance_absence_only_note">Only absent pupils create an immediate notification job. Present and late do not.</string>
+    <string name="attendance_already_submitted">This session is already submitted. Use correction flow in a later phase.</string>
+
+    <string name="lessons_title">Lessons</string>
+    <string name="lessons_subtitle">Offline 5E plans and practical teaching resources.</string>
+    <string name="lesson_plan">Lesson plan</string>
+    <string name="lesson_library">Teaching library</string>
+    <string name="lesson_5e">5E lesson structure</string>
+    <string name="objective_label">Learning objective</string>
+    <string name="engage">Engage</string>
+    <string name="explore">Explore</string>
+    <string name="explain">Explain</string>
+    <string name="elaborate">Elaborate</string>
+    <string name="evaluate">Evaluate</string>
+    <string name="materials">Materials</string>
+    <string name="prior_knowledge">Prior knowledge</string>
+    <string name="duration_minutes">%1$d minutes</string>
+    <string name="save_lesson">Save lesson</string>
+    <string name="lesson_saved">Lesson saved locally.</string>
+    <string name="lesson_not_found">Lesson not found.</string>
+    <string name="teaching_tip_title">Teaching tip</string>
+    <string name="teaching_tip_body">Ask one quiet pupil to explain the idea in their own words. Listen for the part that is still fuzzy, then re-teach only that part.</string>
+
+    <string name="messages_title">Messages</string>
+    <string name="messages_subtitle">Parent conversations through the mock SMS adapter.</string>
+    <string name="no_messages">No conversations yet.</string>
+    <string name="reply">Reply</string>
+    <string name="send_reply">Send reply</string>
+    <string name="reply_hint">Write a short, clear reply</string>
+    <string name="message_queued">Reply queued through the mock adapter.</string>
+    <string name="conversation_title">Conversation</string>
+    <string name="conversation_not_found">Conversation not found.</string>
+    <string name="message_status_queued">Queued</string>
+    <string name="message_status_accepted">Accepted by mock provider</string>
+    <string name="message_status_delivered">Delivered</string>
+    <string name="message_status_unknown">Unknown</string>
+    <string name="parent_label">Parent</string>
+    <string name="teacher_label">Teacher</string>
+
+    <string name="progress_title">Pupil progress</string>
+    <string name="progress_subtitle">A short instructional observation, reviewed before sharing.</string>
+    <string name="doing_well">Doing well</string>
+    <string name="developing">Developing</string>
+    <string name="needs_support">Needs support</string>
+    <string name="not_assessed">Not assessed</string>
+    <string name="teacher_note">Factual note</string>
+    <string name="home_activity">Practical home activity</string>
+    <string name="save_draft">Save draft</string>
+    <string name="approve_progress">Approve for parent sharing</string>
+    <string name="approved">Approved</string>
+    <string name="progress_saved">Progress draft saved locally.</string>
+    <string name="progress_approved">Progress approved for the next digest.</string>
+    <string name="approval_reset_notice">Editing an approved entry creates a new revision and requires approval again.</string>
+    <string name="progress_not_assessed_note">Not assessed means no observation was recorded. It is not a negative judgment.</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="language_setting">Teacher language</string>
+    <string name="workspace_setting">Workspace</string>
+    <string name="sync_setting">Sync and data</string>
+    <string name="wifi_only">Sync on Wi-Fi only</string>
+    <string name="wifi_only_summary">Automatic background sync waits for unmetered Wi-Fi. Manual sync can request a one-time exception.</string>
+    <string name="privacy_setting">Privacy and data</string>
+    <string name="help_setting">Help and about</string>
+    <string name="about_setting">About Tiny</string>
+    <string name="sign_out">Sign out of preview</string>
+    <string name="sign_out_confirm">This clears the local preview session. Sample data remains on this device.</string>
+    <string name="settings_preview_note">Preview build: authentication, cloud sync and live SMS are not connected.</string>
+    <string name="version_label">Version %1$s</string>
+
+    <string name="offline">Offline</string>
+    <string name="online">Online</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_pending">Sync pending</string>
+    <string name="synced">Synced</string>
+    <string name="needs_attention">Needs attention</string>
+    <string name="conflict">Conflict</string>
+    <string name="local_only">Local only</string>
+    <string name="saved_on_phone">Saved on this phone</string>
+    <string name="sync_center_title">Sync center</string>
+    <string name="sync_center_empty">No pending local commands.</string>
+    <string name="sync_center_pending">%1$d local commands waiting.</string>
+    <string name="sync_center_mock_note">This preview uses a mock sync engine. No data leaves this device.</string>
+
+    <string name="close">Close</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="retry">Retry</string>
+    <string name="loading">Loading…</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="empty_generic">Nothing here yet.</string>
+    <string name="access_denied">You do not have access to this record.</string>
+    <string name="not_found">Record not found.</string>
+    <string name="no_network">No network connection.</string>
+    <string name="data_saver">Data saver</string>
+
+    <string name="cd_app_logo">Tiny app logo</string>
+    <string name="cd_settings">Open settings</string>
+    <string name="cd_back">Go back</string>
+    <string name="cd_send_reply">Send reply</string>
+    <string name="cd_status_offline">Offline status</string>
+    <string name="cd_status_pending">Pending sync status</string>
+    <string name="cd_status_synced">Synced status</string>
+
+    <string name="teacher_demo_name">Ms. Bello</string>
+    <string name="school_demo_name">Kofar Demo Primary</string>
+    <string name="school_code_label">School code %1$s</string>
+    <string name="sample_data_badge">SAMPLE</string>
+</resources>

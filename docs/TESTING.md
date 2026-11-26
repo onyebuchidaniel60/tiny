@@ -104,3 +104,12 @@ Targets in `PROJECT_SPEC.md` are proposed engineering targets, not measured clai
 ## 5. Evidence retention
 
 Store test reports, screenshots, device/API information, build hashes, emulator logs with PII redacted and sandbox provider event IDs in `artifacts/test-evidence/`. Link evidence from `AI_HANDOFF.md` and `docs/BUILD_LOG.md`.
+
+## 6. Phase 1 evidence (26 November 2026)
+
+- Android unit tests: **21 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest and sync rules.
+- Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
+- Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
+- Android debug build: `assembleDevDebug` passed; APK 27,894,591 bytes.
+- Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
+- Not yet run: Compose instrumentation, Firebase Emulator Suite runtime/rules tests, GitHub Actions, physical-device install, App Distribution.

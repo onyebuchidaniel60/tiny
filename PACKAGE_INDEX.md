@@ -1,7 +1,7 @@
 # Tiny — Project Handoff Package Index
 
 **Package status:** Complete planning/handoff documentation; no application code included.  
-**Document count:** 28 Markdown files (including the Firebase Agent Skills/MCP guide, credential register and CI guide).
+**Document count:** 29 Markdown files (including the Firebase Agent Skills/MCP guide, credential register and CI guide).
 
 **Blueprint date:** 25 November 2026  
 **Product:** Tiny — Big impact. Small requirements. Accessible everywhere.
@@ -52,8 +52,9 @@
 | `docs/DEPLOYMENT.md` | Protected native APK preview, staging, CI, release gates and rollback |
 | `docs/OPERATOR_GUIDE.md` | Operator responsibilities, workspace support, messaging operations and incident handling |
 | `docs/TROUBLESHOOTING.md` | Common local, Firebase, sync, AI and messaging failures |
-| `docs/DESIGN_NOTES.md` | Pending reference-image inspection and future visual decisions |
+| `docs/DESIGN_NOTES.md` | Reference-derived visual system, screen map, accessibility and design decisions |
 | `docs/BUILD_LOG.md` | Implementation phase and verification evidence log |
+| `landing/README.md` | Static landing-page structure, local preview/deployment and content rules |
 | `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md` | Official Firebase Agent Skills selection, OpenCode installation, Firebase MCP configuration, permissions and usage guardrails |
 
 ## Confirmed product baseline
@@ -75,7 +76,7 @@
 
 ## Readiness blockers
 
-The package is ready for an implementation-agent handoff, but **Phase 0 is not complete**. Git commit/push to `main` is authorized and the repository remains public. UI reference URLs are still pending. Android builds use GitHub Actions Ubuntu runners, not a local Android Studio toolchain. Firebase project creation/access is a later integration gate and does not block independent Phase 1 scaffolding, Firebase skills installation or Emulator Suite setup. The supplied Samsung Galaxy Note 10+ is a general testing device only, not a Gemini Nano-supported device; on-device AI evidence remains a separate blocked acceptance gate. Firebase App Distribution is the preferred preview route, with tester/judge access still to be configured. eSMS remains mock-only. Cloud/AI/SMS/third-party budgets are NGN 0; production deployment, Blaze, paid hosting and live SMS are not authorized.
+Phase 0 intake is complete for the current scope and Phase 1 implementation is in progress. References are supplied and recorded. The Android shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, Functions/rules scaffold, CI workflow and landing page exist. Git commit/push to public `main` is authorized. Android builds use GitHub Actions Ubuntu runners; no full Android Studio toolchain is required on Windows. Firebase project creation/App Distribution access remains a later integration gate. The Samsung Galaxy Note 10+ (Android 12) is a general testing device only, not a Gemini Nano-supported device; on-device AI evidence remains a separate blocked acceptance gate. eSMS is mock-only. Cloud/AI/SMS/third-party budgets are NGN 0; production deployment, Blaze, paid hosting and live SMS are not authorized.
 
 ## Integrity of supplied methodology
 

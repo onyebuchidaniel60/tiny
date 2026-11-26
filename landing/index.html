@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tiny — Big impact. Small requirements.</title>
+  <meta name="description" content="Tiny is an offline-first Android teacher-support and parent-engagement product for rural primary schools. Teachers plan lessons, take attendance and keep parents informed through ordinary SMS.">
+  <meta name="theme-color" content="#F7F0E1">
+  <link rel="canonical" href="https://onyebuchidaniel60.github.io/tiny/">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div class="announcement" role="status">
+    <span class="announcement-dot" aria-hidden="true"></span>
+    Tiny is in active development. This page describes planned MVP capabilities and the current preview shell. No adoption, customer or impact statistics are claimed.
+  </div>
+
+  <header class="site-header" id="top">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="Tiny home">
+        <span class="brand-mark" aria-hidden="true">T<span class="brand-dot"></span></span>
+        <span class="brand-copy">
+          <strong>Tiny</strong>
+          <small>Big impact. Small requirements.</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-lines" aria-hidden="true"></span>
+        <span class="visually-hidden">Open navigation</span>
+      </button>
+
+      <nav class="site-nav" id="site-nav" aria-label="Primary">
+        <a href="#problem">The problem</a>
+        <a href="#approach">Our approach</a>
+        <a href="#teachers">For teachers</a>
+        <a href="#parents">For parents</a>
+        <a href="#walkthrough">Walkthrough</a>
+        <a class="nav-cta" href="#status">Build status</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span> Offline-first teacher tools · SMS for parents</p>
+        <h1>Big impact.<br><em>Small requirements.</em></h1>
+        <p class="hero-lede">Tiny helps teachers in rural primary schools plan lessons, take attendance and keep parents informed — on the Android phone they already have, even when the network does not cooperate.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#walkthrough">Explore the product <span aria-hidden="true">→</span></a>
+          <a class="button button-quiet" href="#status">See what is built</a>
+        </div>
+        <ul class="hero-facts" aria-label="Product principles">
+          <li><span class="tick" aria-hidden="true">✓</span> Works offline after first setup</li>
+          <li><span class="tick" aria-hidden="true">✓</span> Parents use ordinary SMS</li>
+          <li><span class="tick" aria-hidden="true">✓</span> English, Hausa, Yoruba and Igbo</li>
+        </ul>
+      </div>
+
+      <div class="hero-art" aria-label="Tiny interface illustration">
+        <div class="doodle doodle-sun" aria-hidden="true"></div>
+        <div class="doodle doodle-squiggle" aria-hidden="true"></div>
+        <div class="phone phone-hero">
+          <div class="phone-top"><span class="phone-time">8:12</span><span class="phone-pill">PREVIEW</span></div>
+          <div class="phone-screen">
+            <div class="mini-heading">
+              <span class="mini-avatar">MB</span>
+              <span><strong>Good morning, Ms. Bello</strong><small>Friday, 27 November</small></span>
+            </div>
+            <div class="mini-card mini-card-forest">
+              <span class="mini-label">Today</span>
+              <strong>P4 Blue</strong>
+              <span>4 pupils · attendance not started</span>
+              <span class="mini-button">Start attendance</span>
+            </div>
+            <div class="mini-row">
+              <div class="mini-stat"><strong>2</strong><span>classes</span></div>
+              <div class="mini-stat"><strong>6</strong><span>pupils</span></div>
+              <div class="mini-stat"><strong>1</strong><span>message</span></div>
+            </div>
+            <div class="mini-card mini-card-paper">
+              <span class="mini-label">Saved on this phone</span>
+              <strong>Water and its uses</strong>
+              <span>5E lesson · 40 minutes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-note note-one">
+          <span class="note-kicker">Parent SMS</span>
+          <p>“Amina is absent today. Reply 1 A7KD to explain.”</p>
+          <span class="note-meta">Mock adapter · no live SMS</span>
+        </div>
+        <div class="floating-note note-two">
+          <span class="note-kicker">Teacher approval</span>
+          <p>Progress notes stay private until a teacher approves them.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="strip" aria-label="Designed around real constraints">
+      <div class="shell strip-inner">
+        <span class="strip-lead">Designed around</span>
+        <span class="strip-chip">Low-end Android phones</span>
+        <span class="strip-chip">Intermittent data</span>
+        <span class="strip-chip">Shared family handsets</span>
+        <span class="strip-chip">Teacher time</span>
+        <span class="strip-chip">Parent literacy</span>
+      </div>
+    </section>
+
+    <section class="section shell" id="problem">
+      <div class="section-heading">
+        <p class="eyebrow">01 · The problem</p>
+        <h2>The gap is not ambition.<br><em>It is the hand-off.</em></h2>
+        <p class="section-lede">Teachers are doing the work. Parents want to be involved. The tools between them often assume reliable internet, a computer lab or a smartphone in every home.</p>
+      </div>
+
+      <div class="problem-grid">
+        <article class="problem-card">
+          <span class="card-number">01</span>
+          <h3>Planning time disappears</h3>
+          <p>Lesson preparation competes with marking, attendance and a full classroom. Practical, curriculum-aligned planning support is hard to reach offline.</p>
+        </article>
+        <article class="problem-card">
+          <span class="card-number">02</span>
+          <h3>Attendance becomes admin</h3>
+          <p>Paper registers are familiar, but following up on absences and keeping a reliable record takes time the teacher does not have.</p>
+        </article>
+        <article class="problem-card">
+          <span class="card-number">03</span>
+          <h3>Parents are far away</h3>
+          <p>Many guardians use basic phones, have limited data or work away from home. An app-only parent channel would exclude the people it is meant to reach.</p>
+        </article>
+        <article class="problem-card">
+          <span class="card-number">04</span>
+          <h3>The network is not a guarantee</h3>
+          <p>Connectivity can disappear mid-register. A useful classroom tool must keep working locally and make sync state honest.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-tinted" id="approach">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">02 · Our approach</p>
+          <h2>Small enough to fit.<br><em>Serious enough to matter.</em></h2>
+          <p class="section-lede">Tiny is built around three practical ideas: keep the teacher’s core work local, meet parents on SMS, and never let AI or connectivity gate the classroom.</p>
+        </div>
+
+        <div class="approach-grid">
+          <article class="approach-card">
+            <div class="approach-icon" aria-hidden="true">⌂</div>
+            <h3>Local-first by default</h3>
+            <p>Room plus SQLCipher is the teacher’s source of truth. Lessons, attendance, pupil records and queued work remain usable offline. Nothing is labelled “synced” before a server acknowledges it.</p>
+          </article>
+          <article class="approach-card">
+            <div class="approach-icon" aria-hidden="true">✉</div>
+            <h3>SMS is the parent bridge</h3>
+            <p>No parent app. No parent login. A shared Tiny keyword and school code route parent messages, while absence alerts and weekly digests stay short, plain and localised.</p>
+          </article>
+          <article class="approach-card">
+            <div class="approach-icon" aria-hidden="true">✓</div>
+            <h3>The teacher stays in charge</h3>
+            <p>Progress is teacher-recorded instructional feedback, not AI grading. AI may draft a suggestion, but a teacher reviews and approves anything that reaches a parent.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="teachers">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">03 · For teachers</p>
+          <h2>A calmer classroom<br><em>workflow.</em></h2>
+        </div>
+        <p class="section-lede">The app is designed for quick, thumb-friendly use on an existing Android phone — with clearly labelled preview functionality until each flow is verified.</p>
+      </div>
+
+      <div class="feature-grid">
+        <article class="feature-card feature-wide">
+          <div class="feature-top"><span class="feature-badge">Planned MVP</span><span class="feature-icon" aria-hidden="true">▤</span></div>
+          <h3>Offline attendance</h3>
+          <p>Mark every active pupil present, absent or late. Save locally, submit explicitly and see pending sync honestly. Present and late never trigger an immediate parent SMS.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-top"><span class="feature-badge">Preview shell</span><span class="feature-icon" aria-hidden="true">✦</span></div>
+          <h3>5E lesson planning</h3>
+          <p>Engage, Explore, Explain, Elaborate, Evaluate. Save and revisit a practical lesson scaffold without a network connection.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-top"><span class="feature-badge">Planned MVP</span><span class="feature-icon" aria-hidden="true">◌</span></div>
+          <h3>Pupil progress</h3>
+          <p>Record a short subject-level observation, an indicator and an optional home activity. Edit after approval creates a new revision.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-top"><span class="feature-badge">Planned MVP</span><span class="feature-icon" aria-hidden="true">◎</span></div>
+          <h3>Multiple classes</h3>
+          <p>One teacher can manage several classes and subjects, with class-scoped access and a workspace switcher for multiple memberships.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-top"><span class="feature-badge">Planned MVP</span><span class="feature-icon" aria-hidden="true">↺</span></div>
+          <h3>Durable sync</h3>
+          <p>Domain changes and outbox commands are written atomically. Retryable failures back off; permanent failures surface as needs attention.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-top"><span class="feature-badge">Optional, device-gated</span><span class="feature-icon" aria-hidden="true">✧</span></div>
+          <h3>Hybrid AI, never a gate</h3>
+          <p>Short English on-device suggestions where supported, cloud assistance for richer or multilingual drafts, and a curated offline fallback. No pupil PII in prompts.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="parents">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">04 · For parents</p>
+          <h2>One ordinary phone.<br><em>A clearer view.</em></h2>
+          <p class="section-lede">Parents do not install Tiny. They receive short SMS updates and can reply from the handset they already use. Conversations are asynchronous, not live chat.</p>
+        </div>
+
+        <div class="parent-grid">
+          <article class="parent-card">
+            <span class="parent-kicker">Absence only</span>
+            <h3>Immediate absence alerts</h3>
+            <p>After a submitted register is accepted, Tiny creates an alert only for absent pupils and eligible guardians. A shared phone endpoint is deduplicated.</p>
+          </article>
+          <article class="parent-card">
+            <span class="parent-kicker">Weekly</span>
+            <h3>Approved digest</h3>
+            <p>Attendance and teacher-approved progress in a short weekly message. Missing data is never presented as poor performance.</p>
+          </article>
+          <article class="parent-card">
+            <span class="parent-kicker">Two-way</span>
+            <h3>Parent-initiated SMS</h3>
+            <p>Parents can explain an absence or ask a question using the Tiny keyword and school code. Ambiguous senders receive no child-specific information.</p>
+          </article>
+          <article class="parent-card">
+            <span class="parent-kicker">Consent</span>
+            <h3>Verified, opted-in contacts</h3>
+            <p>A one-time in-person code proves possession of the handset and records opt-in. The school still verifies the guardian relationship through its normal process.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="how">
+      <div class="section-heading">
+        <p class="eyebrow">05 · How it works</p>
+        <h2>From roll call to<br><em>a useful conversation.</em></h2>
+      </div>
+
+      <ol class="steps">
+        <li class="step">
+          <span class="step-number">01</span>
+          <div><h3>Set up once</h3><p>A teacher signs in, creates or joins a workspace and downloads the small set of class and lesson data needed offline.</p></div>
+        </li>
+        <li class="step">
+          <span class="step-number">02</span>
+          <div><h3>Teach without a signal</h3><p>Open a saved 5E plan, mark the register and record a short observation. Every save is local and durable.</p></div>
+        </li>
+        <li class="step">
+          <span class="step-number">03</span>
+          <div><h3>Sync honestly</h3><p>When connectivity returns, queued commands are retried with idempotency keys. The UI distinguishes pending, synced, conflict and needs attention.</p></div>
+        </li>
+        <li class="step">
+          <span class="step-number">04</span>
+          <div><h3>Reach the right guardian</h3><p>Only verified, consented endpoints receive child-specific messages. One endpoint can serve siblings without leaking unrelated records.</p></div>
+        </li>
+        <li class="step">
+          <span class="step-number">05</span>
+          <div><h3>Close the loop</h3><p>A parent reply reaches the authorised teacher inbox. The teacher responds from Tiny without exposing a personal number.</p></div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section section-tinted" id="constraints">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">06 · Built for the real world</p>
+          <h2>Offline-first is a<br><em>design constraint.</em></h2>
+          <p class="section-lede">Low requirements are the product, not a downgrade. The Android app is designed for Android 8.0+ and inexpensive phones, with a small package, modest storage and no mandatory media downloads.</p>
+        </div>
+
+        <div class="constraint-grid">
+          <article class="constraint-card">
+            <span class="constraint-label">Offline</span>
+            <h3>Useful without a signal</h3>
+            <p>Local lesson plans, attendance drafts, pupil records and queued work remain available after the first authenticated sync.</p>
+          </article>
+          <article class="constraint-card">
+            <span class="constraint-label">Low bandwidth</span>
+            <h3>Small, deliberate data</h3>
+            <p>No mandatory video or image downloads. Sync batches are bounded. Background sync respects a Wi-Fi-only preference.</p>
+          </article>
+          <article class="constraint-card">
+            <span class="constraint-label">Multilingual</span>
+            <h3>Language is a choice</h3>
+            <p>Teacher UI: English, Hausa, Yoruba and Igbo. Parent SMS: those four plus Nigerian Pidgin, with human-reviewed templates.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="walkthrough">
+      <div class="section-heading split-heading">
+        <div>
+          <p class="eyebrow">07 · Product walkthrough</p>
+          <h2>Four small screens.<br><em>One connected day.</em></h2>
+        </div>
+        <p class="section-lede">These are original interface illustrations based on the current preview shell. They are not screenshots of a finished production app, and they use synthetic data only.</p>
+      </div>
+
+      <div class="walkthrough-grid">
+        <article class="walk-card">
+          <div class="walk-phone">
+            <div class="walk-top"><span>8:12</span><span class="walk-pill">PREVIEW</span></div>
+            <div class="walk-screen">
+              <span class="walk-kicker">Home</span>
+              <strong>Today at a glance</strong>
+              <div class="walk-line"></div>
+              <div class="walk-line short"></div>
+              <div class="walk-block forest"><span>P4 Blue</span><strong>Attendance not started</strong><em>Start attendance</em></div>
+              <div class="walk-block paper"><span>P5 Gold</span><strong>Lesson saved locally</strong></div>
+            </div>
+          </div>
+          <h3>Home</h3>
+          <p>Today’s classes, pending work and the next useful action.</p>
+        </article>
+
+        <article class="walk-card">
+          <div class="walk-phone">
+            <div class="walk-top"><span>8:18</span><span class="walk-pill">LOCAL</span></div>
+            <div class="walk-screen">
+              <span class="walk-kicker">Attendance</span>
+              <strong>P4 Blue · 4 pupils</strong>
+              <div class="walk-pupil"><span class="dot-avatar">AB</span><span>Amina Bello</span><em class="chip-present">Present</em></div>
+              <div class="walk-pupil"><span class="dot-avatar">MI</span><span>Musa Ibrahim</span><em class="chip-absent">Absent</em></div>
+              <div class="walk-pupil"><span class="dot-avatar">GA</span><span>Grace Adamu</span><em class="chip-late">Late</em></div>
+              <div class="walk-block forest"><strong>Submit attendance</strong><span>Saved on this phone first</span></div>
+            </div>
+          </div>
+          <h3>Attendance</h3>
+          <p>Low-tap register with an explicit review and submit step.</p>
+        </article>
+
+        <article class="walk-card">
+          <div class="walk-phone">
+            <div class="walk-top"><span>8:26</span><span class="walk-pill">OFFLINE</span></div>
+            <div class="walk-screen">
+              <span class="walk-kicker">Lesson</span>
+              <strong>Water and its uses</strong>
+              <div class="walk-tags"><span>P4</span><span>Basic Science</span><span>40 min</span></div>
+              <div class="walk-block paper"><span>ENGAGE</span><strong>Where did this water come from?</strong></div>
+              <div class="walk-block paper"><span>EXPLORE</span><strong>Sort sources and uses</strong></div>
+              <div class="walk-block paper"><span>EVALUATE</span><strong>Name two sources and two uses</strong></div>
+            </div>
+          </div>
+          <h3>Lessons</h3>
+          <p>Offline 5E scaffolding and a practical teaching library.</p>
+        </article>
+
+        <article class="walk-card">
+          <div class="walk-phone">
+            <div class="walk-top"><span>8:41</span><span class="walk-pill">MOCK</span></div>
+            <div class="walk-screen">
+              <span class="walk-kicker">Messages</span>
+              <strong>Amina’s family</strong>
+              <div class="bubble parent">Good morning. Amina is unwell today.</div>
+              <div class="bubble teacher">Thank you for letting us know. We will keep today’s work for her.</div>
+              <div class="walk-block paper"><span>STATUS</span><strong>Queued through mock adapter</strong><em>No live SMS</em></div>
+            </div>
+          </div>
+          <h3>Messages</h3>
+          <p>Parent-initiated SMS and teacher replies without a personal number.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section shell" id="impact">
+      <div class="impact-panel">
+        <div>
+          <p class="eyebrow">08 · Potential impact</p>
+          <h2>What better could<br><em>look like.</em></h2>
+          <p class="section-lede">Tiny is designed to reduce the distance between the classroom and the home. These are qualitative outcomes, not measured claims.</p>
+        </div>
+        <ul class="impact-list">
+          <li><span class="tick" aria-hidden="true">✓</span><div><strong>Less admin drag</strong><p>Attendance and parent follow-up fit into the teaching day.</p></div></li>
+          <li><span class="tick" aria-hidden="true">✓</span><div><strong>More useful parent contact</strong><p>Short, specific messages in a language the guardian chose.</p></div></li>
+          <li><span class="tick" aria-hidden="true">✓</span><div><strong>Continuity when signal drops</strong><p>Core records survive the classroom’s real connectivity.</p></div></li>
+          <li><span class="tick" aria-hidden="true">✓</span><div><strong>Teacher professional judgment</strong><p>Observations remain authored, reviewed and approved by a teacher.</p></div></li>
+        </ul>
+      </div>
+      <p class="impact-caveat">No pilot results, testimonials, school endorsements, adoption numbers or impact statistics are claimed on this page. Tiny is an early-stage build.</p>
+    </section>
+
+    <section class="section section-tinted" id="status">
+      <div class="shell">
+        <div class="section-heading">
+          <p class="eyebrow">09 · Build status</p>
+          <h2>What is real today<br><em>and what is gated.</em></h2>
+          <p class="section-lede">This page is part of the public submission. It distinguishes the working preview from features that still depend on external access, credentials or physical hardware.</p>
+        </div>
+
+        <div class="status-grid">
+          <div class="status-column">
+            <h3><span class="status-dot done" aria-hidden="true"></span> Implemented or scaffolded in this repository</h3>
+            <ul class="status-list">
+              <li>Native Android shell with Home, Classes, Lessons, Messages and Settings navigation.</li>
+              <li>Room database encrypted with SQLCipher and a Keystore-wrapped key.</li>
+              <li>Local attendance draft/submit, progress draft/approval and mock parent replies.</li>
+              <li>Deterministic synthetic demo data and a mock SMS adapter.</li>
+              <li>Responsive public landing page with original visual identity.</li>
+              <li>GitHub Actions Android build/test workflow and unit tests.</li>
+            </ul>
+          </div>
+          <div class="status-column">
+            <h3><span class="status-dot gate" aria-hidden="true"></span> External gates and not yet claimed</h3>
+            <ul class="status-list">
+              <li>Firebase project, Auth, Firestore and App Check integration testing.</li>
+              <li>Hosted backend and real SMS provider calls — zero budget and sandbox/mock only.</li>
+              <li>Firebase App Distribution tester/judge access and a hosted preview build.</li>
+              <li>Genuine Gemini Nano on-device inference on supported physical hardware.</li>
+              <li>Native-speaker review of all Hausa, Yoruba and Igbo strings and templates.</li>
+              <li>Real-school pilot, DPIA, legal/controller review and production release.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="status-actions">
+          <a class="button button-primary" href="https://github.com/onyebuchidaniel60/tiny" rel="noopener">View the public repository <span aria-hidden="true">↗</span></a>
+          <a class="button button-quiet" href="https://github.com/onyebuchidaniel60/tiny/blob/main/docs/BUILD_LOG.md" rel="noopener">Read the build log <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section shell" id="faq">
+      <div class="section-heading">
+        <p class="eyebrow">10 · Questions</p>
+        <h2>Plain answers,<br><em>including the limits.</em></h2>
+      </div>
+
+      <div class="faq-list">
+        <details>
+          <summary>Do parents need a smartphone or an app?</summary>
+          <p>No. Parents use ordinary SMS. They do not create a Tiny account, install an app or log in. A parent-initiated message uses the Tiny keyword and school code for routing.</p>
+        </details>
+        <details>
+          <summary>What happens when the teacher has no internet?</summary>
+          <p>Core classroom work remains local. Attendance and progress are saved on the phone, and the UI shows pending sync. Parent notifications are not created until a server accepts the relevant command.</p>
+        </details>
+        <details>
+          <summary>Does Tiny use AI to grade pupils?</summary>
+          <p>No. Progress indicators are teacher-authored instructional feedback. AI may help draft generic teaching material or rephrase a de-identified note, but it cannot create or send parent-facing progress content without teacher review.</p>
+        </details>
+        <details>
+          <summary>Is the on-device AI available on every Android phone?</summary>
+          <p>No. On-device Gemini Nano is limited to specific supported devices. The core app does not depend on it. Cloud AI requires connectivity and the free-tier configuration; offline fallback is a curated resource.</p>
+        </details>
+        <details>
+          <summary>Is Tiny collecting real pupil data in this demo?</summary>
+          <p>No. This preview uses deterministic synthetic names and test phone numbers. Real pupil and guardian data are prohibited in development and demos.</p>
+        </details>
+        <details>
+          <summary>Can a parent’s phone be linked to more than one child?</summary>
+          <p>Yes, within a workspace one contact endpoint can be linked to multiple pupils, and a pupil can have multiple guardians. The phone endpoint is stored once to prevent duplicate sends. Shared handsets are treated as one contact endpoint.</p>
+        </details>
+        <details>
+          <summary>Is production SMS live?</summary>
+          <p>No. The current development mode is a deterministic mock adapter, with zero SMS budget. eSMS sandbox or production access requires separate authorization, provider setup and cost controls.</p>
+        </details>
+        <details>
+          <summary>What is still missing before a real-school pilot?</summary>
+          <p>A non-production Firebase project and access, App Distribution tester access, a supported on-device AI device for that specific acceptance gate, native-language review, legal/DPIA approval, a privacy notice, retention decisions, provider KYC and an approved production budget.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="shell final-cta-inner">
+        <div class="final-doodle" aria-hidden="true">✳</div>
+        <p class="eyebrow">The next useful step</p>
+        <h2>A teacher should not need<br><em>perfect conditions.</em></h2>
+        <p>Tiny is being built for the classroom that exists: the shared phone, the interrupted signal, the parent who cares but cannot download another app.</p>
+        <div class="hero-actions">
+          <a class="button button-light" href="#walkthrough">Walk through the product</a>
+          <a class="button button-outline-light" href="https://github.com/onyebuchidaniel60/tiny" rel="noopener">See the build</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="#top">
+          <span class="brand-mark" aria-hidden="true">T<span class="brand-dot"></span></span>
+          <span class="brand-copy"><strong>Tiny</strong><small>Big impact. Small requirements.</small></span>
+        </a>
+        <p>Offline-first teacher support and SMS parent engagement for rural primary schools. A public preview, built carefully.</p>
+      </div>
+      <div>
+        <h3>Product</h3>
+        <a href="#problem">The problem</a>
+        <a href="#approach">Our approach</a>
+        <a href="#teachers">For teachers</a>
+        <a href="#parents">For parents</a>
+        <a href="#walkthrough">Walkthrough</a>
+      </div>
+      <div>
+        <h3>Resources</h3>
+        <a href="https://github.com/onyebuchidaniel60/tiny" rel="noopener">Public repository ↗</a>
+        <a href="https://github.com/onyebuchidaniel60/tiny/blob/main/docs/BUILD_LOG.md" rel="noopener">Build log ↗</a>
+        <a href="https://github.com/onyebuchidaniel60/tiny/blob/main/README.md" rel="noopener">README ↗</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div>
+        <h3>Trust</h3>
+        <a href="privacy.html">Privacy notice</a>
+        <a href="security.html">Security overview</a>
+        <a href="contact.html">Contact</a>
+        <a href="https://github.com/onyebuchidaniel60/tiny/issues" rel="noopener">Report an issue ↗</a>
+      </div>
+    </div>
+    <div class="shell footer-bottom">
+      <p>© <span id="year">2026</span> Tiny. Public preview. No live parent SMS in this build.</p>
+      <p>No fabricated testimonials, school endorsements, adoption figures or impact statistics.</p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

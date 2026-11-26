@@ -177,3 +177,17 @@ The handoff/build log must record:
 - Any skill instruction that was rejected or adapted, with a short reason.
 
 Do not claim skill or MCP integration is complete until discovery/connection is actually verified.
+
+## 8. Phase 1 installation record (26 November 2026)
+
+- Source: official `firebase/agent-skills`; commit `99954a30898bb5ddc8152ee10e124dc3b4106bf7`.
+- Installed under `.agents/skills/`: `firebase-basics`, `firebase-auth-basics`, `firebase-firestore`, `firebase-security-rules-auditor`, `firestore-rules-creation`.
+- `skills-lock.json` preserved at repository root.
+- Live catalog mapping/renames:
+  - `firebase-firestore-standard` → `firebase-firestore`.
+  - `firestore-security-rules-auditor` → `firebase-security-rules-auditor`.
+  - `firebase-local-env-setup` was not present in the live catalog; `firebase-basics` plus official Firebase CLI/Emulator docs cover the relevant setup.
+  - `firestore-rules-creation` was installed in addition to the auditor for rules authoring.
+- Discovery: Firebase skills are visible in the active OpenCode tool catalog. The `opencode` CLI is not on PATH, so a separate CLI `opencode --version` check was not possible; this is recorded as a limitation.
+- Firebase MCP: not configured/connected; remains disabled until a non-production project and bounded operation scope are authorized.
+- No Firebase resources were created or modified.

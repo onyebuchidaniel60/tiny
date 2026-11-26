@@ -1,5 +1,7 @@
 # Tiny — API Specification
 
+**Implementation status (26 November 2026):** Callable/webhook contracts and type schemas are scaffolded; direct callables cover the main workspace/attendance/progress/message flows. The `syncCommands` offline processor validates batches and writes receipts but does not yet apply every command; it returns a retryable/pending result for supported command types. Emulator runtime integration tests are pending. Do not treat this as production-ready API completion.
+
 **Version:** 1.0  
 **Backend:** Firebase Cloud Functions 2nd gen, TypeScript, Node.js 22, region `africa-south1`.  
 **Canonical design:** Callable commands are the only client mutation interface for shared records. Firestore direct client writes to authoritative collections are denied.

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy notice — Tiny</title>
+  <meta name="description" content="Draft privacy notice for the Tiny public preview and synthetic-data landing page.">
+  <meta name="theme-color" content="#F7F0E1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html" aria-label="Tiny home">
+        <span class="brand-mark" aria-hidden="true">T<span class="brand-dot"></span></span>
+        <span class="brand-copy"><strong>Tiny</strong><small>Big impact. Small requirements.</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html#approach">Our approach</a>
+        <a href="index.html#status">Build status</a>
+        <a href="index.html">Back to Tiny</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="shell legal-wrap">
+    <p class="eyebrow">Trust · Draft</p>
+    <h1 class="legal-title">Privacy notice<br><em>for this public preview.</em></h1>
+    <p class="legal-lede">This notice covers the public landing page and the synthetic-data Android preview. It is a draft for an early-stage product, not a substitute for the school-facing privacy notice and DPIA required before a real pilot.</p>
+
+    <article class="legal-card">
+      <h2>What this page collects</h2>
+      <p>This static landing page does not include analytics, advertising pixels, account forms, contact forms or cookies. It does not ask for a name, phone number, pupil record or guardian contact.</p>
+
+      <h2>What the Android preview stores</h2>
+      <p>The preview uses deterministic synthetic pupil, teacher and guardian records. It stores local demo data in an encrypted Room database whose key material is wrapped by a non-exportable Android Keystore key. It does not connect to a live Firebase project, send real SMS or process real child data.</p>
+
+      <h2>Links to other services</h2>
+      <p>This page links to the public GitHub repository and issue tracker. Those services have their own privacy terms. Do not post real pupil, guardian or school records in a public issue.</p>
+
+      <h2>Before a real pilot</h2>
+      <p>A real-school pilot requires a controller/processor assessment, a Data Protection Impact Assessment, a school-facing privacy notice, lawful-basis decisions, retention and deletion rules, cross-border transfer review, provider terms and safeguarding procedures. None of those are claimed as complete by this preview.</p>
+
+      <h2>Contact</h2>
+      <p>Use the <a href="https://github.com/onyebuchidaniel60/tiny/issues" rel="noopener">public issue tracker</a> for non-sensitive evaluation questions. Do not include personal data. A dedicated contact channel will be published before a real-school pilot.</p>
+    </article>
+
+    <p class="legal-footnote">Last updated: 26 November 2026 · Draft preview notice.</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-bottom">
+      <p>© <span id="year">2026</span> Tiny. Public preview. No live parent SMS in this build.</p>
+      <p><a href="index.html">Return to the Tiny landing page</a></p>
+    </div>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>

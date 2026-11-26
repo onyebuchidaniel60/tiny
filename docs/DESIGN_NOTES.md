@@ -1,98 +1,84 @@
 # Tiny — Design Notes
 
-**Status:** Pending reference-image intake and Phase 6 implementation.  
-**No reference images have been supplied yet.** Do not write claims about image-derived design decisions until exact assets are inspected.
+**Status:** Phase 1 visual foundation implemented; final app refinement and accessibility audit pending.
 
-## 1. Product design principles
+## 1. References
+
+- **REF-001:** https://www.framer.com/marketplace/templates/atelio-studio/ — visual personality reference only. Warm riso-print energy, serif display type, ink outlines, offset shadows, hand-drawn details, tomato/cobalt/butter palette. Limited licence; no source, illustrations, assets, copy or branding copied.
+- **REF-002:** https://pass-web-dun.vercel.app/ — structural/storytelling reference only. Hero → problem → solution → steps → features → final CTA → substantial footer, with product demonstrations embedded in the page. No copy or assets copied.
+
+## 2. Product design principles
 
 - Tiny means low requirements, not reduced capability.
 - Phone-first, thumb-friendly and legible on small Android screens.
 - Offline state and data safety are visible but not technical or alarming.
-- Common classroom action (attendance) is fast and low-friction.
-- Teacher workflows use plain, localized language and avoid dense dashboard overload.
-- Parent communication is designed around SMS constraints and shared/basic phones.
-- Avoid stigmatizing colors/labels for pupil progress; use neutral, constructive indicators and text labels.
-- Avoid decorative heavy imagery, video, animation or large media that consumes data/storage.
-- Provide visible feedback for save, sync pending, synced, conflict and attention required.
-- All features work with touch, system font scaling, sufficient contrast and accessible semantics.
+- The common classroom action (attendance) is fast and low-friction.
+- Teacher workflows use plain, localized language and avoid dashboard overload.
+- Parent communication is designed around SMS and shared/basic phones.
+- Avoid stigmatizing colors/labels for pupil progress; use neutral, constructive labels.
+- Avoid heavy imagery, autoplay video, remote fonts or large media.
+- All features work with system font scaling, sufficient contrast and accessible semantics.
+- Clearly label preview, mock and planned states. Never fake success.
 
-## 2. Reference assets
+## 3. Visual system implemented
 
-See repository-root `REFERENCE_ASSETS.md`. Minimum one operator-supplied reference image is required during consolidated intake, unless operator explicitly authorizes the agent to generate reference imagery.
-
-## 3. Required StageShow skill
-
-At start of Phase 6, attempt:
-
-```bash
-npx skills add benjitaylor/skills --skill stageshow
-```
-
-Inspect installed instructions, apply relevant design guidance and record installation/version. Additional UI/UX skills are optional; evaluate relevance, reputation and compatibility. Do not follow skill instructions that conflict with this specification, privacy/security or architecture.
+- **Palette:** paper `#F8F1E2`, ink `#1D2A24`, forest `#1E5B48`, tomato `#D85C3D`, cobalt `#255AA8`, butter `#F1C453`.
+- **Type:** serif display headings (Georgia/`FontFamily.Serif`), sans body (system sans). Strong hierarchy, generous line height, no remote font dependency.
+- **Shape:** rounded cards (12–32 dp), 1 px ink outlines, restrained offset shadow, warm surfaces.
+- **Motifs:** original CSS/Compose doodles, dots, underline squiggles and a text-first Tiny mark. No third-party illustration or logo copied.
+- **Android:** Compose Material 3 palette/typography/shapes; 48dp+ targets; labelled placeholders; mock/preview banners.
+- **Landing page:** same palette/type; responsive desktop/tablet/phone; semantic sections; skip link; focus states; reduced-motion handling; no analytics/cookies.
 
 ## 4. Screen map
 
-1. Welcome/authentication.
-2. Workspace selection/onboarding.
-3. Teacher home.
-4. Class list/class detail.
-5. Roster/pupil detail.
-6. Attendance capture/review/submit.
-7. Lesson planner/5E plan.
-8. Teaching guidance library and coaching.
-9. Progress entry/review/approval.
-10. Parent inbox/conversation/reply.
-11. Workspace administration/members/classes (admin-gated).
-12. Sync/data controls and language settings.
+1. Welcome/language selection — implemented.
+2. Preview welcome — implemented.
+3. Teacher home — implemented with synthetic data.
+4. Class list/class detail — implemented.
+5. Attendance capture/submit — implemented locally.
+6. Lesson planner/5E detail — implemented.
+7. Progress entry/approval — implemented locally.
+8. Parent inbox/conversation/mock reply — implemented.
+9. Settings/language/sync/privacy — implemented.
+10. Sync center — implemented with honest mock state.
+11. Landing page — implemented.
+12. Workspace administration/members — planned Phase 3/4.
 
-## 5. Visual direction to extract from references
+## 5. Functional states
 
-During Phase 6 record:
-- Layout/composition and information hierarchy.
-- Typography scale, density and line length.
-- Spacing system and shape/radius.
-- Color roles and contrast.
-- Component patterns: navigation, cards, rows, chips, buttons, forms, dialogs.
-- Interaction feedback and navigation transitions.
-- Loading, empty, validation, error, success, offline and permission-denied patterns.
-- Small phone portrait adaptation and system font scaling.
+The shell covers initial/loading-ish seeding, populated, empty, offline/local, pending sync, mock sync, validation error/snackbar, and permission/placeholder labels. Remaining states to audit before release:
 
-Adapt principles into original Tiny components. Do not copy logos, branded illustrations, distinctive proprietary layouts or protected text.
-
-## 6. Functional screen states
-
-Every route must define and test applicable:
-- Initial/loading.
-- Populated.
-- Empty/new user.
-- Offline with locally cached data.
+- Empty new-user workspace creation.
 - Offline with no cached data.
-- Pending sync.
-- Synced.
-- Sync conflict/needs attention.
-- Validation error.
-- Permission denied/revoked.
+- True sync conflict/needs-attention flows.
+- Permission-denied/revoked membership.
 - External provider/AI unavailable.
-- Success confirmation.
+- Success confirmation at every write path.
+- Large font, landscape/tablet and TalkBack passes.
 
-No button may be decorative/inert. Clearly label unfinished shell placeholders during Phase 1.
+## 6. Accessibility and low-resource criteria
 
-## 7. Accessibility and low-resource criteria
+- Minimum touch target 48dp in Compose; web controls use generous padding and focus rings.
+- Dynamic font scaling via Compose and responsive CSS.
+- Status is not communicated by color alone; text labels accompany color.
+- No essential workflow depends on animation, image loading or remote fonts.
+- Landing page supports reduced motion and keyboard focus.
+- Native-language diacritics and long labels still need device/visual testing.
+- Curriculum/lesson content is deliberately text-first and small.
 
-- Minimum touch target follows current Android accessibility guidance.
-- Text scales with Android font size; avoid fixed-height text containers that clip translations.
-- Support screen reader content descriptions and semantic roles.
-- Never communicate status only through color.
-- High contrast, visible focus/selected states and reduced motion.
-- No essential workflow depends on animation, image loading, remote font or large downloads.
-- Test Hausa/Yoruba/Igbo diacritics and long labels.
-- Avoid complex charts and dense tables on phone screens.
-- Confirm offline cues and saved-state feedback are understandable to users with limited digital literacy.
+## 7. Design decisions log
 
-## 8. Design decisions log
-
-Complete during implementation:
-
-| Date | Reference file | Observation | Tiny implementation choice | Deviation and reason | Evidence |
+| Date | Reference | Observation | Tiny implementation choice | Deviation/reason | Evidence |
 |---|---|---|---|---|---|
-| Pending | Pending | Pending | Pending | Pending | Pending |
+| 26 Nov 2026 | REF-001 | Warm riso/ink/doodle personality | Original paper/ink/forest/tomato/butter system | Avoid copying limited-licence assets | `landing/styles.css`, Compose theme |
+| 26 Nov 2026 | REF-002 | Long-form product storytelling | Full landing page with 12 sections | Use structure, not copy | `landing/index.html` |
+| 26 Nov 2026 | Both | Product proof cards | Original phone mockups and feature cards | Synthetic data only; label preview | `artifacts/screenshots/` |
+| 26 Nov 2026 | — | StageShow unavailable | Direct design-system discipline | Harness removed skill ID after restart | Build log/handoff |
+
+## 8. Known design/UX gaps
+
+- Full Hausa/Yoruba/Igbo UI translation coverage and native review.
+- Final app screenshot-by-screenshot reference refinement.
+- Real-device validation on Note 10+ (Android 12) and larger-font TalkBack pass.
+- Sync conflict/needs-attention UI not yet exercised end to end.
+- Landing page GitHub Pages publication not yet verified.

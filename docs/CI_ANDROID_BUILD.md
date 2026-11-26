@@ -1,6 +1,6 @@
 # Tiny — GitHub Actions Android Build and Distribution
 
-**Status:** Planned Phase 1 configuration. No workflow file or APK exists yet.
+**Status:** Implemented in `.github/workflows/android-ci.yml`; first remote run pending. Local portable-JDK/SDK verification succeeded on 26 November 2026.
 
 **Decision:** GitHub Actions Ubuntu runners are the preferred Android build/test environment. Do **not** install the full Android Studio toolchain on the operator’s Windows machine. Local Windows only needs Git, Node.js/npm, and optionally `adb` platform-tools for device installation.
 

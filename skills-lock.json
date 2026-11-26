@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "skills": {
+    "firebase-auth-basics": {
+      "source": "firebase/agent-skills",
+      "commit": "99954a30898bb5ddc8152ee10e124dc3b4106bf7",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-auth-basics/SKILL.md",
+      "computedHash": "3ef272cfc3d28b4dfff7d05a6eb6893d4882c97021bd8d721a12fe92ecd2a50e",
+      "installMode": "copy"
+    },
+    "firebase-basics": {
+      "source": "firebase/agent-skills",
+      "commit": "99954a30898bb5ddc8152ee10e124dc3b4106bf7",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-basics/SKILL.md",
+      "computedHash": "13a496dfb9130cbb273e44f521e78106c2e59787af92d8c06eb225839d346bbf",
+      "installMode": "copy"
+    },
+    "firebase-firestore": {
+      "source": "firebase/agent-skills",
+      "commit": "99954a30898bb5ddc8152ee10e124dc3b4106bf7",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-firestore/SKILL.md",
+      "computedHash": "2d69073a1488d4f1b0df2f39f46fae21382acb466c9b6139ecd0215966765129",
+      "installMode": "copy"
+    },
+    "firebase-security-rules-auditor": {
+      "source": "firebase/agent-skills",
+      "commit": "99954a30898bb5ddc8152ee10e124dc3b4106bf7",
+      "sourceType": "github",
+      "skillPath": "skills/firebase-security-rules-auditor/SKILL.md",
+      "computedHash": "19bc79ffbc43d2bdbeef28d8f093e7f33748b8ba155d021f7efde2618d7544c1",
+      "installMode": "copy"
+    },
+    "firestore-rules-creation": {
+      "source": "firebase/agent-skills",
+      "commit": "99954a30898bb5ddc8152ee10e124dc3b4106bf7",
+      "sourceType": "github",
+      "skillPath": "skills/firestore-rules-creation/SKILL.md",
+      "computedHash": "a0230fba169c539608f2f51d14590c4420fbe4746ed6f71fdd115812a07ee4d5",
+      "installMode": "copy"
+    }
+  }
+}

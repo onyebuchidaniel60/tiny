@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Draft interface strings; native review pending. Missing strings fall back to English. -->
+    <string name="language_title">Yan èdè rẹ</string>
+    <string name="language_yoruba">Yoruba</string>
+    <string name="continue_label">Tẹsiwaju</string>
+    <string name="nav_home">Ile</string>
+    <string name="nav_classes">Awọn kilasi</string>
+    <string name="nav_lessons">Awọn ẹkọ</string>
+    <string name="nav_messages">Awọn ifiranṣẹ</string>
+    <string name="nav_settings">Eto</string>
+    <string name="present">Wa</string>
+    <string name="absent">Ko si</string>
+    <string name="late">Pẹ</string>
+    <string name="save">Fi pamọ</string>
+    <string name="cancel">Fagilee</string>
+    <string name="settings_title">Eto</string>
+</resources>

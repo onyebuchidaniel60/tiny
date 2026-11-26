@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Draft interface strings; native review pending. Missing strings fall back to English. -->
+    <string name="language_title">Họrọ asụsụ gị</string>
+    <string name="language_igbo">Igbo</string>
+    <string name="continue_label">Gaa n\'ihu</string>
+    <string name="nav_home">Ụlọ</string>
+    <string name="nav_classes">Klasị</string>
+    <string name="nav_lessons">Ihe ọmụmụ</string>
+    <string name="nav_messages">Ozi</string>
+    <string name="nav_settings">Ntọala</string>
+    <string name="present">Dị ya</string>
+    <string name="absent">Anọghị ya</string>
+    <string name="late">Abịaghị n\'oge</string>
+    <string name="save">Chekwaa</string>
+    <string name="cancel">Kagbuo</string>
+    <string name="settings_title">Ntọala</string>
+</resources>

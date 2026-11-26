@@ -1,12 +1,12 @@
 # Tiny — AI Implementation Handoff
 
-**Last updated:** 25 November 2026 (Phase 0 intake update)
+**Last updated:** 26 November 2026 (Phase 1 implementation)
 
-**Current status:** Handoff package verified; repository and environment inspected read-only; **application implementation has not started.** Phase 0 intake is **BLOCKED only on the UI reference URLs** for Phase 1 coding; Firebase project access is a later integration gate.
+**Current status:** Phase 1 implementation in progress. Android shell, encrypted local data layer, Functions/rules scaffold, CI workflow and landing page exist. No production deployment, live SMS or Firebase project resources have been created.
 
-**Current phase:** Phase 0 — consolidated operator intake/readiness.
+**Current phase:** Phase 1 — repository foundation, skeletal Android app, CI and landing page.
 
-**Next task:** Operator supplies the exact UI reference URLs in `OPERATOR_INTAKE.md` §9. Then begin Phase 1 using GitHub Actions Ubuntu runners; Firebase project creation, App Distribution tester access and a Gemini Nano-supported device can follow without blocking independent Phase 1 preparation.
+**Next task:** Push this Phase 1 checkpoint, run GitHub Actions, fix any CI failure, verify the APK artifact, then continue Phase 2/3 with Firebase Emulator Suite and rules/domain testing.
 
 ## Product/architecture baseline
 
@@ -33,9 +33,9 @@
 - Auth: Firebase Phone Auth for teachers/admins; first auth requires internet.
 - Integrity: Firebase App Check + Play Integrity.
 - AI: Firebase AI Logic/Gemini Developer API globally processed cloud route; optional experimental on-device SDK on supported devices.
-- SMS: eSMS Africa Two-Way SMS; mock adapter during development; no live sends until authorized.
-- Preview: protected Firebase App Distribution or approved secure APK artifact, not a website.
-- No payment system, voice calling, web frontend, parent app or student app.
+- SMS: eSMS Africa Two-Way SMS target; mock adapter during current development; no live sends until authorized.
+- Preview: protected Firebase App Distribution or approved secure APK artifact, not a website; landing page is a separate static marketing surface.
+- No payment system, voice calling, web product frontend, parent app or student app.
 
 ## Current readiness
 
@@ -46,231 +46,181 @@
 | Architecture | CONFIRMED | `ARCHITECTURE.md`; Firebase Agent Skills/MCP are developer tooling only |
 | Implementation phase plan | CONFIRMED | `IMPLEMENTATION_PLAN.md` |
 | Coding-agent rules | READY | `AGENTS.md` |
-| Operator intake | BLOCKED — UI refs only | Inspection/confirmations complete; exact UI reference URLs outstanding |
-| UI reference links/images | BLOCKED | Operator will supply links; exact URLs/rights not yet received. Do not invent/substitute references |
-| Repository/path/branch | CONFIRMED | `C:\Users\User\Documents\Projects\tiny`; `main`; clean at `690beef` before this intake update |
-| Git commit/push authorization | CONFIRMED | Direct commits/pushes to `main` authorized; no force-push, history rewrite, branch deletion or visibility change |
-| Repository visibility | CONFIRMED PUBLIC | Operator instructed not to change visibility; no secrets or real pupil/guardian data may be committed |
-| Android build environment | CONFIRMED — GitHub Actions Ubuntu | Build/test on GitHub Actions `ubuntu-24.04`; no full Android Studio toolchain on Windows. See `docs/CI_ANDROID_BUILD.md` |
-| Firebase project/access | PENDING — later integration gate | Dedicated project ID/access not yet supplied; does not block Phase 1 scaffolding, Firebase skills installation or Emulator Suite setup |
-| Firebase plan/budget | CONFIRMED | Spark plan; NGN 0 cloud spend; no Blaze, billing account or paid service |
-| Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Do not deploy Functions, activate Blaze or introduce paid hosting; callables/webhooks are emulator-tested |
+| Operator intake | COMPLETE — current scope | References and device baseline supplied; Firebase/App Distribution later gates |
+| UI references | CONFIRMED | REF-001 Atelio Studio visual direction; REF-002 PASS structure/storytelling; reference-only, original Tiny assets |
+| Repository/path/branch | CONFIRMED | `C:\Users\User\Documents\Projects\tiny`; public `main`; direct commits/pushes authorized |
+| Git restrictions | CONFIRMED | No force-push, history rewrite, branch deletion or visibility change |
+| Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
+| Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
+| Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
+| Android tests | PASS — 21/21 | Domain unit tests; no instrumentation/device run yet |
+| Android build | PASS | Local `assembleDevDebug`; APK 27,894,591 bytes (~26.6 MiB) |
+| Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
+| Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
+| Functions callables/webhooks | SCAFFOLDED | Main callables, HMAC webhooks, scheduled digest; emulator runtime tests pending |
+| Firebase project/access | PENDING — later integration gate | Not required for current Android shell |
+| Firebase Emulator Suite | SCAFFOLDED | Config, demo project alias, rules/indexes; startup/rules tests pending |
+| Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
-| Protected preview distribution | CONFIRMED PREFERRED — App Distribution | `internal-testers`/`judges` groups and Firebase project still needed before first distribution; no public APK |
-| Physical Android device | GENERAL TESTING / SEPARATE AI GATE | Samsung Galaxy Note 10+ is general testing only and not on the Gemini Nano supported list. Android version still pending; on-device AI proof is a separate blocked gate |
-| eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter authorized; no live/SMS sandbox sends authorized |
-| Credential/configuration register | CONFIRMED | `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`; `.env.example` placeholders only; no secrets requested via chat |
-| Production SMS authority/budget | NOT AUTHORIZED | NGN 0; mock adapter only |
-| Production deploy authority | NOT AUTHORIZED | Staging/preview only unless explicitly granted later |
+| Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed |
+| Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
+| On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
+| eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
+| Production SMS authority/budget | NOT AUTHORIZED | NGN 0; mock only |
+| Production deploy authority | NOT AUTHORIZED | No production resources |
+| Landing page | IMPLEMENTED — local preview | Responsive static page + legal/security/contact; GitHub Pages pending |
 | Demo audience/output | CONFIRMED | Firebase hackathon judges/product evaluators; `artifacts/demo/` |
 | Demo voice/TTS | PENDING | Recheck free tier/terms at Phase 8 |
 
-## Operator confirmations received (25 November 2026)
+## Operator confirmations received
 
-- Git: commit and push directly to `main`; do not force-push or rewrite history; do not delete branches or change repository visibility. Repository remains public.
-- UI references: operator will supply URLs to existing interfaces as design references; exact URLs pending. Do not invent, generate or substitute references without authorization.
-- Test device: Samsung Galaxy Note 10+; general testing only, not Gemini Nano-supported. Android version to be supplied after checking Settings.
-- Build: GitHub Actions Ubuntu runners are the preferred Android build environment. Do not install the full Android Studio toolchain on the Windows machine.
-- Firebase: dedicated Tiny project will be created and project ID supplied; project creation/access is a later integration gate and must not block Phase 1 scaffolding, Firebase skills installation or Emulator Suite setup. Gemini Developer API free tier; Spark plan; no billing/Blaze/paid model/paid service without explicit approval.
-- Distribution: Firebase App Distribution is the preferred initial testing route; tester/judge access requirements and judge-accessible approach are documented in `docs/CI_ANDROID_BUILD.md`.
-- Cloud Functions: emulator-only under Spark/NGN 0. Do not deploy Functions, activate Blaze, introduce paid hosting or replace the backend architecture.
-- Credentials: complete register in `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`; `.env.example` contains placeholders only; do not request credentials through chat.
-- Budget: cloud NGN 0; paid AI NGN 0; SMS/voice NGN 0; paid third-party NGN 0; mock SMS adapter until further authorization.
-- Data: synthetic pupil/teacher/guardian data only; no real children’s data; production blocked until privacy/legal/security gates pass.
-- Demo: Firebase hackathon judges/product evaluators; 90–150 seconds (max 180); output `artifacts/demo/`.
-- Autonomy: continue after intake and genuine blockers are resolved; maintain handoff/build log; stop for security risks, destructive actions, unexpected costs, unavailable essential dependencies or out-of-scope actions.
+- Git: direct commits/pushes to public `main`; no force-push, history rewrite, branch deletion or visibility change.
+- UI references: Framer Atelio Studio (visual direction) and PASS landing page (structure/storytelling) supplied 26 November 2026. Both reference-only; no copying source/assets/branding; original Tiny identity required.
+- Device: Samsung Galaxy Note 10+, Android 12; only physical device; general testing only, not Gemini Nano-supported; no second device planned.
+- Build: GitHub Actions Ubuntu preferred; no full Android Studio installation on Windows.
+- Firebase: dedicated non-production project to be created/supplied; project access is a later integration gate. Gemini Developer API free tier; Spark; no billing/Blaze/paid service without explicit approval; Emulator Suite and synthetic data.
+- Distribution: Firebase App Distribution preferred; tester/judge access pending.
+- Functions: emulator-only under Spark/NGN 0.
+- Credentials: complete register; `.env.example` placeholders only; no credentials through chat.
+- Budgets: cloud NGN 0; paid AI NGN 0; SMS/voice NGN 0; paid third-party NGN 0.
+- SMS: mock adapter authorized; no live sends.
+- Data: synthetic only; production blocked until privacy/legal/security gates pass.
+- Demo: Firebase hackathon judges/product evaluators; 90–150 seconds (max 180); `artifacts/demo/`.
+- Autonomy: continue after genuine blockers resolved; stop for security, destructive actions, unexpected costs, unavailable essential dependencies or out-of-scope actions.
 
-## Phase 0 inspection evidence (25 November 2026)
+## Phase 1 implementation evidence
 
-### Package
-- 28 Markdown documents present, including `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` and `docs/CI_ANDROID_BUILD.md`; relative links resolve; code fences balanced.
-- `docs/PROPER_VIBE_CODING_WORKFLOW.md` SHA-256 matches the recorded value `11607c448d9803ef27ab69d7e20d53730c2f535fc8b2b97559c9f464b66cacdb`.
-- Documentation-only repository; no app code, Android project, Functions code, migrations, tests, CI workflow or Firebase config.
-- No image/logo asset present. No `.env`, `google-services.json`, `.firebaserc` or service-account file found. No secrets read or displayed.
+### Android
 
-### Repository
-- Path `C:\Users\User\Documents\Projects\tiny`; remote `https://github.com/onyebuchidaniel60/tiny.git`; branch `main`.
-- Pre-intake HEAD `690beef609d4620610611df737252615b7652f23` (`added firebase skills`); clean working tree before this documentation update.
-- GitHub CLI authenticated with repository admin permission. Repository is public; `main` is not branch-protected.
-- No GitHub Actions workflows, secrets, variables, releases or deployment configuration.
-- No `app/`, `functions/`, `firebase/`, `tests/`, `.github/` or `artifacts/` implementation tree exists yet.
+- Gradle/Kotlin/Compose project with pinned versions: AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, JDK 17.
+- Package structure: `core/model`, `core/database`, `core/security`, `core/preferences`, `core/domain`, `core/network`, `core/sync`, `data`, `ui/theme`, `ui/components`, `ui/screens`.
+- Navigation: onboarding → language → welcome → Home/Classes/Lessons/Messages + detail routes; Settings and Sync.
+- Local data: Room entities/DAOs for workspace, class, pupil, guardian, links, attendance, lessons, progress, conversations/messages, outbox, sync cursor, audit.
+- SQLCipher: `net.zetetic:sqlcipher-android:4.20.0`; passphrase generated randomly and wrapped by an Android Keystore AES-GCM key; fails closed if unwrap fails.
+- Demo data: synthetic workspace/classes/pupils/guardians, one submitted attendance session, two lesson plans, progress entries, conversations and a pending outbox command.
+- Attendance: save draft, validate complete roster, submit locally, create outbox command, absence-only audit; no real SMS.
+- Progress: validation, draft save, revision reset on approved edit, approval state, digest eligibility.
+- Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
+- Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
+- Unit tests: 21/21 pass across phone normalization, attendance, SMS segmentation, progress, digest and sync rules.
+- Local build: `testDevDebugUnitTest assembleDevDebug` successful; APK 27,894,591 bytes.
+- Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 
-### Environment
-- Windows 11 Pro 10.0.26200; Git 2.55.0; Node.js v24.20.0; npm 11.19.0; `fnm`, `winget`, Chocolatey and GitHub CLI available.
-- JDK, Android Studio, Android SDK, `adb`, Gradle, Firebase CLI and Google Cloud CLI are absent.
-- No physical Android device detected via USB/PnP; ADB unavailable. Only 5.5 GB free on `C:`.
-- No Firebase/eSMS/Google environment variables present.
+### Functions / Firebase
 
-### Build and credential handling
-- GitHub Actions Ubuntu is the confirmed Android build/test path; no full Android Studio toolchain is required on Windows. See `docs/CI_ANDROID_BUILD.md`.
-- Firebase App Distribution is the preferred preview route; tester/judge groups and project access are pending.
-- `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` and `.env.example` define secret/public/config ownership and secure delivery. No secret values are recorded.
-- `.gitignore` excludes local env files, keystores and Firebase client configuration from accidental commits.
+- `functions/` TypeScript project (Node 22, Firebase Functions 6.5.0, Admin 13.4.0, Zod).
+- Domain modules: phone, access, attendance, guardian, progress, SMS segmentation, digest, sync, AI privacy/schema.
+- 19 Vitest tests pass; `npm run build` passes.
+- Callables scaffolded: workspace create, invitation, accept, classroom, pupil, guardian, link, verification, attendance submit, progress create/approve, teacher reply, sync batch.
+- Webhooks: HMAC-SHA256 raw-body verification, timing-safe comparison, event dedupe, routing by school code, guardian phone-hash lookup, mock-safe responses.
+- Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
+- `firestore.rules`: default deny; member read baseline; direct writes denied; admin-only guardian/conversation reads. Class-level read restrictions need emulator tests and tightening before pilot.
+- `firebase.json`, `.firebaserc` (`demo-tiny`), `firestore.indexes.json` present.
+- `syncCommands` validates batches/receipts but the full command processor is not complete; direct callables cover main flows. Do not claim full offline sync processing.
 
-### Device support finding
-- Hybrid AI acceptance is **not complete** until both a supported on-device path and a cloud path have been tested with source evidence. Cloud AI/fallback work can proceed independently; do not claim on-device inference on unsupported hardware.
-- Samsung Galaxy Note 10+ is **not** on the official ML Kit GenAI direct-model-access supported-device list retrieved on 25 November 2026 from `https://developers.google.com/ml-kit/genai`.
-- The device may still support general app testing if its Android version meets `minSdk 26`, but it cannot provide genuine Gemini Nano/on-device inference evidence. Do not claim on-device inference ran on this device.
+### CI / distribution
 
-### Firebase budget/plan finding
-- Spark plan and NGN 0 are confirmed. Official Firebase documentation states Cloud Functions deployment requires Blaze.
-- The fixed backend can be built and tested in Firebase Emulator Suite while the project remains on Spark/NGN 0. Callables/webhooks can be emulator-tested; scheduled digest logic must be invoked locally/unit-tested. No hosted staging backend, webhook endpoint or scheduled digest deployment is available until billing authority changes.
-- Gemini Developer API free tier is compatible with Spark for cloud AI within free limits. No paid AI.
+- `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; optional manual App Distribution job gated by variables.
+- No GitHub Actions run yet at the time of this checkpoint.
+- `.github/workflows/landing-pages.yml`: GitHub Pages static deployment; Pages enablement pending.
+- App Distribution tester/judge access still pending.
 
-### Scope evidence
-- No implementation command, dependency installation, Firebase/eSMS call, SMS send, APK build, preview deployment or device inference was performed.
-- The documentation changes are `OPERATOR_INTAKE.md`, `REFERENCE_ASSETS.md`, this handoff, `docs/BUILD_LOG.md`, `docs/CONFIGURATION.md`, `docs/SETUP.md`, `docs/DEPLOYMENT.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`, `docs/CI_ANDROID_BUILD.md`, `.env.example` and `.gitignore`. They are not application code.
-- No real secret values were requested, read, displayed or committed. `.env.example` contains placeholders only.
+### Skills
+
+- Firebase Agent Skills installed under `.agents/skills/`; `skills-lock.json` preserved.
+- Source commit: `99954a30898bb5ddc8152ee10e124dc3b4106bf7`.
+- Installed: `firebase-basics`, `firebase-auth-basics`, `firebase-firestore`, `firebase-security-rules-auditor`, `firestore-rules-creation`.
+- Live catalog mapping: `firebase-firestore-standard` → `firebase-firestore`; `firestore-security-rules-auditor` → `firebase-security-rules-auditor`; `firebase-local-env-setup` absent (covered by `firebase-basics` + official emulator docs).
+- Discovery: Firebase skills are visible in the active OpenCode tool catalog. `opencode` CLI is not on PATH, so a separate fresh-session CLI check was not possible; recorded as a limitation.
+- StageShow: install attempted; files appeared but the harness removed the `stageshow` skill ID after a server restart. Incomplete directory removed; **not used** and completion is not claimed.
+- Firebase MCP: disabled until non-production project/access and operation scope are authorized.
+
+### Landing page
+
+- `landing/index.html`, `styles.css`, `app.js`, `privacy.html`, `security.html`, `contact.html`.
+- Original warm paper/riso-inspired identity, serif display type, ink outlines, tomato/cobalt/butter palette, hand-drawn CSS motifs and product mockups.
+- Multi-section story: hero, problem, approach, teacher features, parent features, how it works, offline/low-bandwidth/multilingual, walkthrough, impact, build status, FAQ, final CTA, substantial footer.
+- Clearly distinguishes implemented/preview from planned/externally gated; no fabricated testimonials, logos, adoption numbers or impact statistics.
+- Local screenshots: `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png`, `landing-mobile-revealed.png`.
+- Local link/nav checks pass; no images without alt; mobile nav toggle verified.
 
 ## Blockers and minimum operator action
 
 | Blocker | Why it matters | Minimum operator action |
 |---|---|---|
-| UI reference URLs | Required by the workflow before code phases and Phase 6 | Supply exact URL(s), ownership/usage notes and intended screens |
-| App Distribution tester/judge access | Required before first judge-facing preview; not a Phase 1 scaffolding blocker | Supply Firebase project ID, create/confirm `internal-testers`/`judges` groups and approved judge-email delivery method |
-| Firebase project/access | Required before real Firebase integration tests and App Distribution; not a Phase 1 scaffolding blocker | Supply project ID and least-privilege access method; no secrets in chat |
-| Supported on-device AI device | Note 10+ is general testing only; separate acceptance gate | Provide a currently supported physical device, or explicitly accept on-device demo blocked and use cloud/fallback evidence |
-| Note 10+ Android version | Needed for general compatibility/Play services verification, not scaffolding | Provide version from Settings > About phone |
-| Optional pilot/legal gates | Required before real-school pilot, not synthetic development | Identify DPIA/legal/translation/NERDC approvers and timing |
-
-**Resolved/removed blockers:** local Android Studio toolchain (GitHub Actions Ubuntu is confirmed), hosted Cloud Functions on Spark (emulator-only is confirmed and not authorized), eSMS sandbox (mock adapter authorized), credential register (created), and repository/Git permissions (confirmed).
-
-## Handoff package validation
-
-- [x] 28 Markdown documents present, including `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` and `docs/CI_ANDROID_BUILD.md`.
-- [x] `docs/PROPER_VIBE_CODING_WORKFLOW.md` matches the recorded SHA-256 `11607c448d9803ef27ab69d7e20d53730c2f535fc8b2b97559c9f464b66cacdb`.
-- [x] Internal Markdown links resolve within the package.
-- [x] Markdown fenced code blocks are balanced.
-- [x] Package contains documentation only; no application source code, migrations or executable implementation.
-- [ ] Historical ZIP-integrity claim could not be re-verified; the ZIP is not present in this repository.
-
-## Firebase Agent Skills and MCP status
-
-- Requirement: use official Firebase Agent Skills as progressive Firebase-specific implementation guidance in OpenCode.
-- Selected baseline IDs: `firebase-basics`, `firebase-local-env-setup`, `firebase-auth-basics`, `firebase-firestore-standard`, `firestore-security-rules-auditor`.
-- Installation: **pending Phase 1**, independent of real Firebase project creation; project-local copied files; inspect selected `SKILL.md` files/scripts; verify fresh-session discovery; preserve `skills-lock.json` if generated.
-- Optional `firebase-crashlytics` requires a product/privacy decision before installation/use.
-- `firebase-ai-logic-basics` is web-focused and not authoritative for native Android hybrid inference. Use current Android-specific Firebase docs.
-- Firebase MCP: **not configured/connected**. Keep disabled until operator authorizes non-production project access and bounded tool permissions. State-changing operations require explicit approval.
-- Emulator Suite can be set up with a demo project before the real Firebase project exists.
-- Detailed policy: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`.
+| Firebase project/App Distribution access | Required before real Firebase integration tests and judge-facing preview | Supply project ID, least-privilege access method, `internal-testers`/`judges` groups and judge-email handling |
+| Supported on-device AI device | Note 10+ (Android 12) is general testing only; separate acceptance gate | Provide a currently supported physical device, or accept on-device demo blocked |
+| StageShow skill | Required attempt unavailable after harness restart | No operator action unless a replacement UI skill is approved; current landing page uses direct design-system discipline |
+| GitHub Actions first run | CI is authored but not yet executed | Push checkpoint and inspect the workflow result; fix failures |
+| Firebase Emulator runtime tests | Rules/functions/emulator integration not yet run | Install Firebase CLI in CI/local and run emulator tests |
+| Native translation review | Hausa/Yoruba/Igbo app strings are draft/partial | Arrange native review before pilot; English fallback is active |
+| Pilot/legal gates | DPIA, controller/processor, privacy notice, retention, NERDC rights | Identify approvers and timing before a real-school pilot |
 
 ## Preview / deployment evidence
 
-- Preview URL: **Not created**.
-- Build path: **GitHub Actions Ubuntu runners** (`docs/CI_ANDROID_BUILD.md`). No full Android Studio toolchain on the Windows machine.
-- Distribution channel: **Firebase App Distribution preferred**. No tester group, judge emails or project ID supplied yet; no public APK link.
-- Build: **Not attempted** — no workflow or Android project yet.
-- Deployed commit: **None — implementation has not started**.
-- Hosted backend: **Not deployed** — Spark/NGN 0 prohibits Cloud Functions deployment; emulator-only.
-- Production deployment: **Not authorized**.
-
-## Skill status
-
-- Required UI skill command: `npx skills add benjitaylor/skills --skill stageshow`.
-- Installation/inspection: **Not attempted; must occur at the start of UI work (Phase 6)**.
-- Reference links/images: **Pending**; no UI implementation has started.
-- Additional UI skills: optional, evaluate for relevance and trustworthiness.
+- Local debug APK: `app/build/outputs/apk/dev/debug/app-dev-debug.apk` (27,894,591 bytes).
+- GitHub Actions: workflow file present; **not yet run**.
+- App Distribution: not uploaded; no tester group/project.
+- Landing page: local static preview; GitHub Pages workflow present but Pages enablement/publication not verified.
+- Hosted backend: not deployed; Spark/NGN 0.
+- Production: not authorized.
 
 ## Documentation status
 
-- [x] Product spec
-- [x] Architecture
-- [x] Implementation plan
-- [x] Agent instructions
-- [x] Operator intake updated with Phase 0 findings/confirmations
-- [x] Reference asset register updated with pending-link status
-- [x] API design
-- [x] Data model
-- [x] Security design
-- [x] Setup/configuration/testing/deployment/operations/troubleshooting guides
-- [x] Firebase Agent Skills/MCP guide
-- [x] Credential/configuration register and safe `.env.example`
-- [x] GitHub Actions Android build/App Distribution guide
-- [x] Phase 0 inspection recorded in this handoff and `docs/BUILD_LOG.md`
-- [ ] Implementation README updated with actual build commands/results
-- [ ] Design notes completed against actual reference links/images
-- [ ] Build log populated with implementation evidence
+- [x] Product spec, architecture, implementation plan, agent instructions
+- [x] Operator intake and reference register updated
+- [x] Credential/configuration register and `.env.example`
+- [x] GitHub Actions/App Distribution guide
+- [x] Landing page and legal/security/contact pages
+- [x] Phase 1 evidence in this handoff and build log
+- [ ] Final design notes against app screenshots
+- [ ] Native translation review
+- [ ] Full README build/preview results after CI run
 
 ## Demo status
 
-- Video: Not produced; requires completed real application, working build path and capture device.
+- Video: Not produced; requires stable app capture. No physical device connected during this checkpoint.
 - Target length: 90–150 seconds; absolute maximum 180 seconds.
 - Demo data: synthetic only.
-- Demo journeys: offline lesson, offline attendance and sync, mock absence SMS, parent inbound message/teacher reply, approved progress/digest, cloud AI evidence; on-device AI evidence blocked until a supported device is available.
-- Output location: `artifacts/demo/` (confirmed).
-- Voice/TTS: verify current free Google AI option/quota/terms at production time; use permitted free fallback if unavailable; no charges without authority.
+- Demo journeys: offline lesson, local attendance, mock absence job, parent mock message/teacher reply, approved progress/digest, cloud/fallback AI; on-device Nano evidence blocked.
+- Output: `artifacts/demo/`.
+- TTS: check free Google AI option/quota/terms at Phase 8; no charges.
 
 ## Authorization boundaries
 
-- Do not reveal or commit secrets, real pupil/guardian data or private URLs. Do not request credentials through chat; use `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` and the approved secure destinations.
+- Do not reveal or commit secrets, real pupil/guardian data or private URLs. No credentials through chat.
 - Do not incur unapproved charges. Cloud, AI, SMS, voice and third-party budgets are NGN 0.
-- Do not send live SMS to real parents. Use the mock adapter until further written authorization.
+- Do not send live SMS. Mock adapter only.
 - Do not process real pupil/guardian data in development or demos.
-- Do not deploy production, migrate/destructively alter production data, or enable irreversible actions without explicit authority.
-- Do not deploy Cloud Functions, enable Blaze or create paid Firebase resources without explicit approval. Functions are emulator-only.
-- Do not install the full Android Studio toolchain on the Windows machine; use GitHub Actions Ubuntu runners.
-- A Firebase API key or provider credential is not unlimited spending or sending authority.
-- A staging/preview authorization does not imply production release authorization.
+- Do not deploy production, migrate/destructively alter production data or enable irreversible actions.
+- Do not deploy Cloud Functions, activate Blaze or create paid Firebase resources. Functions are emulator-only.
+- Do not install full Android Studio on the Windows machine; use GitHub Actions.
 - Do not force-push, rewrite history, delete branches or change repository visibility.
 - Do not bypass App Check, encryption or authorization to make a demo work.
 
 ## Documentation inconsistencies observed
 
-1. **Environment-variable names:** `TINY_PROJECT_BLUEPRINT.md` §23 uses `SMS_MONTHLY_BUDGET_USD` and `AI_DAILY_CLOUD_LIMIT_PER_TEACHER`; `docs/CONFIGURATION.md` and `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` use `SMS_MONTHLY_BUDGET_MINOR` and `AI_DAILY_CLOUD_LIMIT_PER_USER`. The register treats the latter names as canonical for implementation; no code exists yet.
-2. **SMS mode:** the target architecture uses `SMS_MODE=sandbox|production`; current development uses `SMS_MODE=mock` per operator authorization. The mock mode is a development adapter, not a production architecture change.
-3. **Demo output path:** `IMPLEMENTATION_PLAN.md` Phase 8 narrative mentions `demo/`; the artifact table and `DEMO_VIDEO_PLAN.md` use `artifacts/demo/`. Operator confirmed `artifacts/demo/`; treat that as canonical.
-4. **Time-sensitive AI versions:** blueprint SDK/Compose versions are provisional and must be checked against current official documentation and pinned/tested in Phase 1.
-5. **Historical ZIP claim:** the ZIP is not in the repository; the claim was not re-verified.
+1. **Environment-variable names:** `TINY_PROJECT_BLUEPRINT.md` §23 uses `SMS_MONTHLY_BUDGET_USD` / `AI_DAILY_CLOUD_LIMIT_PER_TEACHER`; `docs/CONFIGURATION.md` and `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` use `SMS_MONTHLY_BUDGET_MINOR` / `AI_DAILY_CLOUD_LIMIT_PER_USER`. The register treats the latter as canonical.
+2. **SMS mode:** target architecture uses `SMS_MODE=sandbox|production`; current development uses `mock`. Mock is a development adapter, not an architecture change.
+3. **Demo output path:** Phase 8 narrative mentions `demo/`; artifact table and `DEMO_VIDEO_PLAN.md` use `artifacts/demo/`. Use `artifacts/demo/`.
+4. **AI versions:** blueprint SDK/Compose versions are provisional; pinned versions actually used are recorded in this handoff and `docs/BUILD_LOG.md`.
+5. **Firebase skill IDs:** the live official catalog has renamed/removed some selected IDs; mapping is recorded above. No silent substitution.
+6. **StageShow:** required attempt failed due harness removal; not claimed complete.
+7. **Historical ZIP claim:** the ZIP is not in this repository; current Markdown checks pass independently.
 
 ## Known limitations / risks
 
-1. Firebase Android on-device hybrid inference is experimental/beta and only works on selected devices; a physical compatible handset is required for proof. This is a separate acceptance gate and does not block non-AI work.
-2. The supplied Samsung Galaxy Note 10+ is not on the current official ML Kit Gemini Nano supported-device list. It is a general testing device only; on-device AI proof/demo is blocked until a supported device is available.
-3. The project is on Spark with NGN 0. Cloud Functions Gen2 cannot be deployed; backend integration/E2E is emulator-only until billing authority changes. Do not deploy Functions, activate Blaze or introduce paid hosting.
-4. The Windows machine lacks JDK, Android Studio/SDK, `adb`, Gradle, Firebase CLI and Google Cloud CLI; only 5.5 GB is free on `C:`. This is not a build blocker because GitHub Actions Ubuntu is the confirmed build path. Local `adb` is optional for device installation/capture.
-5. The GitHub repository is public. Implementation, commit history and CI artifacts will be publicly visible. Never commit secrets or real data.
-6. Node.js 24.20.0 is active; Functions requires Node.js 22. `fnm` is available to pin the required version.
-7. `minSdk 26` is an explicit architecture compromise; connected production operations also require a Play Integrity-compatible Google Play environment.
-8. Firestore `africa-south1` is Johannesburg, not Nigeria; cross-border processing review/DPIA required.
-9. Gemini Developer API cloud processing is global; do not send PII.
-10. eSMS production activation may require KYC, shared keyword provisioning and recurring costs; mock only until validated/authorized.
-11. Parent number can map to multiple schools/pupils; require school/pupil routing hints, never guess.
-12. Curriculum seed scope and usage rights must be checked against the exact current NERDC source files.
-
-## Independent Phase 1 preparation
-
-After the UI reference URLs are supplied, these tasks can proceed without the real Firebase project or a Gemini Nano-supported device:
-
-1. Install/inspect the selected Firebase Agent Skills for OpenCode; verify fresh-session discovery and preserve the lockfile.
-2. Create the Android Gradle scaffold, theme/navigation/localization scaffolding and labelled placeholders.
-3. Add the GitHub Actions Ubuntu workflow for lint, unit tests, debug APK and artifact upload.
-4. Set up Firebase Emulator Suite with a demo project for local/CI backend tests.
-5. Implement local Room/SQLCipher, repositories and UI flows that do not depend on live Firebase resources, using mocks/emulators.
-6. Document/prepare App Distribution groups and judge access; actual upload waits for the Firebase project and approved tester emails.
-
-These tasks do not authorize Functions deployment, Blaze, paid services, live SMS, production resources or real pupil/guardian data. They also do not satisfy the separate on-device Gemini Nano gate.
-
-## Checkpoint template
-
-At each phase checkpoint update this file and `docs/BUILD_LOG.md`:
-
-```text
-Current phase:
-Completed:
-Tests and evidence:
-Preview URL:
-Deployed commit:
-Reference image/skill status:
-Firebase Agent Skills / MCP status:
-Documentation status:
-Demo video status:
-Known issues:
-Authorization boundaries:
-Next task:
-Blocked by:
-```
+1. On-device Gemini Nano is blocked: Note 10+ is not supported; emulator does not prove physical inference.
+2. Hosted Functions are unavailable under Spark/NGN 0; backend is emulator-only.
+3. Firebase project/App Distribution access is not yet available; no judge-facing build or Firebase integration test.
+4. `syncCommands` command processing is scaffolded, not complete.
+5. Firestore rules are a baseline; class-level guardian/conversation read restrictions need emulator tests before pilot.
+6. App translations are partial draft resources; native review is pending.
+7. No physical device was connected during the checkpoint; general device validation is pending.
+8. StageShow skill was not usable after restart; no claim.
+9. Local Windows machine uses portable JDK/SDK; CI is the canonical build.
+10. Public repository: never commit secrets or real data.
 
 ## Resume instruction
 
-If context/session ends, inspect Git status, this file, `OPERATOR_INTAKE.md` §9 and §10, `docs/BUILD_LOG.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`, `docs/CI_ANDROID_BUILD.md` and the latest commits. Begin Phase 1 once the UI reference URLs are supplied; Firebase project creation, App Distribution tester access and a Gemini Nano-supported device can follow without blocking independent Phase 1 preparation. Do not deploy Functions, activate Blaze, send live SMS or process real pupil/guardian data. Do not redo completed work or ask for routine phase approval.
+Inspect Git status, this file, `OPERATOR_INTAKE.md`, `docs/BUILD_LOG.md`, `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`, `docs/CI_ANDROID_BUILD.md`, and the latest commits. Resume by pushing the Phase 1 checkpoint, running GitHub Actions, fixing CI, then continue Phase 2/3. Do not deploy Functions, activate Blaze, send live SMS, use real pupil data or claim on-device AI without a supported device and evidence.

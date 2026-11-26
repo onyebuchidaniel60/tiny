@@ -1,0 +1,180 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function memberPath(workspaceId) {
+      return /databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid);
+    }
+
+    function isMember(workspaceId) {
+      return signedIn()
+        && exists(memberPath(workspaceId))
+        && get(memberPath(workspaceId)).data.status == 'active';
+    }
+
+    function isAdmin(workspaceId) {
+      return isMember(workspaceId)
+        && get(memberPath(workspaceId)).data.role == 'school_admin';
+    }
+
+    function canAccessClass(workspaceId, classId) {
+      return isMember(workspaceId) && (
+        isAdmin(workspaceId)
+        || request.auth.uid in get(/databases/$(database)/documents/workspaces/$(workspaceId)/classes/$(classId)).data.assignedTeacherUids
+      );
+    }
+
+    // User-private profile and command receipts. The client may read its own
+    // profile; all writes are server-only.
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // Workspace metadata is readable by active members. No client writes.
+    match /workspaces/{workspaceId} {
+      allow read: if isMember(workspaceId);
+      allow write: if false;
+
+      match /classes/{classId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      match /pupils/{pupilId} {
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, resource.data.classId);
+        allow write: if false;
+      }
+
+      match /enrollments/{enrollmentId} {
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, resource.data.classId);
+        allow write: if false;
+      }
+
+      match /attendanceSessions/{sessionId} {
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, resource.data.classId);
+        allow write: if false;
+      }
+
+      match /attendanceEntries/{entryId} {
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, get(/databases/$(database)/documents/workspaces/$(workspaceId)/attendanceSessions/$(resource.data.sessionId)).data.classId);
+        allow write: if false;
+      }
+
+      match /attendanceAmendments/{amendmentId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      match /progressEntries/{progressEntryId} {
+        allow read: if isMember(workspaceId)
+          && canAccessClass(workspaceId, resource.data.classId);
+        allow write: if false;
+        match /revisions/{revisionId} {
+          allow read: if isMember(workspaceId);
+          allow write: if false;
+        }
+      }
+
+      match /lessonPlans/{lessonPlanId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      match /teachingResources/{resourceId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      match /curriculumPacks/{packId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      // Guardian contact data and conversations are restricted to admins in
+      // the read baseline until class-linked conversation rules are tightened
+      // and emulator-tested before a pilot.
+      match /guardians/{guardianId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /guardianPhoneKeys/{phoneKey} {
+        allow read, write: if false;
+      }
+
+      match /guardianVerificationChallenges/{challengeId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /pupilGuardianLinks/{linkId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /conversations/{conversationId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+        match /messages/{messageId} {
+          allow read: if isAdmin(workspaceId);
+          allow write: if false;
+        }
+      }
+
+      match /notificationJobs/{jobId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /weeklyDigests/{digestId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /commandReceipts/{receiptId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /auditEvents/{auditEventId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /invitations/{invitationId} {
+        allow read: if isAdmin(workspaceId);
+        allow write: if false;
+      }
+
+      match /teacherAssignments/{assignmentId} {
+        allow read: if isMember(workspaceId);
+        allow write: if false;
+      }
+
+      match /{document=**} {
+        allow read, write: if false;
+      }
+    }
+
+    // Provider webhook receipts and global routing keys are server-only.
+    match /providerWebhookReceipts/{receiptId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,5 +1,7 @@
 # Tiny — Deployment and Release Procedure
 
+**Current status:** Phase 1 local debug APK built and tested. GitHub Actions workflow exists; no App Distribution upload, GitHub Pages publication or hosted backend deployment is verified yet.
+
 ## 1. Environments
 
 | Environment | Purpose | Data | Provider mode | Authority |

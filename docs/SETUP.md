@@ -1,6 +1,23 @@
 # Tiny — Developer Setup
 
-**Status:** Guide for the implementation phase. No application code has been generated yet.
+**Status:** Phase 1 preview implemented. Android shell, Room/SQLCipher foundation, Functions scaffold, CI and landing page exist.
+
+## 0. Pinned Phase 1 stack
+
+| Item | Verified value |
+|---|---|
+| Android Gradle Plugin | 8.13.2 |
+| Gradle wrapper | 8.13 |
+| Kotlin | 2.3.0 |
+| Compose BOM | 2026.06.01 (newer 2026.09 requires compileSdk 37; AGP 8.13 supports 36.1) |
+| compileSdk / targetSdk | 36 |
+| minSdk | 26 |
+| JDK | 17 |
+| Room | 2.7.2 |
+| SQLCipher for Android | 4.20.0 |
+| Firebase Android BoM | 35.2.0 (dependencies present; client initialization deferred until project config) |
+| Functions runtime | Node.js 22 / firebase-functions 6.5.0 / firebase-admin 13.4.0 |
+| CI runner | GitHub Actions `ubuntu-24.04` |
 
 ## 1. Prerequisites
 
