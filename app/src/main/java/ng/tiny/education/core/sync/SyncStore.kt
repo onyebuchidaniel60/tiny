@@ -12,6 +12,8 @@ interface SyncStore {
     suspend fun markAttendance(classId: String, schoolDate: String, state: SyncState)
     suspend fun markProgress(entryId: String, state: SyncState)
     suspend fun markPupil(pupilId: String, state: SyncState)
+    suspend fun markClass(classId: String, state: SyncState)
+    suspend fun markGuardian(guardianId: String, state: SyncState)
     suspend fun audit(workspaceId: String, action: String, summary: String)
 }
 
@@ -29,6 +31,12 @@ class RoomSyncStore(private val dao: TinyDao) : SyncStore {
 
     override suspend fun markPupil(pupilId: String, state: SyncState) =
         dao.updatePupilSyncState(pupilId, state)
+
+    override suspend fun markClass(classId: String, state: SyncState) =
+        dao.updateClassSyncState(classId, state)
+
+    override suspend fun markGuardian(guardianId: String, state: SyncState) =
+        dao.updateGuardianSyncState(guardianId, state)
 
     override suspend fun audit(workspaceId: String, action: String, summary: String) {
         dao.insertAudit(

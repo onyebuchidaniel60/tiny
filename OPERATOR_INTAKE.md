@@ -1,6 +1,6 @@
 # Tiny — Consolidated Operator Intake / Readiness Check
 
-**Status:** Phase 0 intake complete for current scope; **Phase 1 in progress**. UI references and device baseline are confirmed. Firebase project/App Distribution access remain later gates; on-device Gemini Nano remains a separate blocked acceptance gate.
+**Status:** Phase 0 intake complete. Firebase project `tiny-b9f29` is recorded; Firebase CLI authentication is the current blocker for project-side setup. App Distribution and on-device Gemini Nano remain separate gates. Other local/emulator implementation is proceeding.
 
 **Last inspected:** 25 November 2026 — repository, handoff package and local environment inspected read-only. No application code, dependency installation, cloud resource, SMS or deployment action performed.
 

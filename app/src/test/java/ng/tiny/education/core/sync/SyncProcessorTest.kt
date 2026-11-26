@@ -13,6 +13,8 @@ class SyncProcessorTest {
         val attendance = mutableMapOf<String, SyncState>()
         val progress = mutableMapOf<String, SyncState>()
         val pupils = mutableMapOf<String, SyncState>()
+        val classes = mutableMapOf<String, SyncState>()
+        val guardians = mutableMapOf<String, SyncState>()
         val audits = mutableListOf<String>()
 
         override suspend fun dueCommands(workspaceId: String, nowMillis: Long, limit: Int) =
@@ -37,6 +39,14 @@ class SyncProcessorTest {
 
         override suspend fun markPupil(pupilId: String, state: SyncState) {
             pupils[pupilId] = state
+        }
+
+        override suspend fun markClass(classId: String, state: SyncState) {
+            classes[classId] = state
+        }
+
+        override suspend fun markGuardian(guardianId: String, state: SyncState) {
+            guardians[guardianId] = state
         }
 
         override suspend fun audit(workspaceId: String, action: String, summary: String) {

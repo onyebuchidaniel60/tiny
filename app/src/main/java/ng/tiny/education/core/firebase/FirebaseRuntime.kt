@@ -20,6 +20,9 @@ object FirebaseRuntime {
         FirebaseApp.getApps(context).isNotEmpty()
 
     fun initialize(context: Context) {
+        if (!isConfigured(context)) {
+            FirebaseApp.initializeApp(context)
+        }
         if (!isConfigured(context)) return
         val appCheck = FirebaseAppCheck.getInstance()
         if (BuildConfig.DEBUG) {

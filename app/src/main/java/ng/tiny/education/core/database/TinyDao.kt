@@ -194,6 +194,12 @@ interface TinyDao {
     @Query("UPDATE pupils SET syncState = :syncState WHERE id = :pupilId")
     suspend fun updatePupilSyncState(pupilId: String, syncState: SyncState)
 
+    @Query("UPDATE classrooms SET syncState = :syncState WHERE id = :classId")
+    suspend fun updateClassSyncState(classId: String, syncState: SyncState)
+
+    @Query("UPDATE guardians SET syncState = :syncState WHERE id = :guardianId")
+    suspend fun updateGuardianSyncState(guardianId: String, syncState: SyncState)
+
     @Query("UPDATE messages SET status = :status WHERE id = :messageId")
     suspend fun updateMessageStatus(messageId: String, status: ng.tiny.education.core.model.MessageStatus)
 

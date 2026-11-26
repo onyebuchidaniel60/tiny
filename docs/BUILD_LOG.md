@@ -86,6 +86,34 @@
 - Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.
 - Next phase/task: final emulator recapture/demo, docs polish, physical-device/App Distribution gates.
 
+## Firebase integration checkpoint — 26 November 2026
+
+- Objective: Connect Tiny to `tiny-b9f29` and replace the Android mock sync path with a real Firebase client path, without Blaze or live SMS.
+- Project/config completed:
+  - `.firebaserc` now targets `tiny-b9f29`; `.env.example`, configuration and credential registers record the project ID.
+  - Added Firebase Functions, App Check debug/Play Integrity, Firebase AI Logic and AI Logic on-device Android dependencies.
+  - Added debug-only cleartext permission for the local Functions emulator; release remains cleartext-disabled.
+  - Added `docs/FIREBASE_INTEGRATION.md` with the exact authentication, app registration, SHA, Auth, Firestore, App Check, AI Logic and emulator steps.
+- Android implementation:
+  - App Check bootstrap installs the debug provider in debug builds and Play Integrity in release builds.
+  - Phone-auth gate and screen; preview mode remains available when no `google-services.json` exists.
+  - Firebase callable sync transport (`syncCommands`) with Auth/App Check tokens attached automatically.
+  - WorkManager `SyncWorker` plus `SyncProcessor` handling accepted/alreadyApplied/conflict/rejected/retryable outcomes, receipts, backoff and local record states.
+  - Firestore bootstrap pulls the user's workspace index, workspace, classes and pupils into Room.
+  - Workspace creation, class creation, guardian linking and guardian verification flows (local preview plus online callables).
+  - AI Logic service using `gemini-3.5-flash-lite`, `PREFER_ON_DEVICE`, SDK-reported inference source, App Check limited-use tokens and the curated offline fallback.
+  - Backend `verifyGuardianCode`, client-generated class/guardian IDs, user workspace index, and class/guardian sync handlers.
+- Tests executed:
+  - Backend emulator E2E: **10/10 passed**, including guardian code verification and class/guardian sync.
+  - Firestore rules: **9/9 passed**, including own workspace index access.
+  - Android unit tests: **34/34 passed**, including sync outcome mapping, durable processor, JSON payload and retry policy.
+  - Local debug APK builds successfully; APK size increased to **31,094,724 bytes** (still under 35 MB).
+- Blocked:
+  - Firebase CLI has no authenticated account. Project audit, app registration, `google-services.json`, Auth test numbers, Firestore database/rules deployment, App Check token registration and AI Logic enablement cannot be performed yet.
+  - Real phone SMS is Blaze-only and not authorized; Spark development must use Firebase test phone numbers.
+  - Cloud Functions remain emulator-only under Spark/NGN 0.
+- Next task: operator runs `npx --yes firebase-tools@15.14.0 login`; then complete the runbook and run live client integration tests.
+
 ## Operator confirmations received
 
 - Git: direct commits/pushes to public `main` authorized; no force-push, history rewrite, branch deletion or visibility change.

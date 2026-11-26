@@ -53,13 +53,13 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS — 24/24 unit | Domain unit tests incl. JSON outbox escaping |\n| Compose instrumentation | PASS | API 35 Pixel 5: onboarding → Home → Classes → class detail → Attendance |
-| Android build | PASS - CI | GitHub Actions APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25` |
+| Android tests | PASS - 34/34 unit | Domain, JSON, sync outcome and durable processor tests |\n| Compose instrumentation | PASS - prior run; new class-creation step pending CI | API 35 Pixel 5 journey |
+| Android build | PASS - local; CI retry pending | Local APK 31,094,724 bytes after Firebase/AI SDKs |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
-| Firestore rules | PASS — 8/8 | Emulator tests: unauth/nonmember denial, member reads, write denial, class-scoped pupils/guardians/links/conversations/messages |
+| Firestore rules | PASS - 9/9 | Emulator tests incl. class-scoped records and own workspace index |
 | Functions callables/webhooks | IMPLEMENTED — E2E 10/10 | Workspace/class/pupil/guardian/attendance/progress/message callables, signed webhook, digest, sync dispatcher |
-| Firebase project/access | PENDING — later integration gate | Not required for current Android shell |
+| Firebase project/access | PROJECT CONFIRMED; CLI AUTH BLOCKED | `tiny-b9f29`; no Firebase CLI account yet. See `docs/FIREBASE_INTEGRATION.md` |
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 8/8 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
@@ -120,7 +120,7 @@
 - Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
 - `firestore.rules`: default deny; member read baseline; direct writes denied; admin-only guardian/conversation reads. Class-level read restrictions need emulator tests and tightening before pilot.
 - `firebase.json`, `.firebaserc` (`demo-tiny`), `firestore.indexes.json` present.
-- `syncCommands` dispatches `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client transport remains mock because no Firebase project is configured; do not claim cloud sync from the app.
+- `syncCommands` dispatches `pupil.register`, `class.create`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client now has a Firebase Functions transport and WorkManager processor; live verification is blocked on CLI authentication and an app config file.
 
 ### CI / distribution
 
@@ -220,10 +220,10 @@
 1. On-device Gemini Nano is blocked: Note 10+ is not supported; emulator does not prove physical inference.
 2. Hosted Functions are unavailable under Spark/NGN 0; backend is emulator-only.
 3. Firebase project/App Distribution access is not yet available; no judge-facing build or Firebase integration test.
-4. The server-side `syncCommands` dispatcher is implemented and emulator-tested, but the Android WorkManager client is still wired to the mock sync engine; it does not send commands to Firestore without a configured Firebase project.
-5. Firestore rules are now class-scoped for pupils, guardians, links, conversations and messages, with 8/8 emulator tests; a full review is still required before any pilot.
-6. The Android preview uses seeded classes and guardians; in-app workspace/class creation and guardian verification/linking screens are not complete.
-7. The Android client still uses the mock sync engine; server-side sync is emulator-tested but not connected to the app without a Firebase project.
+4. The Android Firebase sync transport, WorkManager processor, Auth gate, Firestore bootstrap and AI Logic service are implemented but cannot be live-tested until the Firebase CLI is authenticated, the Android app is registered, `google-services.json` is generated and the test phone/App Check tokens are configured.
+5. Firestore rules are class-scoped and pass 9/9 emulator tests; a full review is still required before any pilot.
+6. In-app workspace/class creation and guardian linking/verification screens are implemented against local Room; the online path uses callables. Live online verification is blocked on Firebase CLI authentication.
+7. Android cloud mode requires a Firebase app config; without it the app stays in local/mock preview mode and does not claim cloud sync.
 8. Native translation review and physical low-end device testing remain pending.
 6. App translations are partial draft resources; native review is pending.
 7. No physical device was connected during the checkpoint; general device validation is pending.

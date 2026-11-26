@@ -104,6 +104,12 @@ class SyncProcessor(
             "pupil.register" -> payload.stringValue("pupilId")?.let {
                 store.markPupil(it, SyncState.SYNCED)
             }
+            "class.create" -> payload.stringValue("classId")?.let {
+                store.markClass(it, SyncState.SYNCED)
+            }
+            "guardian.upsert" -> payload.stringValue("guardianId")?.let {
+                store.markGuardian(it, SyncState.SYNCED)
+            }
         }
         store.updateCommand(
             command.copy(
@@ -137,6 +143,12 @@ class SyncProcessor(
             }
             "pupil.register" -> payload.stringValue("pupilId")?.let {
                 store.markPupil(it, state)
+            }
+            "class.create" -> payload.stringValue("classId")?.let {
+                store.markClass(it, state)
+            }
+            "guardian.upsert" -> payload.stringValue("guardianId")?.let {
+                store.markGuardian(it, state)
             }
         }
         store.updateCommand(
