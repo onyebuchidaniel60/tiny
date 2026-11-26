@@ -1,6 +1,6 @@
 # Tiny demo narration script
 
-Target: 90–150s; rendered: 146.2s
+Target: 90–150s; rendered: 149.5s
 
 ## Scenes
 
@@ -22,7 +22,7 @@ The home screen shows today's classes, pending sync, parent messages, and the ne
 
 ### 05. Classes
 
-A teacher can manage more than one class, view the roster, and add a pupil locally.
+A teacher can manage more than one class, view the roster, and add a class or pupil locally.
 
 ### 06. Offline attendance
 
@@ -44,10 +44,10 @@ Parent conversations arrive through the SMS adapter. In this preview the adapter
 
 A teacher can reply from Tiny without exposing a personal phone number. Provider acceptance is not the same as delivery.
 
-### 11. Settings
+### 11. Family contacts
 
-Settings contains language, sync, and privacy controls. The Note 10 plus is a general test device; Gemini Nano needs supported hardware.
+A pupil can have more than one guardian. Link an endpoint, verify it in person, and record opt-in before any child-specific SMS. A shared family contact is reused for siblings.
 
 ### 12. The next gates
 
-Tiny is not finished. The remaining gates are Firebase access, App Distribution, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.
+Tiny is not finished. The remaining gates are Firebase project setup, App Distribution, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.

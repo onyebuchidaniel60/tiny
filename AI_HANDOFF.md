@@ -194,7 +194,7 @@
 
 ## Demo status
 
-- Video: `artifacts/demo/tiny-demo.mp4` — 146.2s, 1920x1080 H.264/AAC, 5,481,700 bytes, SHA-256 `B211C1EB8BBF43B8B2521330AEF2DBA878EEC22B4A6A6F30BDFDB2711CCC40F2`.
+- Video: `artifacts/demo/tiny-demo.mp4` — 149.5s, 1920x1080 H.264/AAC, 5,558,830 bytes, SHA-256 `6285088CB30CB0741FBD075951F80592205F2B5ED33530F1C2B9879A657459FB`.
 - Capture: reviewed screenshot slideshow with narration, not motion screen recording; real emulator screenshots from run `45809071551`.
 - Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is within target.
 - Demo data: synthetic only.

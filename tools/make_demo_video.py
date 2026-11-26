@@ -267,7 +267,7 @@ def build() -> None:
     segment_paths = []
     total = 0.0
     for scene, frame, wav, audio_duration in zip(SCENES, frames, audio_files, durations):
-        seg_duration = max(6.0, audio_duration + 0.7)
+        seg_duration = max(6.0, audio_duration + 0.6)
         total += seg_duration
         seg = BUILD / f"{scene['id']}.mp4"
         subprocess.run([
@@ -292,7 +292,7 @@ def build() -> None:
     caption_lines = []
     clock = 0.0
     for i, (scene, audio_duration) in enumerate(zip(SCENES, durations), start=1):
-        seg_duration = max(6.0, audio_duration + 0.7)
+        seg_duration = max(6.0, audio_duration + 0.6)
         start = clock
         end = clock + seg_duration
         def ts(value: float) -> str:

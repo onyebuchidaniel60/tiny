@@ -1,6 +1,6 @@
 # Tiny — Demo Video Plan
 
-**Status:** Produced 26 November 2026. `artifacts/demo/tiny-demo.mp4` — 146.2s, 1920x1080 H.264/AAC, 5,481,700 bytes, SHA-256 `B211C1EB8BBF43B8B2521330AEF2DBA878EEC22B4A6A6F30BDFDB2711CCC40F2`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. On-device Gemini Nano evidence remains blocked.
+**Status:** Produced 26 November 2026. `artifacts/demo/tiny-demo.mp4` — 149.5s, 1920x1080 H.264/AAC, 5,558,830 bytes, SHA-256 `6285088CB30CB0741FBD075951F80592205F2B5ED33530F1C2B9879A657459FB`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. On-device Gemini Nano evidence remains blocked.
 
 **Current mode:** mock SMS adapter; cloud AI evidence can proceed, but on-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
 

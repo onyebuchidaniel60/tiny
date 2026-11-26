@@ -168,7 +168,7 @@
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
 | 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
 | 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
-| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1` | `artifacts/demo/tiny-demo.mp4` | 146.2s 1080p H.264/AAC slideshow from real emulator screenshots incl. AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
+| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1` | `artifacts/demo/tiny-demo.mp4` | 149.5s 1080p H.264/AAC slideshow from real emulator screenshots incl. AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
 | 9 - Final regression/security/release | PARTIAL - release blocked | `2776ba1` | - | Unit/domain/rules/E2E/instrumentation green; rules tightened; secrets scan; zero-spend boundaries | Production authority not granted; Spark/NGN 0; no App Distribution or physical-device release validation |
 
 ## Firebase Agent Skills and MCP status

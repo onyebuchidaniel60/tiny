@@ -126,7 +126,7 @@ npx --yes serve landing
 
 **Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **34 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Final CI run before the integration stage: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45853884690`. App Distribution/judge access, Firebase project-side setup and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
 
-A reviewed 146-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording.
+A reviewed 149.5-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording.
 
 ## Firebase integration stage
 
