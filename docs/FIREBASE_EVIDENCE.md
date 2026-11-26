@@ -77,8 +77,8 @@ No client writes were attempted or allowed. The documents contain synthetic name
 | API | `firebaseappcheck.googleapis.com` enabled |
 | Debug token registration | Created through the App Check v1beta REST API using project number and app ID |
 | Debug token exchange | `exchangeDebugToken` returned a signed App Check token with TTL `3600s` |
-| Cleanup | Debug token revoked after the protocol test; debug-token list is empty |
-| Log handling | The CI artifact containing the raw logcat was deleted; the smoke script now redacts the token |
+| Cleanup | The first debug token was revoked and its log artifact deleted. A separate token for the private `firebase-ai-smoke` workflow is stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN` and used by an ephemeral, non-uploaded APK |
+| Log handling | The CI smoke logcat is redacted; the AI test reports contain no token |
 | Enforcement | Not enabled |
 | Play Integrity | Not configured yet; requires Play Console link and release fingerprint |
 
@@ -117,7 +117,19 @@ Short response excerpt:
 
 After removing the temporary `generativelanguage.googleapis.com` target from the Android API key, the proxy still succeeded and a direct `generativelanguage.googleapis.com` request returned HTTP 403. This is the intended posture: the app key uses the Firebase AI Logic proxy, and the raw Gemini endpoint is not open through the client key.
 
-This is protocol-level evidence. The Android UI has not yet made a live AI Logic call; the app-level AI path still needs a registered debug token or enforcement-ready build, and on-device inference is separately blocked.
+This is protocol-level evidence. The app-level SDK path is covered separately below; on-device inference remains blocked.
+
+### App-level SDK test (passed)
+
+The manual `firebase-ai-smoke` workflow (`45894574508`) built an ephemeral debug APK with a registered debug token from a GitHub secret, ran `AiLogicLiveTest` on an API 35 emulator, and did **not** upload the APK. Result: **1 test passed, 0 failed**.
+
+- The SDK first tried the on-device provider and logged `FirebaseAIOnDeviceNotAvailableException`.
+- It fell back to the cloud provider and returned text.
+- `AiLogicLiveTest` asserted the SDK-reported source was `Cloud Gemini`; the test report is `tiny-firebase-ai-reports` for run `45894574508`.
+- The test also asserted the emulator did not report `Available` for on-device Nano.
+- The logcat/report artifacts contain no unredacted App Check debug token.
+
+This verifies the app-level cloud AI path and honest source reporting. It does **not** prove on-device Gemini Nano.
 
 ## 6. Authentication
 
@@ -149,12 +161,12 @@ No billing was enabled to initialize or test Auth.
 | Compose instrumentation | Success |
 | Firebase-enabled APK | Built with `google-services.json`; Firebase initialized |
 | Emulator smoke | Auth gate captured, then test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace; `tiny-04-authenticated.png` |
-| Log redaction | The logcat artifact contains no unredacted App Check debug token |
-| Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked |
+| App-level AI smoke | Manual run `45894574508`: `AiLogicLiveTest` passed; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded |
+| Log redaction | The logcat and AI test artifacts contain no unredacted App Check debug token |
+| Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 
 ## 8. Not verified / not claimed
 
-- App-level AI Logic generation or SDK-reported inference source.
 - App Check enforcement or Play Integrity attestation.
 - On-device Gemini Nano inference; the Note 10+ is unsupported.
 - Hosted Cloud Functions, live SMS, App Distribution, production deployment.

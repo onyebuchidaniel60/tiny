@@ -115,6 +115,7 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - Android debug build: CI `assembleDevDebug` passed; latest Firebase-enabled APK 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
 - Emulator smoke: API 35 install/launch succeeded; the Firebase-enabled build signed in with a synthetic test phone number, loaded the synthetic Firestore workspace, and captured `artifacts/emulator/tiny-04-authenticated.png`; launcher ANRs were dismissed and the debug token was redacted.
 - Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI without Firebase client config.
+- App-level AI smoke: manual private run `45894574508`; `AiLogicLiveTest` **1 passed, 0 failed**; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
-- Not yet run: physical-device install, App Distribution, app-level AI Logic, App Check enforcement.
+- Not yet run: physical-device install, App Distribution, App Check enforcement, Functions-emulator client sync.
 

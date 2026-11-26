@@ -132,7 +132,7 @@ A reviewed 149.5-second demo built from the real emulator evidence is at `artifa
 
 ## Firebase integration stage
 
-Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; Auth is initialized; Phone Auth uses two synthetic test numbers; and the Android emulator signs in and loads a synthetic Firestore workspace. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. Remaining hardening: app-level AI Logic, App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`.
+Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; Auth is initialized; Phone Auth uses two synthetic test numbers; the Android emulator signs in and loads a synthetic Firestore workspace; and a private app-level AI test passed with on-device fallback and SDK-reported source `Cloud Gemini`. Remaining hardening: App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`.
 
 
 ## Firebase development-agent tooling

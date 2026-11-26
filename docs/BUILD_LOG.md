@@ -1,6 +1,6 @@
 # Tiny — Build Log
 
-**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, Auth/test phone numbers, App Check debug exchange and AI Logic proxy verification. The Firebase-enabled emulator signs in and loads a synthetic Firestore workspace. App-level AI and App Check enforcement remain pending. No production deployment or live SMS has occurred.
+**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, Auth/test phone numbers, App Check debug exchange, authenticated bootstrap and app-level AI cloud fallback. App Check enforcement, Play Integrity and Functions-emulator client sync remain pending. No production deployment or live SMS has occurred.
 
 ## Planning baseline
 
@@ -155,6 +155,16 @@
   - APK artifact: 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
 - Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted; the embedded test number/code is synthetic.
 - Next task: app-level AI Logic with a registered debug token/enforcement-ready build, Functions-emulator client sync, then App Check enforcement/Play Integrity and App Distribution.
+
+## App-level AI smoke checkpoint — 26 November 2026
+
+- Added `.github/workflows/firebase-ai-smoke.yml` (manual private build) and `AiLogicLiveTest`.
+- The workflow materializes `google-services.json` and a registered App Check debug token from GitHub secrets, builds an **ephemeral** APK, runs the emulator instrumentation test, and does not upload the APK.
+- Run `45894574508`: **1 test passed, 0 failed** in 2.533s.
+- Test evidence: SDK tried the on-device provider (`FirebaseAIOnDeviceNotAvailableException`), fell back to cloud, returned text, and reported `Cloud Gemini`; the emulator was asserted not to report on-device `Available`.
+- Reports `tiny-firebase-ai-reports` contain no unredacted App Check debug token. The APK was not uploaded.
+- No on-device Gemini Nano claim; the Note 10+ remains unsupported.
+- Next: Functions-emulator client sync, App Check enforcement, Play Integrity/release fingerprint and App Distribution.
 
 ## Operator confirmations received
 

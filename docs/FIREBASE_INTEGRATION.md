@@ -21,9 +21,9 @@
 | Firebase Auth | **INITIALIZED** | Console free-tier setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone provider enabled with two synthetic test numbers |
 | Functions | **EMULATOR ONLY** | Backend E2E 10/10; no deployment |
 | App-level Auth/Firestore | **VERIFIED** | Test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace (1 class / 1 pupil) |
-| App-level AI | **NOT YET VERIFIED** | Needs a registered debug token or enforcement-ready build; no on-device claim |
+| App-level AI | **VERIFIED — CLOUD FALLBACK** | `AiLogicLiveTest` passed in the private `firebase-ai-smoke` workflow; on-device unavailable, cloud response, SDK source `Cloud Gemini`; no on-device claim |
 
-**Next verification work:** app-level AI Logic, App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. No immediate operator approval is required for the remaining emulator/protocol work; production remains unauthorized.
+**Next verification work:** App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. No immediate operator approval is required for the remaining emulator/protocol work; production remains unauthorized.
 
 ## 2. Authentication initialization (completed 26 November 2026)
 
@@ -157,6 +157,8 @@ Invoke-RestMethod `
 
 The `firebase-tools` 15.14.0 build in this environment does not expose `appcheck:debugtokens:*` commands. Use the Console or the REST API.
 
+For the manual `firebase-ai-smoke` workflow, a registered debug token is stored only as the GitHub Actions secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`. The workflow builds an ephemeral APK, runs the test, and does not upload the APK. Rotate the token if the secret is exposed; never add it to a public build artifact.
+
 To pin a local token without hardcoding it in source, create the ignored file:
 
 ```text
@@ -209,7 +211,7 @@ https://firebasevertexai.googleapis.com/v1beta/projects/tiny-b9f29/models/gemini
 
 with `x-goog-api-key`, `X-Firebase-AppCheck` and a synthetic English prompt returned a candidate and usage metadata (`promptTokenCount: 22`, `candidatesTokenCount: 50`, `totalTokenCount: 72`). The direct `generativelanguage.googleapis.com` endpoint returned 403 after the temporary key target was removed. This proves the proxy + App Check path, not the Android UI flow.
 
-The app-level AI call remains pending: the CI debug provider generates a new unregistered token each run, and AI Logic requires a valid App Check token. Do not weaken App Check or hardcode a registered token into a public artifact. The on-device path is still unverified. The Samsung Galaxy Note 10+ (Android 12) is not a supported Gemini Nano device; an emulator does not prove physical Nano inference. Never claim on-device inference from configuration or from a cloud response.
+The app-level SDK path is verified by the manual `firebase-ai-smoke` workflow (`45894574508`): it builds an ephemeral debug APK with a registered App Check debug token from a GitHub secret, runs `AiLogicLiveTest`, and does not upload the APK. The test passed: the SDK tried the on-device provider, logged `FirebaseAIOnDeviceNotAvailableException`, fell back to the cloud provider, and reported `Cloud Gemini`; the test also asserted the emulator did not report on-device `Available`. Do not weaken App Check or hardcode a registered token into a public artifact. The on-device path is still unverified. The Samsung Galaxy Note 10+ (Android 12) is not a supported Gemini Nano device; an emulator does not prove physical Nano inference. Never claim on-device inference from configuration or from a cloud response.
 
 ## 6. Cloud Functions and client sync
 
@@ -235,6 +237,8 @@ The build job optionally materializes `app/google-services.json` from the GitHub
 
 Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` — **success**. The emulator smoke captured the auth gate, signed in with the synthetic test phone number, reached Home, and loaded the synthetic Firestore workspace. Evidence: `artifacts/emulator/tiny-03-auth-gate.png` and `artifacts/emulator/tiny-04-authenticated.png`. The smoke script handles launcher ANRs and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
 
+The manual `firebase-ai-smoke` workflow (`https://github.com/onyebuchidaniel60/tiny/actions/runs/45894574508`) builds an ephemeral APK with the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`, runs `AiLogicLiveTest`, and does not upload the APK. It passed with on-device fallback and SDK source `Cloud Gemini`.
+
 ## 8. Verification checklist
 
 - [x] CLI can list `tiny-b9f29` and the Android app.
@@ -248,7 +252,7 @@ Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actio
 - [x] Phone provider enabled; two synthetic test numbers added; SMS region allowlist `NG`; no real SMS.
 - [x] App-level test-phone sign-in succeeds and reaches Home.
 - [x] App-level Firestore bootstrap reads the synthetic workspace/class/pupil (no client writes).
-- [ ] App-level AI Logic call reports its source correctly.
+- [x] App-level AI Logic call reports its source correctly (cloud fallback verified; on-device not claimed).
 - [ ] Callable sync works against the Functions emulator from the Android client.
 - [ ] App Check enforcement enabled after the above.
 - [ ] Play Integrity/release fingerprint configured before production.
@@ -269,6 +273,6 @@ Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actio
 ## 10. Secret handling
 
 - Never commit `app/google-services.json`, App Check debug tokens, service-account JSON, OAuth access tokens or real phone numbers.
-- GitHub Actions secrets currently used: `GOOGLE_SERVICES_JSON_BASE64`.
-- The debug token that appeared in the first CI emulator log was revoked and the artifact containing it was deleted.
-- Do not upload raw logcat that contains App Check debug tokens. The smoke script now redacts the token.
+- GitHub Actions secrets currently used: `GOOGLE_SERVICES_JSON_BASE64` and `FIREBASE_APP_CHECK_DEBUG_TOKEN`.
+- The token that appeared in the first CI emulator log was revoked and the artifact containing it was deleted. The active CI token is stored only in GitHub secrets and is used by an ephemeral, non-uploaded APK.
+- Do not upload raw logcat that contains App Check debug tokens. The smoke script and AI reports redact the token.

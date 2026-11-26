@@ -179,6 +179,8 @@ Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Ac
 
 `.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, and handles launcher ANRs. A Firebase-enabled build captures the auth gate, signs in with the synthetic test phone number, waits for the Firestore bootstrap, and captures `tiny-04-authenticated.png`; it does not pretend the local journey ran. A non-Firebase build continues through home, classes, class detail, attendance, lessons, messages, conversation and settings. The job uploads `tiny-emulator-evidence` with redacted logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
 
+A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45894574508` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token.
+
 The first manual run succeeded and produced:
 - Language screen: `artifacts/emulator/tiny-01-language.png`
 - Welcome: `tiny-02-welcome.png`
