@@ -51,6 +51,7 @@ fun AttendanceScreen(
     onBack: () -> Unit,
 ) {
     val date = remember { LocalDate.now().toString() }
+    val dateLabel = remember { LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("EEEE, d MMMM")) }
     val session by viewModel.observeAttendance(classId, date).collectAsStateWithLifecycle(initialValue = null)
     val entries by remember(session?.id) {
         val id = session?.id
@@ -75,8 +76,8 @@ fun AttendanceScreen(
     ) {
         item {
             SectionHeading(
-                title = stringResource(R.string.attendance_title),
-                subtitle = "Friday, ${LocalDate.now()} · ${pupils.size} active pupils",
+                title = stringResource(R.string.attendance_heading),
+                subtitle = "$dateLabel · ${pupils.size} active pupils",
             )
             Spacer(Modifier.height(8.dp))
             InfoBanner(

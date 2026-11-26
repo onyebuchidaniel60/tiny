@@ -49,7 +49,7 @@ fun LessonsScreen(
     ) {
         item {
             SectionHeading(
-                title = stringResource(R.string.lessons_title),
+                title = stringResource(R.string.lessons_heading),
                 subtitle = stringResource(R.string.lessons_subtitle),
             )
             Spacer(Modifier.height(8.dp))

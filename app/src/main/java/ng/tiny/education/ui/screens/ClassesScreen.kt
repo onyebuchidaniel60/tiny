@@ -53,7 +53,7 @@ fun ClassesScreen(
     ) {
         item {
             SectionHeading(
-                title = stringResource(R.string.classes_title),
+                title = stringResource(R.string.classes_heading),
                 subtitle = stringResource(R.string.classes_subtitle),
             )
             Spacer(Modifier.height(8.dp))

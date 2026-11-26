@@ -51,7 +51,7 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            SectionHeading(title = stringResource(R.string.settings_title), subtitle = stringResource(R.string.settings_preview_note))
+            SectionHeading(title = stringResource(R.string.settings_heading), subtitle = stringResource(R.string.settings_preview_note))
         }
         item {
             PaperCard {
@@ -112,7 +112,8 @@ fun SettingsScreen(
                     Column(Modifier.weight(1f)) {
                         Text(stringResource(R.string.sync_setting), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text(
-                            if (pending > 0) stringResource(R.string.sync_center_pending, pending)
+                            if (pending == 1) stringResource(R.string.sync_center_pending_one)
+                            else if (pending > 1) stringResource(R.string.sync_center_pending, pending)
                             else stringResource(R.string.sync_center_empty),
                             style = MaterialTheme.typography.bodySmall,
                         )
@@ -185,7 +186,7 @@ fun SyncScreen(
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            SectionHeading(title = stringResource(R.string.sync_center_title), subtitle = stringResource(R.string.sync_center_mock_note))
+            SectionHeading(title = stringResource(R.string.sync_heading), subtitle = stringResource(R.string.sync_center_mock_note))
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatusPill("$pending pending", if (pending > 0) TinyButter else TinyForest)

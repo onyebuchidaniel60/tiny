@@ -59,7 +59,7 @@ fun MessagesScreen(
     ) {
         item {
             SectionHeading(
-                title = stringResource(R.string.messages_title),
+                title = stringResource(R.string.messages_heading),
                 subtitle = stringResource(R.string.messages_subtitle),
             )
             Spacer(Modifier.height(8.dp))

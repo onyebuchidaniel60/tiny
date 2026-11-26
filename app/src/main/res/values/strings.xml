@@ -50,6 +50,7 @@
     <string name="home_absence_note">Only absences trigger an immediate parent message after server acceptance.</string>
 
     <string name="classes_title">Classes</string>
+    <string name="classes_heading">Your classes</string>
     <string name="classes_subtitle">Your assigned classes and pupil records.</string>
     <string name="class_count">%1$d pupils</string>
     <string name="mark_attendance">Mark attendance</string>
@@ -60,6 +61,7 @@
     <string name="class_not_found">Class not found.</string>
 
     <string name="attendance_title">Attendance</string>
+    <string name="attendance_heading">Mark the register</string>
     <string name="attendance_subtitle">Mark every active pupil, then review before submitting.</string>
     <string name="present">Present</string>
     <string name="absent">Absent</string>
@@ -76,6 +78,7 @@
     <string name="attendance_already_submitted">This session is already submitted. Use correction flow in a later phase.</string>
 
     <string name="lessons_title">Lessons</string>
+    <string name="lessons_heading">Plan and teach</string>
     <string name="lessons_subtitle">Offline 5E plans and practical teaching resources.</string>
     <string name="lesson_plan">Lesson plan</string>
     <string name="lesson_library">Teaching library</string>
@@ -96,6 +99,7 @@
     <string name="teaching_tip_body">Ask one quiet pupil to explain the idea in their own words. Listen for the part that is still fuzzy, then re-teach only that part.</string>
 
     <string name="messages_title">Messages</string>
+    <string name="messages_heading">Parent inbox</string>
     <string name="messages_subtitle">Parent conversations through the mock SMS adapter.</string>
     <string name="no_messages">No conversations yet.</string>
     <string name="reply">Reply</string>
@@ -128,6 +132,7 @@
     <string name="progress_not_assessed_note">Not assessed means no observation was recorded. It is not a negative judgment.</string>
 
     <string name="settings_title">Settings</string>
+    <string name="settings_heading">Your preferences</string>
     <string name="language_setting">Teacher language</string>
     <string name="workspace_setting">Workspace</string>
     <string name="sync_setting">Sync and data</string>
@@ -151,8 +156,10 @@
     <string name="local_only">Local only</string>
     <string name="saved_on_phone">Saved on this phone</string>
     <string name="sync_center_title">Sync center</string>
+    <string name="sync_heading">Local sync</string>
     <string name="sync_center_empty">No pending local commands.</string>
     <string name="sync_center_pending">%1$d local commands waiting.</string>
+    <string name="sync_center_pending_one">1 local command waiting.</string>
     <string name="sync_center_mock_note">This preview uses a mock sync engine. No data leaves this device.</string>
 
     <string name="close">Close</string>
