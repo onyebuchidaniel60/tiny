@@ -114,6 +114,39 @@
   - Cloud Functions remain emulator-only under Spark/NGN 0.
 - Next task: operator runs `npx --yes firebase-tools@15.14.0 login`; then complete the runbook and run live client integration tests.
 
+## Live Firebase setup checkpoint — 26 November 2026
+
+- Objective: Complete every project-side Firebase step permitted under Spark/NGN 0, verify App Check and AI Logic with synthetic traffic, and leave only unavoidable Console/operator gates.
+- Project/access:
+  - Firebase CLI authenticated as the project owner; `tiny-b9f29` audited (`ACTIVE`, project number `1072757481941`, billing disabled).
+  - Android app `Tiny dev debug` registered (`ng.tiny.education.dev.debug`, app ID `1:1072757481941:android:2005f8b35944923b20dd5c`); debug SHA-1 and SHA-256 registered.
+  - `app/google-services.json` downloaded locally (ignored); GitHub secret `GOOGLE_SERVICES_JSON_BASE64` set.
+- Firestore:
+  - `(default)` created in `africa-south1`, Firestore Native/Standard, delete protection enabled.
+  - Rules deployed: `cloud.firestore` release updated 2026-11-26 17:26:35 UTC, ruleset `c2c94984-9cd2-4a8b-9222-3f4a3e717ec5`.
+  - Seven indexes `READY`. The `messages` collection-group index was rejected as unnecessary, removed from `firestore.indexes.json`, and redeployment succeeded.
+  - Live unauthenticated `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions` with and without an App Check token — intended rules denial.
+- APIs/services:
+  - Enabled Firestore, App Check, App Distribution, Firebase AI Logic (`firebasevertexai`), Firebase ML (`firebaseml`), Generative Language, Play Integrity, Secure Token and related Firebase APIs.
+  - Created AI Logic service identities and granted `roles/firebaseml.serviceAgent`.
+- App Check:
+  - Registered a debug token through the App Check v1beta REST API and exchanged it for a signed token (TTL 3600s).
+  - Revoked the token after testing; debug-token list is empty. The CI artifact containing the raw logcat was deleted and the smoke script now redacts the token.
+  - Enforcement remains off; Play Integrity/release fingerprint not configured.
+- AI Logic:
+  - `gemini-3.5-flash-lite` proxy request with App Check returned a candidate and usage metadata (22 prompt / 50 candidate / 72 total tokens).
+  - Removed the temporary direct `generativelanguage.googleapis.com` target from the Android key; the proxy still works and the raw endpoint returns 403.
+  - This is protocol-level evidence; no Android UI or on-device claim.
+- Auth:
+  - Admin config returns `CONFIGURATION_NOT_FOUND`; public `initializeAuth` returns `BILLING_NOT_ENABLED` on Spark.
+  - No users or test phone numbers; no real SMS. Console **Authentication → Get started** is the only immediate blocker.
+- CI:
+  - Run `45873038243` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
+  - The Firebase-enabled emulator smoke correctly showed the phone-auth gate; the prior scripted journey did not run. The script now branches on the gate and skips the journey.
+  - APK artifact: 31,097,300 bytes; SHA-256 `11E6332EF6B641169A501A006EE4B42285E8589154E9431E24D4EDC93BAE8F24`.
+- Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted.
+- Next task: operator initializes Auth in the Console; then enable Phone/test numbers and run authenticated client/AI/Firestore/Functions-emulator checks.
+
 ## Operator confirmations received
 
 - Git: direct commits/pushes to public `main` authorized; no force-push, history rewrite, branch deletion or visibility change.
@@ -162,9 +195,9 @@
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
 | 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 34 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, prior emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
-| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; live project pending | `13b7e60` | - | Functions build; 8 rules tests; demo project aliases; config/indexes | Real Firebase project/Auth/Firestore integration pending |
-| 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport pending | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Android WorkManager transport needs a configured Firebase project |
-| 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Cloud integration and broader device QA pending |
+| 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore live deployed; Auth Console gate | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes | Firebase Auth initialization pending Console action |
+| 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport implemented | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Live callable sync blocked by Spark/emulator-only |
+| 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Auth-gated cloud flows and broader device QA pending |
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
 | 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
 | 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
@@ -179,7 +212,7 @@
 - Discovery: Firebase skills are visible in the active OpenCode tool catalog. The `opencode` CLI is not on PATH, so a separate fresh-session CLI check was not possible; this limitation is recorded.
 - StageShow: install attempted; harness removed the skill ID after restart. Not used; not claimed complete.
 - Firebase MCP: disabled until non-production project/access and operation scope are authorized.
-- No Firebase resources created or modified.
+- Firebase resources created/modified on 26 November 2026: Android app, SHA certificates, Firestore default database in `africa-south1`, rules/indexes, free-tier API enablement, App Check debug token (revoked), AI Logic P4SA identities/role. No billing, Functions deployment or production resource.
 
 ## Checkpoint entry template
 

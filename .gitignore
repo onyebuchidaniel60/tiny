@@ -12,6 +12,9 @@ local.properties
 # Firebase client configuration — inject locally or via CI, do not commit
 google-services.json
 
+# Local App Check debug token resource — secret, never commit
+app/src/debug/res/values/firebase_app_check_debug.xml
+
 # Emulator and Firebase CLI local state
 .firebase/
 functions/.secret.local

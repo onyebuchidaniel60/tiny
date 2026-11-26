@@ -77,7 +77,7 @@
 
 ## Readiness blockers
 
-Phase 0 intake is complete. Firebase project `tiny-b9f29` is recorded, and the Android client now has App Check, phone-auth gating, a real callable sync transport, WorkManager processing, Firestore bootstrap, workspace/class/guardian flows and AI Logic hybrid code. Firebase CLI authentication is the current blocker for project-side setup and live verification; see `docs/FIREBASE_INTEGRATION.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
+Phase 0 intake is complete. Firebase project `tiny-b9f29` is configured and audited: the CLI is authenticated, the dev app and SHA fingerprints are registered, Firestore `(default)` is deployed in `africa-south1` with rules/indexes, and free-tier App Check and AI Logic are enabled. App Check debug exchange and the AI Logic proxy were verified with synthetic traffic. Firebase Auth still needs the one-time Console **Authentication → Get started** action; see `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
 
 ## Integrity of supplied methodology
 

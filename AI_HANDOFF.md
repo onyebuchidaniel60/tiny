@@ -1,12 +1,26 @@
 # Tiny — AI Implementation Handoff
 
-**Last updated:** 26 November 2026 (Firebase integration stage)
+**Last updated:** 26 November 2026 (live Firebase setup checkpoint)
 
-**Current status:** Firebase project `tiny-b9f29` is recorded. The Android client now contains App Check bootstrap, phone-auth gating, a real callable sync transport with durable WorkManager retries/receipts/conflicts, Firestore bootstrap reads, AI Logic hybrid code, and workspace/class/guardian flows. The Firebase CLI is not authenticated, so project audit, Android app registration, `google-services.json`, Auth provider/test numbers, Firestore database/rules deployment, App Check token registration and AI Logic enablement remain pending.
+**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. App Check debug-token registration/exchange and the Firebase AI Logic cloud proxy were verified with synthetic traffic; the debug token was then revoked. The Firebase-enabled CI APK correctly stops at the phone-auth gate. Firebase Auth is still uninitialized, so no real user sign-in, authenticated Firestore client access or app-level AI call has been run.
 
-**Current blocker:** operator Firebase CLI authentication. Exact steps are in `docs/FIREBASE_INTEGRATION.md`. No secret should be pasted into chat.
+**Current blocker:** Firebase Console → Authentication → **Get started** is required once. The public Identity Platform initialization API rejects Spark with `BILLING_NOT_ENABLED`; do not enable billing. Exact steps are in `docs/FIREBASE_INTEGRATION.md`.
 
-**Next task:** after operator runs `npx --yes firebase-tools@15.14.0 login`, audit `tiny-b9f29`, register the dev app, enable the free-tier services, generate `app/google-services.json`, and run the real client integration tests against Auth/Firestore/AI Logic and the Functions emulator.
+**Next task:** after the operator initializes Auth, enable Phone Auth with synthetic test numbers, run test-phone sign-in and authenticated Firestore/AI checks, exercise the Functions-emulator sync path, then refresh the demo/CI evidence. See `docs/FIREBASE_EVIDENCE.md` for the sanitized audit record.
+
+## Live Firebase setup checkpoint (26 November 2026)
+
+- **CLI/access:** `firebase-tools` 15.14.0 authenticated as the project owner; project `tiny-b9f29` (number `1072757481941`) is Spark with billing disabled.
+- **Android app:** `Tiny dev debug`, package `ng.tiny.education.dev.debug`, app ID `1:1072757481941:android:2005f8b35944923b20dd5c`; debug SHA-1/SHA-256 registered.
+- **Client config:** `app/google-services.json` present locally and ignored; GitHub secret `GOOGLE_SERVICES_JSON_BASE64` set. Never commit or print the file.
+- **Firestore:** `(default)` created in `africa-south1`, Firestore Native/Standard, delete protection enabled. Rules release `cloud.firestore` updated 2026-11-26 17:26:35 UTC; seven indexes READY. The unnecessary `messages` collection-group index was removed and the deployment succeeded.
+- **APIs enabled:** Firestore, Firebase App Check, Firebase App Distribution, Firebase AI Logic (`firebasevertexai`), Firebase ML (`firebaseml`), Generative Language, Play Integrity, Secure Token and related Firebase services.
+- **App Check:** debug token registered through the v1beta REST API and exchanged successfully (TTL 3600s). The token was revoked after the protocol test; the CI artifact containing the raw logcat was deleted. Enforcement remains off. The local debug-token resource file is ignored by Git.
+- **AI Logic:** P4SA identities created; `roles/firebaseml.serviceAgent` granted. A `gemini-3.5-flash-lite` proxy call with App Check returned a candidate (usage: 22 prompt / 50 candidate / 72 total tokens). The direct Gemini endpoint remains blocked through the client key. This is protocol-level evidence, not an app-level or on-device claim.
+- **Rules behaviour:** live unauthenticated Firestore `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without App Check, as designed.
+- **Auth:** `CONFIGURATION_NOT_FOUND`; public `initializeAuth` returns `BILLING_NOT_ENABLED`; no users or test numbers. **Console `Get started` is the only blocker.**
+- **CI:** run `45873038243` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The Firebase-enabled emulator smoke correctly stopped at the auth gate; the smoke script now detects that gate and redacts App Check tokens.
+- **Not claimed:** authenticated client Firestore, app-level AI Logic, Phone Auth SMS, App Check enforcement, Play Integrity, hosted Functions, App Distribution, on-device Gemini Nano.
 
 ## Firebase integration stage (26 November 2026)
 
@@ -62,16 +76,20 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS - 34/34 unit | Domain, JSON, sync outcome and durable processor tests |\n| Compose instrumentation | PASS - prior run; new class-creation step pending CI | API 35 Pixel 5 journey |
-| Android build | PASS - local; CI retry pending | Local APK 31,094,724 bytes after Firebase/AI SDKs |
+| Android tests | PASS - 34/34 unit | Domain, JSON, sync outcome and durable processor tests |
+| Compose instrumentation | PASS | API 35 Pixel 5 journey in run 45873038243 |
+| Android build | PASS - CI | `tiny-dev-debug-apk` from run 45873038243; Firebase config injected |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
 | Firestore rules | PASS - 9/9 | Emulator tests incl. class-scoped records and own workspace index |
 | Functions callables/webhooks | IMPLEMENTED — E2E 10/10 | Workspace/class/pupil/guardian/attendance/progress/message callables, signed webhook, digest, sync dispatcher |
-| Firebase project/access | PROJECT CONFIRMED; CLI AUTH BLOCKED | `tiny-b9f29`; no Firebase CLI account yet. See `docs/FIREBASE_INTEGRATION.md` |
+| Firebase project/access | CONFIRMED - CLI authenticated | `tiny-b9f29`; app and SHA registered; billing disabled; see `docs/FIREBASE_EVIDENCE.md` |
+| Firestore live database | DEPLOYED | `(default)` in `africa-south1`; rules release live; 7 indexes READY; unauthenticated reads denied |
+| Firebase Auth | BLOCKED - Console action | Auth config missing; public init returns `BILLING_NOT_ENABLED`; Console **Get started** required |
+| App Check | PARTIAL - debug token verified | Registration/exchange succeeded, token revoked; enforcement off; Play Integrity pending |
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
-| Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
+| Cloud AI | PROTOCOL VERIFIED — free tier | AI Logic proxy + App Check returned a Gemini candidate; app-level/on-device pending |
 | Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed; CI APK artifact available |
 | Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
 | On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
@@ -129,7 +147,7 @@
 - Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
 - `firestore.rules`: default deny; member read baseline; direct writes denied; admin-only guardian/conversation reads. Class-level read restrictions need emulator tests and tightening before pilot.
 - `firebase.json`, `.firebaserc` (`demo-tiny`), `firestore.indexes.json` present.
-- `syncCommands` dispatches `pupil.register`, `class.create`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client now has a Firebase Functions transport and WorkManager processor; live verification is blocked on CLI authentication and an app config file.
+- `syncCommands` dispatches `pupil.register`, `class.create`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, records accepted/rejected receipts, and replays accepted commands as `alreadyApplied`. The Android client has a Firebase Functions transport and WorkManager processor. The project and client config are now present; live callable verification remains unavailable because Functions are emulator-only on Spark and Auth is not initialized.
 
 ### CI / distribution
 
@@ -161,21 +179,20 @@
 
 | Blocker | Why it matters | Minimum operator action |
 |---|---|---|
-| Firebase project/App Distribution access | Required before real Firebase integration tests and judge-facing preview | Supply project ID, least-privilege access method, `internal-testers`/`judges` groups and judge-email handling |
+| Firebase Auth initialization | Auth config is missing; Spark cannot use the public `initializeAuth` API | In Firebase Console open **Authentication → Get started** once; do not enable billing. Then notify the agent |
+| App Check enforcement / Play Integrity | Debug exchange works, but enforcement is off and release attestation is unconfigured | After Auth/test-phone sign-in, register the release SHA-256 and enable enforcement deliberately |
 | Supported on-device AI device | Note 10+ (Android 12) is general testing only; separate acceptance gate | Provide a currently supported physical device, or accept on-device demo blocked |
-| StageShow skill | Required attempt unavailable after harness restart | No operator action unless a replacement UI skill is approved; current landing page uses direct design-system discipline |
-| Full Functions callable/emulator E2E | Rules tests pass, but callable/webhook/scheduler E2E still needs an emulator harness | Continue implementing the test harness in Phase 3/5 |
-| App Distribution / judge access | Preview APK exists but no Firebase project/tester group | Supply project ID, access and groups |
+| App Distribution / judge access | Preview APK exists but no tester/judge groups | Supply tester/judge emails privately and the App Distribution groups |
 | Native translation review | Hausa/Yoruba/Igbo app strings are draft/partial | Arrange native review before pilot; English fallback is active |
 | Pilot/legal gates | DPIA, controller/processor, privacy notice, retention, NERDC rights | Identify approvers and timing before a real-school pilot |
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45853884690` (31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45873038243` (31,097,300 bytes; SHA-256 `11E6332EF6B641169A501A006EE4B42285E8589154E9431E24D4EDC93BAE8F24`).
 - GitHub Actions build/test and rules jobs: **success**.
-- Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, captured after the startup seed fix.
-- Compose instrumentation: **success** in CI on API 35 Pixel 5; onboarding, Home, Classes, class detail and Attendance exercised.
-- App Distribution: not uploaded; no tester group/project.
+- Emulator smoke: **correctly stopped at the Firebase phone-auth gate**; the Firebase-enabled build is not a completed local journey. The prior pre-Firebase screenshots remain at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png` and in the demo.
+- Compose instrumentation: **success** in CI on API 35 Pixel 5 (no Firebase client config injected; local-mode journey).
+- App Distribution: not uploaded; no tester group.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.
 - Production: not authorized.
@@ -188,6 +205,7 @@
 - [x] GitHub Actions/App Distribution guide
 - [x] Landing page and legal/security/contact pages
 - [x] Phase 1 evidence in this handoff and build log
+- [x] Firebase live-setup audit and sanitized evidence: `docs/FIREBASE_EVIDENCE.md`
 - [x] Final design notes against app screenshots
 - [ ] Native translation review
 - [x] Full README build/preview results after CI run
@@ -196,6 +214,7 @@
 
 - Video: `artifacts/demo/tiny-demo.mp4` — 149.5s, 1920x1080 H.264/AAC, 5,558,830 bytes, SHA-256 `6285088CB30CB0741FBD075951F80592205F2B5ED33530F1C2B9879A657459FB`.
 - Capture: reviewed screenshot slideshow with narration, not motion screen recording; real emulator screenshots from run `45809071551`.
+- **Disclosure:** the demo predates the Firebase-enabled build. It demonstrates the local/offline product and mock SMS flows; it does not show live Firebase Auth, Firestore sync, App Check enforcement or a cloud AI response. A post-Auth demo refresh is pending.
 - Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is within target.
 - Demo data: synthetic only.
 - Demo journeys: offline lesson, local attendance, optional offline AI fallback, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
@@ -228,10 +247,10 @@
 
 1. On-device Gemini Nano is blocked: Note 10+ is not supported; emulator does not prove physical inference.
 2. Hosted Functions are unavailable under Spark/NGN 0; backend is emulator-only.
-3. Firebase project/App Distribution access is not yet available; no judge-facing build or Firebase integration test.
-4. The Android Firebase sync transport, WorkManager processor, Auth gate, Firestore bootstrap and AI Logic service are implemented but cannot be live-tested until the Firebase CLI is authenticated, the Android app is registered, `google-services.json` is generated and the test phone/App Check tokens are configured.
+3. App Distribution and judge access are not yet available; no judge-facing build has been uploaded.
+4. The Android Firebase sync transport, WorkManager processor, Auth gate, Firestore bootstrap and AI Logic service are implemented. Client config, App Check debug exchange and the AI Logic proxy are verified; Auth, authenticated Firestore, app-level AI and live callable sync remain unverified because Auth needs Console initialization and Functions are emulator-only.
 5. Firestore rules are class-scoped and pass 9/9 emulator tests; a full review is still required before any pilot.
-6. In-app workspace/class creation and guardian linking/verification screens are implemented against local Room; the online path uses callables. Live online verification is blocked on Firebase CLI authentication.
+6. In-app workspace/class creation and guardian linking/verification screens are implemented against local Room; the online path uses callables. Live online verification is blocked on Auth/Functions deployment constraints.
 7. Android cloud mode requires a Firebase app config; without it the app stays in local/mock preview mode and does not claim cloud sync.
 8. Native translation review and physical low-end device testing remain pending.
 6. App translations are partial draft resources; native review is pending.

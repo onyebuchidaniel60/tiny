@@ -1,8 +1,8 @@
 # Tiny — Consolidated Operator Intake / Readiness Check
 
-**Status:** Phase 0 intake complete. Firebase project `tiny-b9f29` is recorded; Firebase CLI authentication is the current blocker for project-side setup. App Distribution and on-device Gemini Nano remain separate gates. Other local/emulator implementation is proceeding.
+**Status:** Phase 0 intake complete. Firebase project `tiny-b9f29` is confirmed and project-side setup is largely complete: CLI authenticated, dev app and SHA registered, Firestore database/rules/indexes deployed, free-tier APIs enabled, App Check debug exchange and AI Logic proxy verified. **Firebase Authentication must be initialized once in the Firebase Console** (Spark cannot use the public identityPlatform initialization API). App Distribution and on-device Gemini Nano remain separate gates.
 
-**Last inspected:** 25 November 2026 — repository, handoff package and local environment inspected read-only. No application code, dependency installation, cloud resource, SMS or deployment action performed.
+**Last inspected:** 26 November 2026 — live Firebase project audit, app registration, Firestore deployment and protocol-level App Check/AI Logic checks completed. No billing, live SMS, production deployment or real pupil data.
 
 **Rule:** The agent reads the repository and handoff first, then asks all genuinely missing critical questions in one consolidated intake. Do not ask again for information already provided by the repository, environment, this package or operator response.
 
@@ -65,18 +65,18 @@ Do not claim any missing reference exists. The UI implementation is direct from 
 | Input | Required? | Status | Authorization boundary |
 |---|---:|---|---|
 | Firebase project ID | Yes for backend integration and App Distribution | CONFIRMED | `tiny-b9f29` (dedicated non-production project; not a secret). Recorded 26 November 2026. Project is Spark/NGN 0; Cloud Functions remain emulator-only |
-| Firebase project membership/role | Yes | PENDING — later integration gate | Operator must grant least-privilege access or authenticate Firebase CLI locally/CI. Agent verifies access |
-| Firebase billing account / plan | Yes for hosted Functions | CONFIRMED — Spark, NGN 0 | No Blaze upgrade, billing account, paid model or paid service without explicit operator approval |
+| Firebase project membership/role | Yes | CONFIRMED — project owner CLI access | Firebase CLI is authenticated; project API audit and resource setup performed within Spark/NGN 0 |
+| Firebase billing account / plan | Yes for hosted Functions | CONFIRMED — Spark, NGN 0 | No Blaze upgrade, billing account, paid model or paid service without explicit operator approval. Billing confirmed disabled. |
 | Cloud Functions Gen2 deployment | Yes for fixed backend | NOT AUTHORIZED — emulator-only | Do not deploy Functions, activate Blaze, introduce paid hosting or replace the backend architecture. Callables/webhooks can be emulator-tested; scheduled digest logic must be invoked locally/unit-tested |
-| Firestore database | Yes | BLOCKED - CLI authentication | Create the default database in `africa-south1` after authentication; Spark free-tier limits apply |
-| Firebase Authentication Phone provider | Yes | BLOCKED - CLI authentication | Enable Phone Auth and add synthetic test numbers. Spark does not include verification SMS; real SMS requires Blaze and is NOT authorized |
-| App Check / Play Integrity | Production required | PARTIAL - code ready, token pending | Debug provider installed in debug builds; register its token after app registration. Play Integrity needs the debug SHA-256 and Play Console link |
-| Firebase AI Logic Gemini Developer API | Yes for cloud AI demo | CONFIRMED — free tier | No paid AI. Gemini Developer API free tier is compatible with Spark; use App Check debug provider locally |
+| Firestore database | Yes | CONFIRMED — deployed | `(default)` created in `africa-south1`, Firestore Native/Standard, delete protection enabled; rules/indexes deployed. Spark free-tier limits apply |
+| Firebase Authentication Phone provider | Yes | BLOCKED — Console initialization | Auth config is missing; public `initializeAuth` returns `BILLING_NOT_ENABLED` on Spark. Operator must open Console → Authentication → **Get started** once. Then enable Phone and synthetic test numbers. Real SMS requires Blaze and is NOT authorized |
+| App Check / Play Integrity | Production required | PARTIAL — debug exchange verified; enforcement off | Debug provider installed; a debug token was registered, exchanged and revoked. Play Integrity needs a Play Console link and release SHA-256. Enforcement must follow Auth verification |
+| Firebase AI Logic Gemini Developer API | Yes for cloud AI demo | PROTOCOL VERIFIED — free tier | AI Logic proxy + App Check returned a Gemini candidate; P4SA role granted. No paid AI. App-level/on-device calls still pending |
 | On-device AI test phone | Yes for proof of on-device path | SEPARATE BLOCKED GATE | Samsung Galaxy Note 10+, Android 12, is the only physical device and is **not** on the current ML Kit Gemini Nano supported-device list. Use for general testing only; do not claim on-device inference. Emulator does not prove physical Nano inference |
 | Representative low-cost pilot phones | Required before pilot | PENDING | No second device available and operator does not intend to purchase one. Use Note 10+ for general testing and emulators/CI for additional coverage; record the pilot-device gap |
 | Android build environment | Yes | CONFIRMED — GitHub Actions Ubuntu | Primary build/test path is GitHub Actions `ubuntu-24.04`. Local Windows verification used a portable JDK 17 + Android command-line SDK, not full Android Studio. See `docs/CI_ANDROID_BUILD.md` |
-| Firebase App Distribution | Preferred preview route | CONFIRMED PREFERRED — tester access pending | Create `internal-testers` and `judges` groups; tester/judge emails and Firebase project are still needed before first distribution. No public APK link |
-| Firebase Emulator Suite | Strongly required for tests | CONFIRMED — rules + backend E2E pass | `firebase.json`, Functions, rules and indexes present; 8/8 Firestore rules tests and 10/10 callable/webhook/scheduler/sync E2E tests pass in CI. No production data |
+| Firebase App Distribution | Preferred preview route | CONFIRMED PREFERRED — tester access pending | Create `internal-testers` and `judges` groups; tester/judge emails still needed before first distribution. No public APK link |
+| Firebase Emulator Suite | Strongly required for tests | CONFIRMED — rules + backend E2E pass | `firebase.json`, Functions, rules and indexes present; 9/9 Firestore rules tests and 10/10 callable/webhook/scheduler/sync E2E tests pass in CI. No production data |
 
 **Fixed region decision:** Firestore Standard and Functions Gen2 in `africa-south1` (Johannesburg). This is not Nigerian data residency. Cross-border processing must be assessed in DPIA/legal review. Gemini Developer API AI processing is global; only de-identified/minimized generic context may be sent.
 
@@ -157,7 +157,7 @@ Provider acceptance must never be labelled delivery. Mock/sandbox only unless th
 
 Only items still missing after the 25 November 2026 inspection and operator confirmations are listed. Answer all that apply in one reply. Do not paste secret values into chat or Markdown.
 
-1. **Firebase project and App Distribution access (later integration/preview gate).** Supply the dedicated non-production project ID, least-privilege access method, and confirmation that `internal-testers` and `judges` groups exist or how approved judge emails will be added without committing them. No public APK link. This does not block independent Android shell work, which is already building locally.
+1. **Firebase Authentication initialization (required now).** Open <https://console.firebase.google.com/project/tiny-b9f29/authentication>, select **Get started**, and accept the terms. Do not enable billing or Blaze. Confirm when the page shows the Users/Sign-in method tabs. The agent can then enable Phone Auth with synthetic test numbers. If the Console demands billing, stop and report it rather than upgrading.
 2. **Supported Gemini Nano device (separate acceptance gate).** The Note 10+ is Android 12 and is general-testing only. Confirm whether a currently supported physical device is available. If not, on-device proof remains blocked; cloud/fallback evidence can proceed.
 3. **Optional pilot context.** If known, name the pilot state/LGA/community/schools and target languages. Not required for synthetic development.
 4. **Any additional restrictions.** State any repository/organisation policy that would prevent GitHub Actions on Ubuntu, artifact upload or GitHub Pages publication.
@@ -250,11 +250,12 @@ These tasks can proceed without the real Firebase project or a Gemini Nano-suppo
 - **Done:** installed and inspected the official Firebase Agent Skills under `.agents/skills/`; preserved `skills-lock.json`; live catalog renames recorded.
 - **Done:** created the Android Gradle/Kotlin/Compose project, theme/navigation/localization scaffolding and labelled preview shell.
 - **Done:** added the GitHub Actions Ubuntu workflow for lint, unit tests, debug APK and artifact upload (first workflow run pending).
-- **Scaffolded + emulator-tested:** Firebase Emulator Suite configuration, Functions, rules, indexes and a demo project alias; 8/8 Firestore rules tests and 10/10 backend E2E tests pass in CI.
+- **Scaffolded + emulator-tested:** Firebase Emulator Suite configuration, Functions, rules, indexes and a demo project alias; 9/9 Firestore rules tests and 10/10 backend E2E tests pass in CI.
 - **Done:** local Room/SQLCipher database, Keystore-wrapped key, repositories, demo data, attendance/progress/message flows, mock adapters and local pupil registration.
 - **Done:** landing page with responsive design system, legal/security/contact pages and preview screenshots.
 - **Done:** CI Android build/test, APK artifact, Firestore rules emulator job, backend callable/webhook/scheduler/sync E2E, Compose instrumentation job and manual emulator smoke evidence.
 - **Blocked:** StageShow installation/verification (harness removed the skill ID); do not claim it complete.
-- **Pending:** actual Firebase project/Auth/Firestore integration, full callable E2E and App Distribution upload.
+- **Done:** live project audit, dev app/SHA registration, Firestore database/rules/indexes deployment, free-tier API enablement, App Check debug exchange and AI Logic proxy verification. See `docs/FIREBASE_EVIDENCE.md`.
+- **Pending:** Firebase Auth Console initialization, test-phone sign-in, authenticated Firestore/AI app checks, Functions-emulator client sync and App Distribution upload.
 
 These tasks do **not** authorize Cloud Functions deployment, Blaze, paid services, live SMS, production resources or real pupil/guardian data. They also do not satisfy the separate on-device Gemini Nano acceptance gate.

@@ -23,9 +23,9 @@
 |---|---|---|---|---|---|---|
 | `FIREBASE_PROJECT_ID` | Android/Firebase project selection; CI and App Distribution | Firebase Console → Project settings → General | `.env`, GitHub Actions variable/config, docs | Public | Before Firebase integration | `tiny-b9f29` |
 | `GCLOUD_PROJECT_ID` | Functions runtime project alias | Same Firebase project | Functions config/Secret Manager reference | Public | Before Firebase integration | `tiny-b9f29` |
-| `FIREBASE_ANDROID_APP_ID` | App Distribution target app | Firebase Console → Project settings → Your apps | GitHub Actions variable | Public | Before distribution | `PENDING` |
-| `google-services.json` | Android Firebase client configuration | Firebase Console → Project settings → Your apps → Android | `app/google-services.json` locally or CI-injected | Public client config, not a server secret | Before Firebase-enabled Android build | `PENDING`; ignored by Git |
-| `GOOGLE_SERVICES_JSON_BASE64` | CI transport for the client config | Base64 of the downloaded file | GitHub Actions secret | Restricted/public client config | Before distribution/Firebase build | `PENDING` |
+| `FIREBASE_ANDROID_APP_ID` | App Distribution target app | Firebase Console → Project settings → Your apps | GitHub Actions variable | Public | Before distribution | `1:1072757481941:android:2005f8b35944923b20dd5c` |
+| `google-services.json` | Android Firebase client configuration | Firebase Console → Project settings → Your apps → Android | `app/google-services.json` locally or CI-injected | Public client config, not a server secret | Before Firebase-enabled Android build | Present locally; ignored by Git |
+| `GOOGLE_SERVICES_JSON_BASE64` | CI transport for the client config | Base64 of the downloaded file | GitHub Actions secret | Restricted/public client config | Before distribution/Firebase build | Set in GitHub Actions 26 Nov 2026 |
 | `FIREBASE_REGION` | Firestore/Functions region | Fixed architecture | Functions/Android config | Public | Before Firebase integration | `africa-south1` |
 | `FIRESTORE_DATABASE_ID` | Firestore database | Firebase Console | Functions config | Public | Before Firebase integration | `(default)` |
 | `APP_ENV` | Environment classification | Project convention | `.env`/Functions config | Public | Before Firebase integration | `development` |
@@ -34,8 +34,8 @@
 | `GCP_WORKLOAD_IDENTITY_PROVIDER` | Preferred keyless GitHub Actions auth | Google Cloud Console → IAM → Workload Identity Federation | GitHub Actions variable | Public identifier | Before distribution | `PENDING` |
 | `GCP_SERVICE_ACCOUNT_EMAIL` | Service account used with Workload Identity Federation | Google Cloud Console | GitHub Actions variable | Public identifier | Before distribution | `PENDING` |
 | `FIREBASE_TOKEN` | Legacy Firebase CLI CI token | Firebase CLI `login:ci` | GitHub Actions secret | Secret | Only if Workload Identity Federation unavailable | `NOT REQUIRED` |
-| `APP_CHECK_DEBUG_TOKEN` | Local debug App Check attestation | Firebase Console → App Check → Apps → Manage debug tokens | Ignored local `.env`; never commit | Secret | Before local Firebase/AI integration | `PENDING` |
-| `PLAY_INTEGRITY_SHA256` | App signing certificate fingerprint for App Check | Play Console/keystore inspection | Firebase Console → App Check | Public fingerprint | Before production/connected release | `PENDING` |
+| `APP_CHECK_DEBUG_TOKEN` | Local debug App Check attestation | App Check debug-provider log or a generated UUID; register via Console/REST | Ignored local `.env` or `app/src/debug/res/values/firebase_app_check_debug.xml`; never commit | Secret | Before local Firebase/AI integration | No active token; generate/register per session, revoke after use |
+| `PLAY_INTEGRITY_SHA256` | App signing certificate fingerprint for App Check | Play Console/keystore inspection | Firebase Console → App Check | Public fingerprint | Before production/connected release | Debug SHA-256 recorded; release SHA-256 still pending |
 | `AI_PROVIDER` | AI route selection | Fixed architecture | Android/config | Public | Before AI integration | `firebase-ai-logic` |
 | `CLOUD_MODEL_NAME` | Exact Gemini cloud model | Current Firebase AI Logic model docs | Android/config | Public | Before cloud AI integration | `gemini-3.5-flash-lite` (free-tier featured model; verify at runtime) |
 | `AI_DAILY_CLOUD_LIMIT_PER_USER` | Conservative cloud request guard | Project policy | Functions/Remote Config/config | Public | Before cloud AI integration | `PENDING — conservative value` |
