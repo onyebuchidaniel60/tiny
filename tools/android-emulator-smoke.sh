@@ -109,7 +109,7 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
       adb shell input text "123456" || true
       sleep 1
       tap_text_retry "Confirm and sign in" 5 || tap_coord 540 1130
-      if wait_for_text "Today at a glance" 30; then
+      if wait_for_text "Quick actions" 30; then
         screenshot "tiny-04-authenticated"
         echo "Test-phone auth succeeded; captured tiny-04-authenticated.png."
       else
