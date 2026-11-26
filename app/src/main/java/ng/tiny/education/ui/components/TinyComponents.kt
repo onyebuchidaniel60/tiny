@@ -228,7 +228,7 @@ fun PaperCard(
         .border(1.dp, TinyLine.copy(alpha = 0.55f), shape)
     if (onClick == null) {
         Surface(color = MaterialTheme.colorScheme.surface, shape = shape, modifier = base) {
-            Box(Modifier.padding(18.dp)) { content() }
+            Column(Modifier.padding(18.dp)) { content() }
         }
     } else {
         Surface(
@@ -237,7 +237,7 @@ fun PaperCard(
             shape = shape,
             modifier = base,
         ) {
-            Box(Modifier.padding(18.dp)) { content() }
+            Column(Modifier.padding(18.dp)) { content() }
         }
     }
 }
