@@ -108,8 +108,10 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 ## 6. Phase 1 evidence (26 November 2026)
 
 - Android unit tests: **21 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest and sync rules.
+- Firestore rules tests: **6 passed, 0 failed** in the Firestore emulator.
 - Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
-- Android debug build: `assembleDevDebug` passed; APK 27,894,591 bytes.
+- Android debug build: CI `assembleDevDebug` passed; APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
+- Emulator smoke: API 35 install/launch succeeded; 10 screens captured; no Tiny fatal exception in logcat.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
-- Not yet run: Compose instrumentation, Firebase Emulator Suite runtime/rules tests, GitHub Actions, physical-device install, App Distribution.
+- Not yet run: Compose instrumentation/accessibility suite, full callable/webhook/scheduler E2E, physical-device install, App Distribution.

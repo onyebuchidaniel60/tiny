@@ -15,10 +15,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.Icon
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -115,6 +121,48 @@ fun ClassDetailScreen(
 ) {
     val classroom by viewModel.observeClass(classId).collectAsStateWithLifecycle(initialValue = null)
     val pupils by viewModel.observePupils(classId).collectAsStateWithLifecycle(initialValue = emptyList())
+    var showAddPupil by remember { mutableStateOf(false) }
+    var pupilName by remember { mutableStateOf("") }
+    var pupilCode by remember { mutableStateOf("") }
+
+    if (showAddPupil) {
+        AlertDialog(
+            onDismissRequest = { showAddPupil = false },
+            title = { Text(stringResource(R.string.add_pupil)) },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = pupilName,
+                        onValueChange = { pupilName = it },
+                        label = { Text(stringResource(R.string.pupil_name)) },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = pupilCode,
+                        onValueChange = { pupilCode = it },
+                        label = { Text(stringResource(R.string.local_code)) },
+                        singleLine = true,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.addPupil(classId, pupilName, pupilCode)
+                        showAddPupil = false
+                        pupilName = ""
+                        pupilCode = ""
+                    },
+                    enabled = pupilName.isNotBlank(),
+                ) { Text(stringResource(R.string.add)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAddPupil = false }) { Text(stringResource(R.string.cancel)) }
+            },
+        )
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -134,6 +182,12 @@ fun ClassDetailScreen(
         }
         item {
             SectionHeading(title = stringResource(R.string.roster), subtitle = "Active pupils in this class.")
+            Spacer(Modifier.height(8.dp))
+            TinySecondaryButton(
+                text = stringResource(R.string.add_pupil),
+                onClick = { showAddPupil = true },
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
         items(pupils, key = { it.id }) { pupil ->
             PupilRow(pupil = pupil, onProgress = { onProgress(pupil.id) })

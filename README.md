@@ -124,7 +124,7 @@ npx --yes serve landing
 
 ## Current build status
 
-**Phase 1 preview implemented.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules scaffold, CI workflow and responsive landing page are present. Local verification: **21 Android unit tests passed**, **19 Functions tests passed**, **lint passed**, debug APK **27,894,591 bytes**. GitHub Actions/App Distribution/Emulator runtime and a physical device run are still pending. Native translations are draft. Production release is not authorized.
+**Phase 1 preview implemented and CI-verified.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules scaffold, CI workflow and responsive landing page are present. Local/CI verification: **21 Android unit tests passed**, **19 Functions tests passed**, **6 Firestore rules tests passed**, **lint passed**, **emulator smoke passed**, CI APK **27,897,539 bytes**. App Distribution/judge access and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
 
 
 ## Firebase development-agent tooling

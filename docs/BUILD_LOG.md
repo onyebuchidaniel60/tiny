@@ -38,13 +38,15 @@
   - Added `.env.example`, `.gitignore` and credential/CI documentation.
 - Tests executed and results:
   - Android unit tests: **21 passed, 0 failed** (`PhoneNormalizer`, `AttendanceRules`, `SmsSegments`, `ProgressRules`, `DigestBuilder`, `SyncRules`).
-  - Android local build: `assembleDevDebug` **successful**; APK **27,894,591 bytes** (~26.6 MiB), under the 35 MB target.
+  - Firestore rules tests: **6 passed, 0 failed** in the Firestore emulator.
+  - Android CI build: **successful**; APK **27,897,539 bytes**; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
+  - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings screens.
   - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog; no lint errors remain.
-  - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites.
+  - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 6/6.
   - Landing page: local link check passed; responsive layout inspected at 1440 px and 390 px; mobile nav toggles correctly; no broken local links; no images without alt.
 - Manual verification: Desktop/mobile screenshots saved at `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png` and `landing-mobile-revealed.png`. References recorded in `REFERENCE_ASSETS.md`.
-- Commit hash: To be recorded after the Phase 1 implementation commit.
-- Preview artifact/build URL: Local APK at `app/build/outputs/apk/dev/debug/app-dev-debug.apk`. No GitHub Actions run or Firebase App Distribution upload yet.
+- Commit hash: Phase 1 implementation commits through `8286d9a`; final checkpoint commit to be recorded after the next push.
+- Preview artifact/build URL: GitHub Actions run `45784722613`; artifact `tiny-dev-debug-apk`; APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`. No App Distribution upload.
 - Reference image/skill status: REF-001/REF-002 supplied and recorded. StageShow installation attempted; harness removed the `stageshow` skill ID after a server restart, so it was not used and completion is not claimed. Firebase skills installed and visible in the active tool catalog.
 - Documentation updated: `REFERENCE_ASSETS.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/DESIGN_NOTES.md` (pending), this build log and source docs.
 - Known limitations:
@@ -104,9 +106,9 @@
 | Phase | Status | Commit | Preview build/URL | Tests/evidence | Issues |
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
-| 1 — Repo + skeletal Android shell + protected preview | IN PROGRESS | Pending | Local `app-dev-debug.apk`; GitHub Actions pending | 21 Android unit tests, 19 Functions tests, lint, local assemble | CI run and App Distribution access pending |
-| 2 — Backend/data/auth foundation | SCAFFOLDED | Pending | — | Functions build; emulator config/rules/indexes present | Firebase project/access and emulator runtime tests pending |
-| 3 — Core domain + APIs + integrations | PARTIAL | Pending | — | 19 domain tests; callables/webhooks/digest code | Sync processor, rules tests and end-to-end emulator tests pending |
+| 1 — Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `8286d9a` | CI artifact `tiny-dev-debug-apk`; run 45784722613 | 21 Android tests, 19 Functions tests, 6 rules tests, lint, CI build, emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
+| 2 — Backend/data/auth foundation | PARTIAL | Pending | — | Functions build; rules emulator tests; config/indexes | Real Firebase project/Auth/Firestore integration pending |
+| 3 — Core domain + APIs + integrations | PARTIAL | Pending | — | 19 domain tests; callables/webhooks/digest code; 6 rules tests | Callable/webhook/scheduler E2E and sync processor pending |
 | 4 — Functional Android integration | PARTIAL | Pending | Local APK | Local Room flows, mock attendance/progress/messages | UI/device QA and cloud integration pending |
 | 5 — E2E functionality gate | NOT STARTED | — | — | — | Hosted backend unavailable; on-device AI gate separate |
 | 6 — Reference-led final UI | PARTIAL | Pending | Landing page local preview | Original visual system; desktop/mobile screenshots | App final polish and StageShow unavailable |

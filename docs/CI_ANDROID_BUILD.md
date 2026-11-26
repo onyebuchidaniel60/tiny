@@ -175,8 +175,18 @@ Fallback only if Workload Identity Federation is unavailable: create a service-a
 
 Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Actions secret.
 
-## 4. Firebase App Distribution tester access
+## 3.1 Manual emulator smoke job
 
+`.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, captures the language screen, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings, and uploads `tiny-emulator-evidence` with logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
+
+The first manual run succeeded and produced:
+- Language screen: `artifacts/emulator/tiny-01-language.png`
+- Welcome: `tiny-02-welcome.png`
+- Home: `tiny-03-home.png`
+- Classes/attendance/lessons/messages/settings: captured with the current shell
+- Logcat: `artifacts/emulator/logcat.txt`
+
+## 4. Firebase App Distribution tester access
 ### Internal testers
 
 1. Create an `internal-testers` group in Firebase App Distribution.
@@ -206,12 +216,14 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 - No production signing or Play Store release.
 - No Firebase MCP state-changing call.
 
-## 6. Phase 1 evidence to record
+## 6. Phase 1 evidence
 
-- Workflow file path and commit.
-- JDK, Android SDK/build-tools, Gradle, Compose and Firebase versions actually pinned.
-- GitHub Actions run URL and result.
-- APK artifact name/hash and size.
-- App Distribution release/build number, tester group and invitation link (redacted where needed).
-- Confirmation that no secrets appeared in logs.
-- Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported.
+- Workflow file: `.github/workflows/android-ci.yml`.
+- CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45784722613` — success for build/test, Firestore rules and manual emulator smoke.
+- Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
+- APK artifact: `tiny-dev-debug-apk`; 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
+- Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings captured.
+- Firestore rules: 6/6 emulator tests pass.
+- App Distribution: not uploaded; no tester group/project or invitation link yet.
+- No secrets appeared in logs; App Check debug tokens are not committed.
+- Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.

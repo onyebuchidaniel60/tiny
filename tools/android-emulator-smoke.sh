@@ -84,6 +84,12 @@ tap_coord 690 2200
 sleep 3
 screenshot "tiny-07-lessons"
 
+tap_text "Teaching helper" || true
+sleep 2
+screenshot "tiny-07a-ai-fallback"
+adb shell input keyevent 4 || true
+sleep 1
+
 tap_coord 945 2200
 sleep 3
 screenshot "tiny-08-messages"

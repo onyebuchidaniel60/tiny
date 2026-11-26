@@ -57,6 +57,10 @@
     <string name="view_class">View class</string>
     <string name="class_detail_title">Class details</string>
     <string name="roster">Roster</string>
+    <string name="add_pupil">Add pupil</string>
+    <string name="pupil_name">Pupil display name</string>
+    <string name="local_code">Local pupil code (optional)</string>
+    <string name="add">Add</string>
     <string name="add_pupil_placeholder">Pupil registration is scaffolded for the next functional phase.</string>
     <string name="class_not_found">Class not found.</string>
 
@@ -97,6 +101,22 @@
     <string name="lesson_not_found">Lesson not found.</string>
     <string name="teaching_tip_title">Teaching tip</string>
     <string name="teaching_tip_body">Ask one quiet pupil to explain the idea in their own words. Listen for the part that is still fuzzy, then re-teach only that part.</string>
+    <string name="ai_title">Teaching helper</string>
+    <string name="ai_subtitle">Optional teaching support that never blocks the lesson.</string>
+    <string name="ai_device_unavailable">On-device Gemini Nano is unavailable on this device.</string>
+    <string name="ai_cloud_unconfigured">Cloud AI is not configured in this preview.</string>
+    <string name="ai_offline_title">Curated offline fallback</string>
+    <string name="ai_offline_body">These reviewed strategies are bundled in the app and work without a network or model.</string>
+    <string name="ai_source_label">Source</string>
+    <string name="ai_source_offline">Offline curated library</string>
+    <string name="ai_privacy_note">No pupil names, phone numbers or records are sent to a model. AI cannot grade, diagnose or send parent content.</string>
+    <string name="ai_try">Show another strategy</string>
+    <string name="ai_strategy_1_title">Think, pair, share</string>
+    <string name="ai_strategy_1_body">Give pupils 30 seconds to think, 60 seconds to explain to a partner, then choose two pairs to share with the class.</string>
+    <string name="ai_strategy_2_title">One-minute misconception check</string>
+    <string name="ai_strategy_2_body">Ask pupils to write one sentence about what they are still unsure of. Read three aloud without names and correct the class together.</string>
+    <string name="ai_strategy_3_title">Concrete before abstract</string>
+    <string name="ai_strategy_3_body">Start with a local object, picture or story. Ask pupils to describe what they notice before introducing the formal term.</string>
 
     <string name="messages_title">Messages</string>
     <string name="messages_heading">Parent inbox</string>

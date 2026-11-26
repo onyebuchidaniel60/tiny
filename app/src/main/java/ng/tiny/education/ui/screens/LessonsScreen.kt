@@ -41,6 +41,7 @@ import ng.tiny.education.ui.theme.TinyTomato
 fun LessonsScreen(
     viewModel: TinyViewModel,
     onOpenLesson: (String) -> Unit,
+    onOpenAi: () -> Unit,
 ) {
     val lessons by viewModel.lessons.collectAsStateWithLifecycle()
     LazyColumn(
@@ -57,6 +58,19 @@ fun LessonsScreen(
                 "These plans are stored locally. They are teacher-authored scaffolds, not a claim of full NERDC curriculum coverage.",
                 tone = TinyCobalt,
             )
+        }
+        item {
+            PaperCard(onClick = onOpenAi) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Outlined.Star, contentDescription = null, tint = TinyTomato)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.ai_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text("Curated offline help when a model is unavailable.", style = MaterialTheme.typography.bodySmall)
+                    }
+                    StatusPill("Optional", TinyCobalt)
+                }
+            }
         }
         item {
             PaperCard {

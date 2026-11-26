@@ -29,6 +29,7 @@ import ng.tiny.education.ui.components.TinyBottomBar
 import ng.tiny.education.ui.components.TinyTab
 import ng.tiny.education.ui.components.TinyTopBar
 import ng.tiny.education.ui.screens.AttendanceScreen
+import ng.tiny.education.ui.screens.AiAssistantScreen
 import ng.tiny.education.ui.screens.ClassDetailScreen
 import ng.tiny.education.ui.screens.ClassesScreen
 import ng.tiny.education.ui.screens.ConversationScreen
@@ -48,6 +49,7 @@ private const val ROUTE_CLASS_DETAIL = "class/{classId}"
 private const val ROUTE_ATTENDANCE = "attendance/{classId}"
 private const val ROUTE_LESSONS = "lessons"
 private const val ROUTE_LESSON_DETAIL = "lesson/{lessonId}"
+private const val ROUTE_AI = "ai"
 private const val ROUTE_MESSAGES = "messages"
 private const val ROUTE_CONVERSATION = "conversation/{conversationId}"
 private const val ROUTE_PROGRESS = "progress/{pupilId}"
@@ -170,7 +172,11 @@ private fun MainShell(viewModel: TinyViewModel) {
                 )
             }
             composable(ROUTE_LESSONS) {
-                LessonsScreen(viewModel = viewModel, onOpenLesson = { navController.navigate("lesson/$it") })
+                LessonsScreen(
+                    viewModel = viewModel,
+                    onOpenLesson = { navController.navigate("lesson/$it") },
+                    onOpenAi = { navController.navigate(ROUTE_AI) },
+                )
             }
             composable(
                 route = ROUTE_LESSON_DETAIL,
@@ -181,6 +187,9 @@ private fun MainShell(viewModel: TinyViewModel) {
                     viewModel = viewModel,
                     onBack = { navController.popBackStack() },
                 )
+            }
+            composable(ROUTE_AI) {
+                AiAssistantScreen(onBack = { navController.popBackStack() })
             }
             composable(ROUTE_MESSAGES) {
                 MessagesScreen(viewModel = viewModel, onOpenConversation = { navController.navigate("conversation/$it") })
@@ -223,6 +232,7 @@ private fun titleForRoute(route: String?): String = when (route) {
     ROUTE_ATTENDANCE -> stringResource(R.string.attendance_title)
     ROUTE_LESSONS -> stringResource(R.string.nav_lessons)
     ROUTE_LESSON_DETAIL -> stringResource(R.string.lesson_plan)
+    ROUTE_AI -> stringResource(R.string.ai_title)
     ROUTE_MESSAGES -> stringResource(R.string.nav_messages)
     ROUTE_CONVERSATION -> stringResource(R.string.conversation_title)
     ROUTE_PROGRESS -> stringResource(R.string.progress_title)

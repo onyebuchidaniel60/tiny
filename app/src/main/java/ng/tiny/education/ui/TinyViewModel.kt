@@ -98,6 +98,13 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     fun observeGuardian(guardianId: String) = repository.observeGuardian(guardianId)
     fun observeMessages(conversationId: String) = repository.observeMessages(conversationId)
 
+    fun addPupil(classId: String, displayName: String, localPupilCode: String?) = viewModelScope.launch {
+        val ws = workspace.value ?: return@launch
+        repository.addPupil(ws.id, classId, displayName, localPupilCode)
+            .onSuccess { _message.value = "Pupil added locally and queued." }
+            .onFailure { _message.value = it.message ?: "Could not add pupil." }
+    }
+
     fun saveAttendanceDraft(classId: String, schoolDate: String, statuses: Map<String, AttendanceStatus>) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.saveAttendanceDraft(ws.id, classId, schoolDate, statuses)

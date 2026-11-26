@@ -38,3 +38,6 @@ functions/lib/
 # OS noise
 .DS_Store
 Thumbs.db
+
+# Large emulator diagnostics (screenshots are committed; full logcat is not)
+artifacts/emulator/logcat.txt

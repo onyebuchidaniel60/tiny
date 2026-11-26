@@ -66,6 +66,35 @@ class TinyRepository(
 
     suspend fun seedDemoData() = DemoData.seedIfEmpty(dao)
 
+    suspend fun addPupil(
+        workspaceId: String,
+        classId: String,
+        displayName: String,
+        localPupilCode: String?,
+    ): Result<String> = runCatching {
+        val name = displayName.trim()
+        require(name.isNotEmpty()) { "Pupil name is required." }
+        val pupilId = "pupil_${UUID.randomUUID()}"
+        database.withTransaction {
+            dao.upsertPupils(
+                listOf(
+                    PupilEntity(
+                        id = pupilId,
+                        workspaceId = workspaceId,
+                        classId = classId,
+                        displayName = name,
+                        localCode = localPupilCode?.trim()?.takeIf { it.isNotEmpty() },
+                        syncState = SyncState.PENDING_SYNC,
+                        version = 1,
+                    ),
+                ),
+            )
+            enqueueOutbox(workspaceId, "pupil.register", "{\"pupilId\":\"$pupilId\",\"classId\":\"$classId\"}")
+            audit(workspaceId, "pupil.registered", "pupil", pupilId, "Pupil registered locally.")
+        }
+        pupilId
+    }
+
     suspend fun saveAttendanceDraft(
         workspaceId: String,
         classId: String,

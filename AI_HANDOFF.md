@@ -53,22 +53,23 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS — 21/21 | Domain unit tests; no instrumentation/device run yet |
-| Android build | PASS | Local `assembleDevDebug`; APK 27,894,591 bytes (~26.6 MiB) |
+| Android tests | PASS — 21/21 | Domain unit tests; emulator smoke captured app launch/screens; no physical-device run |
+| Android build | PASS — CI | GitHub Actions APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD` |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
-| Functions callables/webhooks | SCAFFOLDED | Main callables, HMAC webhooks, scheduled digest; emulator runtime tests pending |
+| Firestore rules | PASS — 6/6 | Firestore emulator rules tests (unauthenticated/nonmember denial, member reads, write denial, class scope, guardian admin-only) |
+| Functions callables/webhooks | SCAFFOLDED | Main callables, HMAC webhooks, scheduled digest; full callable E2E still pending |
 | Firebase project/access | PENDING — later integration gate | Not required for current Android shell |
-| Firebase Emulator Suite | SCAFFOLDED | Config, demo project alias, rules/indexes; startup/rules tests pending |
+| Firebase Emulator Suite | PASS — rules; callables pending | Config/rules/indexes working in CI; Functions emulator E2E still pending |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | CONFIRMED — free tier | Gemini Developer API free tier on Spark; no paid AI |
-| Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed |
+| Protected preview distribution | PENDING — App Distribution preferred | Firebase project and tester/judge groups needed; CI APK artifact available |
 | Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
 | On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
 | eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
 | Production SMS authority/budget | NOT AUTHORIZED | NGN 0; mock only |
 | Production deploy authority | NOT AUTHORIZED | No production resources |
-| Landing page | IMPLEMENTED — local preview | Responsive static page + legal/security/contact; GitHub Pages pending |
+| Landing page | IMPLEMENTED — local preview | Responsive static page + legal/security/contact; GitHub Pages manual workflow not enabled/published |
 | Demo audience/output | CONFIRMED | Firebase hackathon judges/product evaluators; `artifacts/demo/` |
 | Demo voice/TTS | PENDING | Recheck free tier/terms at Phase 8 |
 
@@ -103,14 +104,17 @@
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
 - Unit tests: 21/21 pass across phone normalization, attendance, SMS segmentation, progress, digest and sync rules.
-- Local build: `testDevDebugUnitTest assembleDevDebug` successful; APK 27,894,591 bytes.
+- Local build: `testDevDebugUnitTest assembleDevDebug` successful; CI APK 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
+- GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
+- Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
+- Firestore rules: 6/6 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class scope, guardian admin-only).
 
 ### Functions / Firebase
 
 - `functions/` TypeScript project (Node 22, Firebase Functions 6.5.0, Admin 13.4.0, Zod).
 - Domain modules: phone, access, attendance, guardian, progress, SMS segmentation, digest, sync, AI privacy/schema.
-- 19 Vitest tests pass; `npm run build` passes.
+- 19 Vitest domain tests pass; 6 Firestore rules tests pass in the Firebase emulator; `npm run build` passes.
 - Callables scaffolded: workspace create, invitation, accept, classroom, pupil, guardian, link, verification, attendance submit, progress create/approve, teacher reply, sync batch.
 - Webhooks: HMAC-SHA256 raw-body verification, timing-safe comparison, event dedupe, routing by school code, guardian phone-hash lookup, mock-safe responses.
 - Scheduled digest: Friday 15:00 Africa/Lagos; approved/non-not-assessed entries only; mock notification jobs.
@@ -120,10 +124,10 @@
 
 ### CI / distribution
 
-- `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; optional manual App Distribution job gated by variables.
-- No GitHub Actions run yet at the time of this checkpoint.
-- `.github/workflows/landing-pages.yml`: GitHub Pages static deployment; Pages enablement pending.
+- `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
+- GitHub Actions run `45784722613` succeeded: build/test, rules tests, and manual emulator evidence.
 - App Distribution tester/judge access still pending.
+- GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
 ### Skills
 
@@ -151,17 +155,18 @@
 | Firebase project/App Distribution access | Required before real Firebase integration tests and judge-facing preview | Supply project ID, least-privilege access method, `internal-testers`/`judges` groups and judge-email handling |
 | Supported on-device AI device | Note 10+ (Android 12) is general testing only; separate acceptance gate | Provide a currently supported physical device, or accept on-device demo blocked |
 | StageShow skill | Required attempt unavailable after harness restart | No operator action unless a replacement UI skill is approved; current landing page uses direct design-system discipline |
-| GitHub Actions first run | CI is authored but not yet executed | Push checkpoint and inspect the workflow result; fix failures |
-| Firebase Emulator runtime tests | Rules/functions/emulator integration not yet run | Install Firebase CLI in CI/local and run emulator tests |
+| Full Functions callable/emulator E2E | Rules tests pass, but callable/webhook/scheduler E2E still needs an emulator harness | Continue implementing the test harness in Phase 3/5 |
+| App Distribution / judge access | Preview APK exists but no Firebase project/tester group | Supply project ID, access and groups |
 | Native translation review | Hausa/Yoruba/Igbo app strings are draft/partial | Arrange native review before pilot; English fallback is active |
 | Pilot/legal gates | DPIA, controller/processor, privacy notice, retention, NERDC rights | Identify approvers and timing before a real-school pilot |
 
 ## Preview / deployment evidence
 
-- Local debug APK: `app/build/outputs/apk/dev/debug/app-dev-debug.apk` (27,894,591 bytes).
-- GitHub Actions: workflow file present; **not yet run**.
+- CI APK artifact: `tiny-dev-debug-apk` from run `45784722613` (27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`).
+- GitHub Actions build/test and rules jobs: **success**.
+- Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, logcat excluded from commit.
 - App Distribution: not uploaded; no tester group/project.
-- Landing page: local static preview; GitHub Pages workflow present but Pages enablement/publication not verified.
+- Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.
 - Production: not authorized.
 
