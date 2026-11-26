@@ -79,9 +79,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            ./gradlew connectedDevDebugAndroidTest \
-              -Pandroid.testInstrumentationRunnerArguments.class=ng.tiny.education.AiLogicLiveTest \
-              --stacktrace
+            ./gradlew connectedDevDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=ng.tiny.education.AiLogicLiveTest --stacktrace
 
       - name: Upload AI test reports
         if: always()
