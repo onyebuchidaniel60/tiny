@@ -43,13 +43,6 @@
       ]
     },
     {
-      "collectionGroup": "messages",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "providerMessageId", "order": "ASCENDING" }
-      ]
-    },
-    {
       "collectionGroup": "guardianVerificationChallenges",
       "queryScope": "COLLECTION",
       "fields": [
