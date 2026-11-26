@@ -9,6 +9,7 @@ import ng.tiny.education.core.firebase.FirebaseRuntime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -22,6 +23,7 @@ class AiLogicLiveTest {
     @Test
     fun cloudGenerationReportsSdkSource() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        assumeTrue("Firebase config is required for the live AI test", FirebaseRuntime.isConfigured(context))
         assertTrue("Firebase must be configured for this live test", FirebaseRuntime.isConfigured(context))
 
         val service = AiLogicService(context)
