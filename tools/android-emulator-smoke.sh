@@ -60,6 +60,15 @@ screenshot "tiny-02-welcome"
 
 tap_text "Explore the preview" || true
 sleep 12
+dump_ui
+if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verification code' "$XML" 2>/dev/null; then
+  # A Firebase-configured build correctly stops at the phone-auth gate. Do
+  # not pretend the local journey ran; capture the gate and stop.
+  screenshot "tiny-03-auth-gate"
+  adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
+  echo "Firebase auth gate detected; captured tiny-03-auth-gate.png and skipped local journey."
+  exit 0
+fi
 screenshot "tiny-03-home"
 
 # Bottom navigation is 1080 px wide on the Pixel 5 emulator profile.
@@ -113,4 +122,4 @@ sleep 2
 screenshot "tiny-10-settings"
 
 dump_ui
-adb logcat -d > "$OUT/logcat.txt" || true
+adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
