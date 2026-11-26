@@ -110,6 +110,9 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
       sleep 1
       tap_text_retry "Confirm and sign in" 5 || tap_coord 540 1130
       if wait_for_text "Quick actions" 30; then
+        # Give the Firestore bootstrap a moment to load the synthetic remote
+        # workspace; if it is not configured, keep the local sample screen.
+        wait_for_text "Tiny Synthetic E2E" 20 || true
         screenshot "tiny-04-authenticated"
         echo "Test-phone auth succeeded; captured tiny-04-authenticated.png."
       else
