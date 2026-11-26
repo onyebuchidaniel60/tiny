@@ -15,7 +15,7 @@
 | Item | Purpose | Handling |
 |---|---|---|
 | `google-services.json` | Firebase Android client configuration | Generated for exact app ID; not a server credential; include only per repo policy or retrieve using approved CI flow |
-| Firebase project ID | Select Firebase project | Build flavor config; dev/staging only for preview |
+| Firebase project ID | Select Firebase project | `tiny-b9f29`; Spark/NGN 0; Functions emulator-only |
 | Android application ID | Package identity | Proposed safe default `ng.tiny.education`; verify ownership/conflict before pinning |
 | App Check debug token | Local attestation | Local ignored file/CI secret; never production |
 | Play Integrity | Production App Check | Firebase Console configuration, not app secret |
@@ -24,7 +24,7 @@
 
 | Name | Type | Required | Secret? | Purpose/default |
 |---|---|---:|---:|---|
-| `GCLOUD_PROJECT_ID` | Config | Yes | No | Non-production Firebase project ID |
+| `GCLOUD_PROJECT_ID` | Config | Yes | No | `tiny-b9f29` (non-production) |
 | `FIREBASE_REGION` | Config | Yes | No | `africa-south1` |
 | `FIRESTORE_DATABASE_ID` | Config | Yes | No | `(default)` unless approved otherwise |
 | `APP_ENV` | Config | Yes | No | `development|staging|production` |

@@ -45,7 +45,10 @@ service cloud.firestore {
       allow read: if signedIn() && request.auth.uid == uid;
       allow write: if false;
       match /{document=**} {
-        allow read, write: if false;
+        // Own command receipts and the workspace-membership index. No client
+        // writes are permitted.
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow write: if false;
       }
     }
 

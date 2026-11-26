@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
+import ng.tiny.education.core.model.SyncState
 
 @Dao
 interface TinyDao {
@@ -60,11 +61,21 @@ interface TinyDao {
     @Query("SELECT * FROM guardians WHERE id = :guardianId LIMIT 1")
     suspend fun getGuardian(guardianId: String): GuardianEntity?
 
+    @Query("SELECT * FROM guardians WHERE workspaceId = :workspaceId AND phoneE164 = :phoneE164 LIMIT 1")
+    suspend fun getGuardianByPhone(workspaceId: String, phoneE164: String): GuardianEntity?
+
     @Query("SELECT * FROM guardians WHERE id = :guardianId LIMIT 1")
     fun observeGuardian(guardianId: String): Flow<GuardianEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertGuardians(guardians: List<GuardianEntity>)
+
+    @Query("UPDATE guardians SET verificationStatus = :verification, consentStatus = :consent WHERE id = :guardianId")
+    suspend fun updateGuardianConsent(
+        guardianId: String,
+        verification: ng.tiny.education.core.model.GuardianVerificationStatus,
+        consent: ng.tiny.education.core.model.ConsentStatus,
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertLinks(links: List<PupilGuardianLinkEntity>)
@@ -156,6 +167,15 @@ interface TinyDao {
     @Query("SELECT * FROM outbox_commands WHERE syncState = 'PENDING_SYNC' ORDER BY createdAt ASC LIMIT :limit")
     suspend fun getPendingOutbox(limit: Int = 20): List<OutboxCommandEntity>
 
+    @Query(
+        "SELECT * FROM outbox_commands WHERE workspaceId = :workspaceId AND syncState = 'PENDING_SYNC' " +
+            "AND (nextAttemptAt IS NULL OR nextAttemptAt <= :now) ORDER BY createdAt ASC LIMIT :limit",
+    )
+    suspend fun getDueOutbox(workspaceId: String, now: Long, limit: Int = 20): List<OutboxCommandEntity>
+
+    @Query("SELECT * FROM outbox_commands WHERE id = :id LIMIT 1")
+    suspend fun getOutboxCommand(id: String): OutboxCommandEntity?
+
     @Query("SELECT COUNT(*) FROM outbox_commands WHERE workspaceId = :workspaceId AND syncState IN ('PENDING_SYNC', 'NEEDS_ATTENTION', 'CONFLICT')")
     fun observePendingOutboxCount(workspaceId: String): Flow<Int>
 
@@ -164,6 +184,18 @@ interface TinyDao {
 
     @Update
     suspend fun updateOutbox(command: OutboxCommandEntity)
+
+    @Query("UPDATE attendance_sessions SET syncState = :syncState, version = version + 1 WHERE classId = :classId AND schoolDate = :schoolDate")
+    suspend fun updateAttendanceSessionSyncState(classId: String, schoolDate: String, syncState: SyncState)
+
+    @Query("UPDATE progress_entries SET syncState = :syncState WHERE id = :entryId")
+    suspend fun updateProgressSyncState(entryId: String, syncState: SyncState)
+
+    @Query("UPDATE pupils SET syncState = :syncState WHERE id = :pupilId")
+    suspend fun updatePupilSyncState(pupilId: String, syncState: SyncState)
+
+    @Query("UPDATE messages SET status = :status WHERE id = :messageId")
+    suspend fun updateMessageStatus(messageId: String, status: ng.tiny.education.core.model.MessageStatus)
 
     @Query("SELECT * FROM sync_cursors WHERE workspaceId = :workspaceId LIMIT 1")
     suspend fun getSyncCursor(workspaceId: String): SyncCursorEntity?

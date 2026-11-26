@@ -32,6 +32,7 @@ beforeEach(async () => {
   await testEnv.withSecurityRulesDisabled(async (context) => {
     const db = context.firestore();
     await setDoc(doc(db, 'workspaces/ws1'), { workspaceId: 'ws1', name: 'Demo', type: 'school' });
+    await setDoc(doc(db, 'users/teacher1/workspaces/ws1'), { workspaceId: 'ws1', status: 'active' });
     await setDoc(doc(db, 'workspaces/ws1/members/admin1'), { uid: 'admin1', role: 'school_admin', status: 'active' });
     await setDoc(doc(db, 'workspaces/ws1/members/teacher1'), {
       uid: 'teacher1', role: 'teacher', status: 'active', assignedClassIds: ['class1'],
@@ -119,5 +120,13 @@ describe('Tiny Firestore rules', () => {
     await assertSucceeds(getDoc(doc(teacherDb, 'workspaces/ws1/conversations/conv1/messages/m1')));
     await assertFails(getDoc(doc(teacherDb, 'workspaces/ws1/conversations/conv2/messages/m2')));
     await assertSucceeds(getDoc(doc(adminDb, 'workspaces/ws1/conversations/conv2/messages/m2')));
+  });
+
+  it('allows a user to read only their own workspace index', async () => {
+    const ownDb = testEnv.authenticatedContext('teacher1').firestore();
+    const otherDb = testEnv.authenticatedContext('teacher2').firestore();
+    await assertSucceeds(getDoc(doc(ownDb, 'users/teacher1/workspaces/ws1')));
+    await assertFails(getDoc(doc(otherDb, 'users/teacher1/workspaces/ws1')));
+    await assertFails(setDoc(doc(ownDb, 'users/teacher1/workspaces/ws2'), { workspaceId: 'ws2' }));
   });
 });

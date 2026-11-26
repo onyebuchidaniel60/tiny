@@ -64,13 +64,13 @@ Do not claim any missing reference exists. The UI implementation is direct from 
 
 | Input | Required? | Status | Authorization boundary |
 |---|---:|---|---|
-| Firebase project ID | Yes for backend integration and App Distribution | PENDING — later integration gate | Operator will create a dedicated Tiny project and supply the project ID. This does not block independent Phase 1 scaffolding, Firebase skills installation or Emulator Suite setup with a demo project. Project ID is not a secret |
+| Firebase project ID | Yes for backend integration and App Distribution | CONFIRMED | `tiny-b9f29` (dedicated non-production project; not a secret). Recorded 26 November 2026. Project is Spark/NGN 0; Cloud Functions remain emulator-only |
 | Firebase project membership/role | Yes | PENDING — later integration gate | Operator must grant least-privilege access or authenticate Firebase CLI locally/CI. Agent verifies access |
 | Firebase billing account / plan | Yes for hosted Functions | CONFIRMED — Spark, NGN 0 | No Blaze upgrade, billing account, paid model or paid service without explicit operator approval |
 | Cloud Functions Gen2 deployment | Yes for fixed backend | NOT AUTHORIZED — emulator-only | Do not deploy Functions, activate Blaze, introduce paid hosting or replace the backend architecture. Callables/webhooks can be emulator-tested; scheduled digest logic must be invoked locally/unit-tested |
-| Firestore database | Yes | PENDING | Create Firestore Standard in `africa-south1` after project access; Spark free-tier limits apply |
-| Firebase Authentication Phone provider | Yes | PENDING | Enable Phone Auth; configure +234 policy, OTP quota and authorized test numbers |
-| App Check / Play Integrity | Production required | PENDING | Debug provider only for local development; production Play Integrity configured later |
+| Firestore database | Yes | BLOCKED - CLI authentication | Create the default database in `africa-south1` after authentication; Spark free-tier limits apply |
+| Firebase Authentication Phone provider | Yes | BLOCKED - CLI authentication | Enable Phone Auth and add synthetic test numbers. Spark does not include verification SMS; real SMS requires Blaze and is NOT authorized |
+| App Check / Play Integrity | Production required | PARTIAL - code ready, token pending | Debug provider installed in debug builds; register its token after app registration. Play Integrity needs the debug SHA-256 and Play Console link |
 | Firebase AI Logic Gemini Developer API | Yes for cloud AI demo | CONFIRMED — free tier | No paid AI. Gemini Developer API free tier is compatible with Spark; use App Check debug provider locally |
 | On-device AI test phone | Yes for proof of on-device path | SEPARATE BLOCKED GATE | Samsung Galaxy Note 10+, Android 12, is the only physical device and is **not** on the current ML Kit Gemini Nano supported-device list. Use for general testing only; do not claim on-device inference. Emulator does not prove physical Nano inference |
 | Representative low-cost pilot phones | Required before pilot | PENDING | No second device available and operator does not intend to purchase one. Use Note 10+ for general testing and emulators/CI for additional coverage; record the pilot-device gap |

@@ -13,10 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ng.tiny.education.R
 import ng.tiny.education.core.database.OutboxCommandEntity
+import ng.tiny.education.core.model.WorkspaceType
 import ng.tiny.education.ui.TinyViewModel
 import ng.tiny.education.ui.components.InfoBanner
 import ng.tiny.education.ui.components.PaperCard
@@ -45,6 +52,59 @@ fun SettingsScreen(
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val workspace by viewModel.workspace.collectAsStateWithLifecycle()
     val pending by viewModel.pendingOutboxCount.collectAsStateWithLifecycle()
+    var showCreateWorkspace by remember { mutableStateOf(false) }
+    var workspaceName by remember { mutableStateOf("") }
+    var workspaceType by remember { mutableStateOf(WorkspaceType.SCHOOL) }
+
+    if (showCreateWorkspace) {
+        AlertDialog(
+            onDismissRequest = { showCreateWorkspace = false },
+            title = { Text("Create workspace") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = workspaceName,
+                        onValueChange = { workspaceName = it },
+                        label = { Text("Workspace or school name") },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FilterChip(
+                            selected = workspaceType == WorkspaceType.SCHOOL,
+                            onClick = { workspaceType = WorkspaceType.SCHOOL },
+                            label = { Text("School") },
+                        )
+                        FilterChip(
+                            selected = workspaceType == WorkspaceType.INDEPENDENT,
+                            onClick = { workspaceType = WorkspaceType.INDEPENDENT },
+                            label = { Text("Independent") },
+                        )
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        if (viewModel.backendSyncEnabled) {
+                            "The workspace is created through the backend with a school code."
+                        } else {
+                            "Preview mode creates the workspace locally with a generated school code."
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.createWorkspace(workspaceName, workspaceType)
+                        showCreateWorkspace = false
+                        workspaceName = ""
+                    },
+                    enabled = workspaceName.isNotBlank(),
+                ) { Text("Create") }
+            },
+            dismissButton = { TextButton(onClick = { showCreateWorkspace = false }) { Text("Cancel") } },
+        )
+    }
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
@@ -89,6 +149,12 @@ fun SettingsScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     StatusPill("Public preview · synthetic data", TinyCobalt)
+                    Spacer(Modifier.height(10.dp))
+                    TinySecondaryButton(
+                        text = "Create workspace",
+                        onClick = { showCreateWorkspace = true },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
         }
@@ -181,16 +247,20 @@ fun SyncScreen(
 ) {
     val outbox by viewModel.outbox.collectAsStateWithLifecycle()
     val pending by viewModel.pendingOutboxCount.collectAsStateWithLifecycle()
+    val backend = viewModel.backendSyncEnabled
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         item {
-            SectionHeading(title = stringResource(R.string.sync_heading), subtitle = stringResource(R.string.sync_center_mock_note))
+            SectionHeading(
+                title = stringResource(R.string.sync_center_title),
+                subtitle = if (backend) "Queued commands are sent to the Firebase callable when online." else stringResource(R.string.sync_center_mock_note),
+            )
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatusPill("$pending pending", if (pending > 0) TinyButter else TinyForest)
-                StatusPill("Mock engine", TinyCobalt)
+                StatusPill(if (backend) "Firebase backend" else "Mock engine", TinyCobalt)
             }
         }
         item {
@@ -208,8 +278,12 @@ fun SyncScreen(
         }
         item {
             InfoBanner(
-                "The mock sync engine never marks a record as cloud-synced. Real acknowledgement requires a deployed backend, which is not authorized under Spark/NGN 0.",
-                tone = TinyTomato,
+                if (backend) {
+                    "Commands are idempotent and receipted. Accepted records become Synced; conflicts and rejections remain visible for review."
+                } else {
+                    "The mock sync engine never marks a record as cloud-synced. Connect a Firebase project to use the backend processor."
+                },
+                tone = if (backend) TinyForest else TinyTomato,
             )
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +41,12 @@ class TinyNavigationTest {
         }
         composeRule.waitUntil(timeoutMillis = 20_000) {
             composeRule.onAllNodesWithText("P4 Blue").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("Add class").performScrollTo().performClick()
+        composeRule.onNodeWithText("Section label, for example Blue").performTextInput("A")
+        composeRule.onNodeWithText("Add").performClick()
+        composeRule.waitUntil(timeoutMillis = 15_000) {
+            composeRule.onAllNodesWithText("P4 A").fetchSemanticsNodes().isNotEmpty()
         }
         composeRule.onNodeWithText("P4 Blue").performScrollTo().performClick()
         composeRule.onNodeWithText("Roster").assertIsDisplayed()

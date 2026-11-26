@@ -21,8 +21,8 @@
 
 | Name | Purpose | Where obtained | Where entered | Secret? | Timing | Current/default |
 |---|---|---|---|---|---|---|
-| `FIREBASE_PROJECT_ID` | Android/Firebase project selection; CI and App Distribution | Firebase Console → Project settings → General | `.env`, GitHub Actions variable/config, docs | Public | Before Firebase integration | `PENDING` |
-| `GCLOUD_PROJECT_ID` | Functions runtime project alias | Same Firebase project | Functions config/Secret Manager reference | Public | Before Firebase integration | `PENDING` |
+| `FIREBASE_PROJECT_ID` | Android/Firebase project selection; CI and App Distribution | Firebase Console → Project settings → General | `.env`, GitHub Actions variable/config, docs | Public | Before Firebase integration | `tiny-b9f29` |
+| `GCLOUD_PROJECT_ID` | Functions runtime project alias | Same Firebase project | Functions config/Secret Manager reference | Public | Before Firebase integration | `tiny-b9f29` |
 | `FIREBASE_ANDROID_APP_ID` | App Distribution target app | Firebase Console → Project settings → Your apps | GitHub Actions variable | Public | Before distribution | `PENDING` |
 | `google-services.json` | Android Firebase client configuration | Firebase Console → Project settings → Your apps → Android | `app/google-services.json` locally or CI-injected | Public client config, not a server secret | Before Firebase-enabled Android build | `PENDING`; ignored by Git |
 | `GOOGLE_SERVICES_JSON_BASE64` | CI transport for the client config | Base64 of the downloaded file | GitHub Actions secret | Restricted/public client config | Before distribution/Firebase build | `PENDING` |

@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ng.tiny.education.R
 import ng.tiny.education.core.database.ProgressEntryEntity
+import ng.tiny.education.core.database.PupilGuardianLinkEntity
 import ng.tiny.education.core.model.ApprovalStatus
+import ng.tiny.education.core.model.GuardianVerificationStatus
 import ng.tiny.education.core.model.ProgressIndicator
 import ng.tiny.education.ui.TinyViewModel
 import ng.tiny.education.ui.components.InfoBanner
@@ -50,9 +54,117 @@ fun ProgressScreen(
 ) {
     val pupil by viewModel.observePupil(pupilId).collectAsStateWithLifecycle(initialValue = null)
     val entries by viewModel.observeProgress(pupilId).collectAsStateWithLifecycle(initialValue = emptyList())
+    val links by viewModel.observeGuardianLinks(pupilId).collectAsStateWithLifecycle(initialValue = emptyList())
+    val guardianCode by viewModel.guardianCode.collectAsStateWithLifecycle()
     var indicator by remember { mutableStateOf(ProgressIndicator.DOING_WELL) }
     var note by remember { mutableStateOf("") }
     var homeActivity by remember { mutableStateOf("") }
+    var showAddGuardian by remember { mutableStateOf(false) }
+    var guardianName by remember { mutableStateOf("") }
+    var guardianPhone by remember { mutableStateOf("") }
+    var guardianRelationship by remember { mutableStateOf("Parent") }
+    var verifyingGuardianId by remember { mutableStateOf<String?>(null) }
+    var verificationCode by remember { mutableStateOf("") }
+
+    if (showAddGuardian) {
+        AlertDialog(
+            onDismissRequest = { showAddGuardian = false },
+            title = { Text("Add guardian") },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = guardianName,
+                        onValueChange = { guardianName = it },
+                        label = { Text("Guardian name") },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = guardianPhone,
+                        onValueChange = { guardianPhone = it },
+                        label = { Text("Nigerian phone, e.g. 0803 123 4567") },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = guardianRelationship,
+                        onValueChange = { guardianRelationship = it },
+                        label = { Text("Relationship") },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        "Synthetic test numbers only. A shared endpoint is reused for siblings.",
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.addGuardian(
+                            pupilId = pupilId,
+                            displayName = guardianName,
+                            phone = guardianPhone,
+                            locale = "en",
+                            relationship = guardianRelationship,
+                        )
+                        showAddGuardian = false
+                        guardianName = ""
+                        guardianPhone = ""
+                    },
+                    enabled = guardianName.isNotBlank() && guardianPhone.isNotBlank(),
+                ) { Text("Add") }
+            },
+            dismissButton = { TextButton(onClick = { showAddGuardian = false }) { Text("Cancel") } },
+        )
+    }
+
+    verifyingGuardianId?.let { guardianId ->
+        AlertDialog(
+            onDismissRequest = {
+                verifyingGuardianId = null
+                verificationCode = ""
+                viewModel.clearGuardianCode()
+            },
+            title = { Text("Verify guardian") },
+            text = {
+                Column {
+                    Text(
+                        guardianCode?.let { "In-person code: $it" }
+                            ?: "Request a code, read it to the guardian, then enter it here.",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = verificationCode,
+                        onValueChange = { verificationCode = it },
+                        label = { Text("Verification code") },
+                        singleLine = true,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.verifyGuardian(guardianId, verificationCode)
+                        verifyingGuardianId = null
+                        verificationCode = ""
+                    },
+                    enabled = verificationCode.isNotBlank(),
+                ) { Text("Verify") }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        verifyingGuardianId = null
+                        verificationCode = ""
+                        viewModel.clearGuardianCode()
+                    },
+                ) { Text("Cancel") }
+            },
+        )
+    }
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
@@ -128,6 +240,29 @@ fun ProgressScreen(
             }
         }
         item {
+            SectionHeading(title = "Family contacts", subtitle = "Verified, opted-in endpoints receive child-specific SMS.")}
+        item {
+            TinySecondaryButton(
+                text = "Add guardian",
+                onClick = { showAddGuardian = true },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        items(links, key = { it.id }) { link ->
+            GuardianContactCard(
+                link = link,
+                viewModel = viewModel,
+                onRequestCode = {
+                    viewModel.requestGuardianVerification(link.guardianId)
+                    verifyingGuardianId = link.guardianId
+                },
+                onVerify = { verifyingGuardianId = link.guardianId },
+            )
+        }
+        if (links.isEmpty()) {
+            item { PaperCard { Text("No guardian is linked to this pupil yet.") } }
+        }
+        item {
             SectionHeading(title = "History", subtitle = "Only approved entries can enter a parent digest.")
         }
         items(entries, key = { it.id }) { entry ->
@@ -150,6 +285,53 @@ private fun IndicatorChoice(label: String, selected: Boolean, color: androidx.co
             selectedLabelColor = MaterialTheme.colorScheme.onSurface,
         ),
     )
+}
+
+@Composable
+private fun GuardianContactCard(
+    link: PupilGuardianLinkEntity,
+    viewModel: TinyViewModel,
+    onRequestCode: () -> Unit,
+    onVerify: () -> Unit,
+) {
+    val guardian by viewModel.observeGuardian(link.guardianId).collectAsStateWithLifecycle(initialValue = null)
+    PaperCard {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        guardian?.displayName ?: "Guardian",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        "${guardian?.phoneE164 ?: "No phone"} · ${link.relationshipLabel}",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+                val verified = guardian?.verificationStatus == GuardianVerificationStatus.VERIFIED
+                StatusPill(
+                    if (verified) "Verified" else "Pending",
+                    if (verified) TinyForest else TinyTomato,
+                )
+            }
+            if (guardian?.verificationStatus != GuardianVerificationStatus.VERIFIED) {
+                Spacer(Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TinySecondaryButton(
+                        text = "Request code",
+                        onClick = onRequestCode,
+                        modifier = Modifier.weight(1f),
+                    )
+                    TinyPrimaryButton(
+                        text = "Enter code",
+                        onClick = onVerify,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable

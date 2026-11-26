@@ -38,6 +38,7 @@ import ng.tiny.education.ui.screens.LanguageScreen
 import ng.tiny.education.ui.screens.LessonDetailScreen
 import ng.tiny.education.ui.screens.LessonsScreen
 import ng.tiny.education.ui.screens.MessagesScreen
+import ng.tiny.education.ui.screens.PhoneAuthScreen
 import ng.tiny.education.ui.screens.ProgressScreen
 import ng.tiny.education.ui.screens.SettingsScreen
 import ng.tiny.education.ui.screens.SyncScreen
@@ -60,6 +61,7 @@ private const val ROUTE_SYNC = "sync"
 fun TinyApp(container: AppContainer) {
     val viewModel: TinyViewModel = viewModel(factory = TinyViewModel.factory(container))
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
+    val authUser by container.authRepository.user.collectAsStateWithLifecycle()
     var onboardingStage by rememberSaveable { mutableIntStateOf(if (preferences.onboarded) 2 else 0) }
 
     LaunchedEffect(preferences.language) {
@@ -68,9 +70,21 @@ fun TinyApp(container: AppContainer) {
     LaunchedEffect(preferences.onboarded) {
         if (preferences.onboarded) onboardingStage = 2
     }
+    LaunchedEffect(authUser?.uid) {
+        if (authUser != null) viewModel.bootstrapRemoteWorkspace()
+    }
 
     if (preferences.onboarded) {
-        MainShell(viewModel = viewModel)
+        if (container.firebaseConfigured && authUser == null) {
+            PhoneAuthScreen(
+                authRepository = container.authRepository,
+                onSignedIn = {
+                    container.syncScheduler.requestSync()
+                },
+            )
+        } else {
+            MainShell(viewModel = viewModel)
+        }
     } else {
         when (onboardingStage) {
             0 -> LanguageScreen(
@@ -189,7 +203,7 @@ private fun MainShell(viewModel: TinyViewModel) {
                 )
             }
             composable(ROUTE_AI) {
-                AiAssistantScreen(onBack = { navController.popBackStack() })
+                AiAssistantScreen(viewModel = viewModel, onBack = { navController.popBackStack() })
             }
             composable(ROUTE_MESSAGES) {
                 MessagesScreen(viewModel = viewModel, onOpenConversation = { navController.navigate("conversation/$it") })

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -53,6 +54,60 @@ fun ClassesScreen(
     onOpenAttendance: (String) -> Unit,
 ) {
     val classes by viewModel.classes.collectAsStateWithLifecycle()
+    var showAddClass by remember { mutableStateOf(false) }
+    var grade by remember { mutableStateOf("P4") }
+    var label by remember { mutableStateOf("") }
+    var year by remember { mutableStateOf("2026/2027") }
+
+    if (showAddClass) {
+        AlertDialog(
+            onDismissRequest = { showAddClass = false },
+            title = { Text(stringResource(R.string.add_class)) },
+            text = {
+                Column {
+                    Text(stringResource(R.string.grade_level), style = MaterialTheme.typography.labelLarge)
+                    Spacer(Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        listOf("P1", "P2", "P3", "P4", "P5", "P6").forEach { option ->
+                            FilterChip(
+                                selected = grade == option,
+                                onClick = { grade = option },
+                                label = { Text(option) },
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = label,
+                        onValueChange = { label = it },
+                        label = { Text(stringResource(R.string.section_label)) },
+                        singleLine = true,
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = year,
+                        onValueChange = { year = it },
+                        label = { Text(stringResource(R.string.academic_year)) },
+                        singleLine = true,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.createClass(grade, label.trim().ifBlank { "A" }, year.trim())
+                        showAddClass = false
+                        label = ""
+                    },
+                    enabled = year.isNotBlank(),
+                ) { Text(stringResource(R.string.add)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAddClass = false }) { Text(stringResource(R.string.cancel)) }
+            },
+        )
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -63,7 +118,19 @@ fun ClassesScreen(
                 subtitle = stringResource(R.string.classes_subtitle),
             )
             Spacer(Modifier.height(8.dp))
-            InfoBanner("This preview stores class records locally in an encrypted Room database. Cloud class sync is not connected.")
+            TinyPrimaryButton(
+                text = stringResource(R.string.add_class),
+                onClick = { showAddClass = true },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(Modifier.height(8.dp))
+            InfoBanner(
+                if (viewModel.backendSyncEnabled) {
+                    "Classes are created through the backend when online. Offline class creation is still available in preview mode."
+                } else {
+                    "This preview stores class records locally in an encrypted Room database. Cloud class creation is not connected."
+                },
+            )
         }
         items(classes, key = { it.id }) { classroom ->
             ClassCard(

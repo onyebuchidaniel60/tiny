@@ -3,7 +3,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { absencePupilIds, sessionDocumentId, validateAttendance } from './domain/attendance';
-import { canNotifyGuardian, dedupeGuardiansByPhone, guardianPhoneKey, verificationCode, verificationCodeHash } from './domain/guardian';
+import { canNotifyGuardian, dedupeGuardiansByPhone, guardianPhoneKey, hashMatches, verificationCode, verificationCodeHash } from './domain/guardian';
 import { normalizeNigerianPhone } from './domain/phone';
 import { assertValidProgress, nextRevision, progressDocumentId } from './domain/progress';
 import { validateSyncBatch } from './domain/sync';
@@ -72,6 +72,7 @@ const acceptInvitationCommand = workspaceCommand.extend({
 
 const createClassroomCommand = workspaceCommand.extend({
   payload: z.object({
+    classId: z.string().regex(/^class_[A-Za-z0-9-]{6,80}$/).optional(),
     gradeLevel: z.enum(['P1', 'P2', 'P3', 'P4', 'P5', 'P6']),
     sectionLabel: z.string().min(1).max(30),
     academicYear: z.string().min(4).max(12),
@@ -92,6 +93,7 @@ const registerPupilCommand = workspaceCommand.extend({
 
 const upsertGuardianCommand = workspaceCommand.extend({
   payload: z.object({
+    guardianId: z.string().regex(/^guardian_[A-Za-z0-9-]{6,80}$/).optional(),
     displayName: z.string().min(1).max(100),
     phoneE164: z.string().min(7).max(20),
     preferredLocale: z.enum(['en', 'ha', 'yo', 'ig', 'pcm']),
@@ -109,6 +111,13 @@ const linkGuardianCommand = workspaceCommand.extend({
 
 const requestVerificationCommand = workspaceCommand.extend({
   payload: z.object({ guardianId: z.string().min(3) }),
+});
+
+const verifyGuardianCommand = workspaceCommand.extend({
+  payload: z.object({
+    guardianId: z.string().min(3),
+    code: z.string().min(6).max(12),
+  }),
 });
 
 const attendanceCommand = workspaceCommand.extend({
@@ -262,6 +271,13 @@ export const createWorkspace = onCall(callableOptions, wrap(async (request) => {
       version: 1,
     });
     transaction.set(codeRef, { workspaceId, createdAt: now });
+    transaction.set(db.collection(COLLECTIONS.users).doc(uid).collection('workspaces').doc(workspaceId), {
+      workspaceId,
+      role: command.payload.type === 'school' ? 'school_admin' : 'teacher',
+      status: 'active',
+      createdAt: now,
+      updatedAt: now,
+    });
   });
 
   await writeUserReceipt(uid, {
@@ -339,6 +355,17 @@ export const acceptInvitation = onCall(callableOptions, wrap(async (request) => 
       },
     );
     transaction.update(invitationRef, { status: 'accepted', acceptedByUid: uid, updatedAt: now });
+    transaction.set(
+      db.collection(COLLECTIONS.users).doc(uid).collection('workspaces').doc(command.workspaceId),
+      {
+        workspaceId: command.workspaceId,
+        role: 'teacher',
+        status: 'active',
+        createdAt: now,
+        updatedAt: now,
+      },
+      { merge: true },
+    );
   });
   return { ok: true, outcome: 'accepted', workspaceId: command.workspaceId };
 }));
@@ -347,14 +374,21 @@ export const createClassroom = onCall(callableOptions, wrap(async (request) => {
   const uid = requireAuth(request);
   const command = parse(createClassroomCommand, request.data);
   await requireManager(command.workspaceId, uid);
-  const classId = `class_${randomUUID()}`;
+  const classId = command.payload.classId ?? `class_${randomUUID()}`;
   const uniqueKey = `${command.payload.gradeLevel}_${command.payload.sectionLabel}_${command.payload.academicYear}`.replace(/[^A-Za-z0-9_-]/g, '_');
   await db.runTransaction(async (transaction) => {
+    const classRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.classrooms).doc(classId);
+    const existingClass = await transaction.get(classRef);
+    if (existingClass.exists && asRecord(existingClass.data()).sectionLabel !== command.payload.sectionLabel) {
+      throw new DomainError('VERSION_CONFLICT', 'This class id already exists with different details.');
+    }
     const keyRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection('classKeys').doc(uniqueKey);
     const keySnap = await transaction.get(keyRef);
-    if (keySnap.exists) throw new DomainError('VERSION_CONFLICT', 'A class with this grade, section and year already exists.');
+    if (keySnap.exists && String(asRecord(keySnap.data()).classId) !== classId) {
+      throw new DomainError('VERSION_CONFLICT', 'A class with this grade, section and year already exists.');
+    }
     const now = new Date();
-    transaction.set(db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.classrooms).doc(classId), {
+    transaction.set(classRef, {
       classId,
       workspaceId: command.workspaceId,
       gradeLevel: command.payload.gradeLevel,
@@ -421,7 +455,9 @@ export const upsertGuardian = onCall(callableOptions, wrap(async (request) => {
   const endpointHash = guardianPhoneKey(command.workspaceId, phone, phoneHashSecret());
   const keyRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId).collection(COLLECTIONS.phoneKeys).doc(endpointHash);
   const keySnap = await keyRef.get();
-  const guardianId = keySnap.exists ? String(asRecord(keySnap.data()).guardianId) : `guardian_${randomUUID()}`;
+  const guardianId = keySnap.exists
+    ? String(asRecord(keySnap.data()).guardianId)
+    : (command.payload.guardianId ?? `guardian_${randomUUID()}`);
   await db.runTransaction(async (transaction) => {
     const freshKey = await transaction.get(keyRef);
     const now = new Date();
@@ -512,6 +548,66 @@ export const requestGuardianVerification = onCall(callableOptions, wrap(async (r
     createdAt: new Date(),
   });
   return { ok: true, outcome: 'accepted', code, expiresAt: expiresAt.toISOString(), maxAttempts: 5 };
+}));
+
+export const verifyGuardianCode = onCall(callableOptions, wrap(async (request) => {
+  const uid = requireAuth(request);
+  const command = parse(verifyGuardianCommand, request.data);
+  await requireMembership(command.workspaceId, uid);
+  const guardianRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId)
+    .collection(COLLECTIONS.guardians).doc(command.payload.guardianId);
+  const guardianSnap = await guardianRef.get();
+  if (!guardianSnap.exists) throw new DomainError('RESOURCE_NOT_FOUND', 'Guardian not found.');
+
+  const challenges = await db.collection(COLLECTIONS.workspaces).doc(command.workspaceId)
+    .collection('guardianVerificationChallenges')
+    .where('guardianId', '==', command.payload.guardianId)
+    .where('status', '==', 'pending')
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get();
+  if (challenges.empty) throw new DomainError('RESOURCE_NOT_FOUND', 'No pending verification challenge.');
+  const challenge = challenges.docs[0];
+  const data = asRecord(challenge.data());
+  if (timestampMillis(data.expiresAt) < Date.now()) {
+    await challenge.ref.update({ status: 'expired', updatedAt: new Date() });
+    throw new DomainError('VALIDATION_FAILED', 'The verification code has expired. Request a new code.');
+  }
+  const actualHash = verificationCodeHash(command.workspaceId, command.payload.guardianId, command.payload.code);
+  if (!hashMatches(String(data.codeHash), actualHash)) {
+    const attempts = Number(data.failedAttemptCount ?? 0) + 1;
+    const maxAttempts = Number(data.maxAttempts ?? 5);
+    await challenge.ref.update({
+      failedAttemptCount: attempts,
+      status: attempts >= maxAttempts ? 'locked' : 'pending',
+      updatedAt: new Date(),
+    });
+    throw new DomainError('VALIDATION_FAILED', 'The verification code is incorrect.');
+  }
+
+  const now = new Date();
+  await db.runTransaction(async (transaction) => {
+    const fresh = await transaction.get(challenge.ref);
+    if (!fresh.exists || asRecord(fresh.data()).status !== 'pending') {
+      throw new DomainError('VERSION_CONFLICT', 'This verification challenge is no longer valid.');
+    }
+    transaction.update(challenge.ref, {
+      status: 'verified',
+      verifiedAt: now,
+      verifiedByUid: uid,
+      updatedAt: now,
+    });
+    transaction.update(guardianRef, {
+      verificationStatus: 'verified',
+      consentStatus: 'opted_in',
+      consentRecordedAt: now,
+      verifiedAt: now,
+      verificationMethod: 'in_person_code',
+      updatedAt: now,
+    });
+  });
+  await audit(db, command.workspaceId, 'guardian.verified', 'guardian', command.payload.guardianId, 'Guardian phone verified and opt-in recorded.', uid);
+  return { ok: true, outcome: 'accepted', guardianId: command.payload.guardianId, verificationStatus: 'verified', consentStatus: 'opted_in' };
 }));
 
 export const submitAttendanceSession = onCall(callableOptions, wrap(async (request) => {
@@ -764,6 +860,10 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
     'progress.approve': (approveProgressEntry as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
     'message.reply': (sendTeacherMessage as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
     'pupil.register': (registerPupil as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'class.create': (createClassroom as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'guardian.upsert': (upsertGuardian as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'guardian.link': (linkGuardianToPupil as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'guardian.verify': (verifyGuardianCode as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
   };
 
   const results = [] as Array<Record<string, unknown>>;
@@ -802,7 +902,16 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
     try {
       const data = await handler(childRequest);
       const resultRef = typeof data === 'object' && data !== null
-        ? String(asRecord(data).sessionId ?? asRecord(data).progressEntryId ?? asRecord(data).messageId ?? asRecord(data).pupilId ?? '')
+        ? String(
+            asRecord(data).sessionId ??
+            asRecord(data).progressEntryId ??
+            asRecord(data).messageId ??
+            asRecord(data).pupilId ??
+            asRecord(data).classId ??
+            asRecord(data).guardianId ??
+            asRecord(data).linkId ??
+            '',
+          )
         : '';
       await writeWorkspaceReceipt(command.workspaceId, {
         idempotencyKey: item.idempotencyKey,
@@ -811,7 +920,7 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
         commandType: item.commandType,
         payloadHash: payloadHash(item.payload),
         outcome: 'accepted',
-        resultRef: resultRef || undefined,
+        ...(resultRef ? { resultRef } : {}),
         createdAt: new Date(),
       });
       results.push({ idempotencyKey: item.idempotencyKey, outcome: 'accepted', data });

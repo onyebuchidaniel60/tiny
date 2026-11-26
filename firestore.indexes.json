@@ -48,6 +48,23 @@
       "fields": [
         { "fieldPath": "providerMessageId", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "guardianVerificationChallenges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "guardianId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "pupilGuardianLinks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "guardianId", "order": "ASCENDING" },
+        { "fieldPath": "status", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

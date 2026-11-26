@@ -128,6 +128,10 @@ npx --yes serve landing
 
 A reviewed 146-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording.
 
+## Firebase integration stage
+
+Firebase project `tiny-b9f29` is recorded in `.firebaserc` and the configuration docs. The Android client contains App Check bootstrap, phone-auth gating, a callable sync transport with durable WorkManager retries/receipts/conflicts, Firestore bootstrap reads, AI Logic hybrid inference code, and workspace/class/guardian flows. Project-side setup and live verification are waiting on Firebase CLI authentication; run `npx --yes firebase-tools@15.14.0 login` and follow `docs/FIREBASE_INTEGRATION.md`. Cloud Functions remain emulator-only under Spark/NGN 0.
+
 
 ## Firebase development-agent tooling
 

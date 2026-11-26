@@ -15,6 +15,7 @@ import {
   submitAttendanceSession,
   syncCommands,
   upsertGuardian,
+  verifyGuardianCode,
 } from './callables';
 import { runWeeklyDigests } from './jobs';
 import { esmsInbound } from './webhooks';
@@ -40,6 +41,7 @@ const registerPupilFn = wrapCallable(registerPupil);
 const upsertGuardianFn = wrapCallable(upsertGuardian);
 const linkGuardianFn = wrapCallable(linkGuardianToPupil);
 const requestVerificationFn = wrapCallable(requestGuardianVerification);
+const verifyGuardianFn = wrapCallable(verifyGuardianCode);
 const submitAttendanceFn = wrapCallable(submitAttendanceSession);
 const createProgressFn = wrapCallable(createProgressEntry);
 const approveProgressFn = wrapCallable(approveProgressEntry);
@@ -194,11 +196,19 @@ describe('Tiny backend emulator E2E', () => {
     }, auth);
     expect(String(challenge.code)).toHaveLength(8);
 
-    await guardianDoc.ref.update({
-      verificationStatus: 'verified',
-      consentStatus: 'opted_in',
-      updatedAt: new Date(),
-    });
+    const verified = await verifyGuardianFn({
+      workspaceId,
+      idempotencyKey: 'guardian-verify-submit-e2e-0001',
+      schemaVersion: 1,
+      payload: { guardianId, code: String(challenge.code) },
+    }, auth);
+    expect(verified.outcome).toBe('accepted');
+    expect(verified.verificationStatus).toBe('verified');
+    expect(verified.consentStatus).toBe('opted_in');
+
+    const verifiedDoc = await guardianDoc.ref.get();
+    expect(verifiedDoc.data()?.verificationStatus).toBe('verified');
+    expect(verifiedDoc.data()?.consentStatus).toBe('opted_in');
   });
 
   it('submits attendance once and queues an absence job only for the absent pupil', async () => {
@@ -306,6 +316,18 @@ describe('Tiny backend emulator E2E', () => {
   it('applies a mixed offline sync batch and replays it idempotently', async () => {
     const commands = [
       {
+        idempotencyKey: 'sync-class-create-0001',
+        commandType: 'class.create',
+        schemaVersion: 1,
+        payload: {
+          classId: 'class_sync0001',
+          gradeLevel: 'P5',
+          sectionLabel: 'Gold',
+          academicYear: '2026/2027',
+          subjectIds: [],
+        },
+      },
+      {
         idempotencyKey: 'sync-pupil-register-0001',
         commandType: 'pupil.register',
         schemaVersion: 1,
@@ -359,7 +381,7 @@ describe('Tiny backend emulator E2E', () => {
       payload: { commands },
     }, auth);
     const firstResults = first.results as Array<Record<string, unknown>>;
-    expect(firstResults.map((item) => item.outcome)).toEqual(['accepted', 'accepted', 'accepted', 'accepted']);
+    expect(firstResults.map((item) => item.outcome)).toEqual(['accepted', 'accepted', 'accepted', 'accepted', 'accepted']);
 
     const second = await syncFn({
       workspaceId,
@@ -368,7 +390,7 @@ describe('Tiny backend emulator E2E', () => {
       payload: { commands },
     }, auth);
     const secondResults = second.results as Array<Record<string, unknown>>;
-    expect(secondResults.map((item) => item.outcome)).toEqual(['alreadyApplied', 'alreadyApplied', 'alreadyApplied', 'alreadyApplied']);
+    expect(secondResults.map((item) => item.outcome)).toEqual(['alreadyApplied', 'alreadyApplied', 'alreadyApplied', 'alreadyApplied', 'alreadyApplied']);
 
     const rejected = await syncFn({
       workspaceId,

@@ -12,6 +12,7 @@ export {
   submitAttendanceSession,
   syncCommands,
   upsertGuardian,
+  verifyGuardianCode,
 } from './callables';
 export { esmsDelivery, esmsInbound } from './webhooks';
 export { runWeeklyDigests } from './jobs';

@@ -56,6 +56,10 @@
     <string name="mark_attendance">Mark attendance</string>
     <string name="view_class">View class</string>
     <string name="class_detail_title">Class details</string>
+    <string name="add_class">Add class</string>
+    <string name="grade_level">Grade level</string>
+    <string name="section_label">Section label, for example Blue</string>
+    <string name="academic_year">Academic year</string>
     <string name="roster">Roster</string>
     <string name="add_pupil">Add pupil</string>
     <string name="pupil_name">Pupil display name</string>
@@ -210,4 +214,15 @@
     <string name="school_demo_name">Kofar Demo Primary</string>
     <string name="school_code_label">School code %1$s</string>
     <string name="sample_data_badge">SAMPLE</string>
+
+    <string name="auth_title">Sign in with your phone</string>
+    <string name="auth_subtitle">Tiny uses Firebase Phone Authentication. After the first sign-in, classroom work stays available offline.</string>
+    <string name="auth_project_label">Project: %1$s</string>
+    <string name="auth_phone">Phone number, for example 0803 123 4567</string>
+    <string name="auth_code">6-digit code</string>
+    <string name="auth_send_code">Send verification code</string>
+    <string name="auth_confirm">Confirm and sign in</string>
+    <string name="auth_retry">Use a different number</string>
+    <string name="auth_privacy_note">Your number is used for account verification. Do not enter a real pupil or guardian phone number here.</string>
+    <string name="auth_test_number_note">Development uses Firebase test phone numbers only. No live parent SMS is sent.</string>
 </resources>

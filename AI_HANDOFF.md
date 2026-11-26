@@ -1,12 +1,12 @@
 ﻿# Tiny — AI Implementation Handoff
 
-**Last updated:** 26 November 2026 (Phase 1 complete; Phase 2/3 backend verified)
+**Last updated:** 26 November 2026 (Firebase integration stage)
 
-**Current status:** Phase 1 local/CI shell is implemented and verified; Phase 2/3 backend/rules foundations are emulator-tested. No production deployment, live SMS or Firebase project resources have been created. App Distribution, physical-device and on-device AI gates remain external.
+**Current status:** Firebase project `tiny-b9f29` is recorded. The Android client now contains App Check bootstrap, phone-auth gating, a real callable sync transport with durable WorkManager retries/receipts/conflicts, Firestore bootstrap reads, AI Logic hybrid code, and workspace/class/guardian flows. The Firebase CLI is not authenticated, so project audit, Android app registration, `google-services.json`, Auth provider/test numbers, Firestore database/rules deployment, App Check token registration and AI Logic enablement remain pending.
 
-**Current phase:** Final Phase 1-7 evidence and documentation pass; Phase 8 demo review.
+**Current blocker:** operator Firebase CLI authentication. Exact steps are in `docs/FIREBASE_INTEGRATION.md`. No secret should be pasted into chat.
 
-**Next task:** Finish the final emulator recapture/demo, update evidence, and report the remaining external gates. Do not claim production, live SMS, cloud sync from the app, or on-device AI.
+**Next task:** after operator runs `npx --yes firebase-tools@15.14.0 login`, audit `tiny-b9f29`, register the dev app, enable the free-tier services, generate `app/google-services.json`, and run the real client integration tests against Auth/Firestore/AI Logic and the Functions emulator.
 
 ## Product/architecture baseline
 

@@ -22,11 +22,15 @@ import ng.tiny.education.core.domain.ProgressRules
 import ng.tiny.education.core.model.ApprovalStatus
 import ng.tiny.education.core.model.AttendanceSessionStatus
 import ng.tiny.education.core.model.AttendanceStatus
+import ng.tiny.education.core.model.ConsentStatus
+import ng.tiny.education.core.model.GuardianVerificationStatus
 import ng.tiny.education.core.model.MessageDirection
 import ng.tiny.education.core.model.MessageSenderType
 import ng.tiny.education.core.model.MessageStatus
 import ng.tiny.education.core.model.ProgressIndicator
 import ng.tiny.education.core.model.SyncState
+import ng.tiny.education.core.model.VerificationStatus
+import ng.tiny.education.core.model.WorkspaceType
 import ng.tiny.education.core.network.MockSmsGateway
 import ng.tiny.education.core.network.SmsMessage
 import ng.tiny.education.core.sync.MockSyncEngine
@@ -36,10 +40,18 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 import java.util.UUID
 
+data class SyncSummary(
+    val message: String,
+    val usedBackend: Boolean,
+    val retryable: Boolean,
+)
+
 class TinyRepository(
     private val database: TinyDatabase,
     private val smsGateway: MockSmsGateway,
     private val syncEngine: MockSyncEngine,
+    private val syncProcessor: ng.tiny.education.core.sync.SyncProcessor? = null,
+    private val requestSync: () -> Unit = {},
 ) {
     private val dao = database.dao()
 
@@ -66,6 +78,224 @@ class TinyRepository(
     fun observeAudit(workspaceId: String): Flow<List<AuditEventEntity>> = dao.observeAudit(workspaceId)
 
     suspend fun seedDemoData() = DemoData.seedIfEmpty(dao)
+
+    suspend fun currentWorkspace(): ng.tiny.education.core.database.WorkspaceEntity? = dao.getWorkspace()
+
+    suspend fun createLocalWorkspace(name: String, type: WorkspaceType): Result<String> = runCatching {
+        val workspaceId = "ws_${UUID.randomUUID()}"
+        val code = buildString {
+            val alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+            repeat(8) { append(alphabet.random()) }
+        }
+        dao.upsertWorkspace(
+            WorkspaceEntity(
+                id = workspaceId,
+                name = name.trim(),
+                type = type,
+                schoolCode = code,
+                verificationStatus = VerificationStatus.ACTIVE_UNVERIFIED,
+                syncState = SyncState.LOCAL_ONLY,
+                version = 1,
+                updatedAt = System.currentTimeMillis(),
+            ),
+        )
+        workspaceId
+    }
+
+    suspend fun saveRemoteWorkspace(workspaceId: String, name: String, type: WorkspaceType, schoolCode: String) {
+        dao.upsertWorkspace(
+            WorkspaceEntity(
+                id = workspaceId,
+                name = name,
+                type = type,
+                schoolCode = schoolCode,
+                verificationStatus = VerificationStatus.ACTIVE_UNVERIFIED,
+                syncState = SyncState.SYNCED,
+                version = 1,
+                updatedAt = System.currentTimeMillis(),
+            ),
+        )
+    }
+
+    suspend fun createLocalClass(
+        workspaceId: String,
+        gradeLevel: String,
+        label: String,
+        academicYear: String,
+        subjectSummary: String,
+        teacherName: String,
+    ): Result<String> = runCatching {
+        val classId = "class_${UUID.randomUUID()}"
+        val classroom = ClassroomEntity(
+            id = classId,
+            workspaceId = workspaceId,
+            gradeLevel = gradeLevel,
+            label = label,
+            academicYear = academicYear,
+            subjectSummary = subjectSummary,
+            teacherName = teacherName,
+            syncState = SyncState.PENDING_SYNC,
+            version = 1,
+        )
+        database.withTransaction {
+            dao.upsertClasses(listOf(classroom))
+            enqueueOutbox(
+                workspaceId,
+                "class.create",
+                "{\"classId\":${JsonStrings.quote(classId)},\"gradeLevel\":${JsonStrings.quote(gradeLevel)},\"sectionLabel\":${JsonStrings.quote(label)},\"academicYear\":${JsonStrings.quote(academicYear)},\"subjectIds\":[]}",
+            )
+            audit(workspaceId, "class.created", "classroom", classId, "Class created locally and queued.")
+        }
+        classId
+    }
+
+    suspend fun saveRemoteClass(
+        workspaceId: String,
+        classId: String,
+        gradeLevel: String,
+        label: String,
+        academicYear: String,
+        subjectSummary: String,
+        teacherName: String,
+    ) {
+        dao.upsertClasses(
+            listOf(
+                ClassroomEntity(
+                    id = classId,
+                    workspaceId = workspaceId,
+                    gradeLevel = gradeLevel,
+                    label = label,
+                    academicYear = academicYear,
+                    subjectSummary = subjectSummary,
+                    teacherName = teacherName,
+                    syncState = SyncState.SYNCED,
+                    version = 1,
+                ),
+            ),
+        )
+    }
+
+    suspend fun addLocalGuardianAndLink(
+        workspaceId: String,
+        pupilId: String,
+        displayName: String,
+        phoneE164: String,
+        preferredLocale: String,
+        relationshipLabel: String,
+    ): Result<String> = runCatching {
+        val normalized = ng.tiny.education.core.domain.PhoneNormalizer.normalize(phoneE164)
+            ?: error("Enter a valid Nigerian phone number.")
+        val existing = dao.getGuardianByPhone(workspaceId, normalized)
+        val guardianId = existing?.id ?: "guardian_${UUID.randomUUID()}"
+        database.withTransaction {
+            if (existing == null) {
+                dao.upsertGuardians(
+                    listOf(
+                        GuardianEntity(
+                            id = guardianId,
+                            workspaceId = workspaceId,
+                            displayName = displayName.trim(),
+                            phoneE164 = normalized,
+                            preferredLocale = preferredLocale,
+                            verificationStatus = GuardianVerificationStatus.PENDING,
+                            consentStatus = ConsentStatus.NOT_RECORDED,
+                            syncState = SyncState.PENDING_SYNC,
+                        ),
+                    ),
+                )
+                enqueueOutbox(
+                    workspaceId,
+                    "guardian.upsert",
+                    "{\"guardianId\":${JsonStrings.quote(guardianId)},\"displayName\":${JsonStrings.quote(displayName.trim())},\"phoneE164\":${JsonStrings.quote(normalized)},\"preferredLocale\":${JsonStrings.quote(preferredLocale)}}",
+                )
+            }
+            val linkId = "${pupilId}_${guardianId}"
+            dao.upsertLinks(
+                listOf(
+                    ng.tiny.education.core.database.PupilGuardianLinkEntity(
+                        id = linkId,
+                        workspaceId = workspaceId,
+                        pupilId = pupilId,
+                        guardianId = guardianId,
+                        relationshipLabel = relationshipLabel,
+                        notificationEligible = true,
+                    ),
+                ),
+            )
+            enqueueOutbox(
+                workspaceId,
+                "guardian.link",
+                "{\"pupilId\":${JsonStrings.quote(pupilId)},\"guardianId\":${JsonStrings.quote(guardianId)},\"relationshipLabel\":${JsonStrings.quote(relationshipLabel)},\"notificationEligible\":true}",
+            )
+            audit(workspaceId, "guardian.linked", "guardian", guardianId, "Guardian linked locally and queued.")
+        }
+        guardianId
+    }
+
+    suspend fun saveRemoteGuardianAndLink(
+        workspaceId: String,
+        pupilId: String,
+        guardianId: String,
+        displayName: String,
+        phoneE164: String,
+        preferredLocale: String,
+        relationshipLabel: String,
+    ) {
+        val normalized = ng.tiny.education.core.domain.PhoneNormalizer.normalize(phoneE164)
+            ?: error("Enter a valid Nigerian phone number.")
+        database.withTransaction {
+            dao.upsertGuardians(
+                listOf(
+                    GuardianEntity(
+                        id = guardianId,
+                        workspaceId = workspaceId,
+                        displayName = displayName.trim(),
+                        phoneE164 = normalized,
+                        preferredLocale = preferredLocale,
+                        verificationStatus = GuardianVerificationStatus.PENDING,
+                        consentStatus = ConsentStatus.NOT_RECORDED,
+                        syncState = SyncState.SYNCED,
+                    ),
+                ),
+            )
+            dao.upsertLinks(
+                listOf(
+                    ng.tiny.education.core.database.PupilGuardianLinkEntity(
+                        id = "${pupilId}_$guardianId",
+                        workspaceId = workspaceId,
+                        pupilId = pupilId,
+                        guardianId = guardianId,
+                        relationshipLabel = relationshipLabel,
+                        notificationEligible = true,
+                    ),
+                ),
+            )
+            audit(workspaceId, "guardian.linked", "guardian", guardianId, "Guardian linked with the backend.")
+        }
+    }
+
+    suspend fun markGuardianVerified(guardianId: String) {
+        dao.updateGuardianConsent(
+            guardianId,
+            GuardianVerificationStatus.VERIFIED,
+            ConsentStatus.OPTED_IN,
+        )
+    }
+
+    suspend fun applyRemoteBootstrap(bootstrap: ng.tiny.education.core.firebase.RemoteBootstrap) {
+        database.withTransaction {
+            dao.upsertWorkspace(bootstrap.workspace)
+            if (bootstrap.classes.isNotEmpty()) dao.upsertClasses(bootstrap.classes)
+            if (bootstrap.pupils.isNotEmpty()) dao.upsertPupils(bootstrap.pupils)
+            audit(
+                bootstrap.workspace.id,
+                "firebase.bootstrap",
+                "workspace",
+                bootstrap.workspace.id,
+                "Pulled ${bootstrap.classes.size} class(es) and ${bootstrap.pupils.size} pupil(s) from Firestore.",
+            )
+        }
+    }
 
     suspend fun addPupil(
         workspaceId: String,
@@ -196,7 +426,7 @@ class TinyRepository(
                             "{\"pupilId\":${JsonStrings.quote(pupilId)},\"status\":${JsonStrings.quote(status.name.lowercase())}}"
                         },
                     )
-                    append("]}")
+                    append("],\"sessionId\":${JsonStrings.quote(sessionId)}}")
                 },
             )
             audit(
@@ -257,6 +487,7 @@ class TinyRepository(
                     append(",\"periodEnd\":${JsonStrings.quote(periodEnd.toString())}")
                     append(",\"subjectId\":${JsonStrings.quote(subjectId)}")
                     append(",\"indicator\":${JsonStrings.quote(indicator.name.lowercase())}")
+                    append(",\"clientEntryId\":${JsonStrings.quote(entryId)}")
                     teacherNote?.takeIf { it.isNotBlank() }?.let {
                         append(",\"teacherNote\":${JsonStrings.quote(it)}")
                     }
@@ -352,7 +583,19 @@ class TinyRepository(
 
     suspend fun markConversationRead(conversationId: String) = dao.markConversationRead(conversationId)
 
-    suspend fun syncNow(workspaceId: String): MockSyncResult = syncEngine.run(dao, workspaceId)
+    suspend fun syncNow(workspaceId: String): SyncSummary {
+        val processor = syncProcessor
+        if (processor != null) {
+            val result = processor.process(workspaceId)
+            return SyncSummary(
+                message = result.message,
+                usedBackend = true,
+                retryable = result.retryable > 0,
+            )
+        }
+        val result = syncEngine.run(dao, workspaceId)
+        return SyncSummary(message = result.message, usedBackend = false, retryable = false)
+    }
 
     private suspend fun enqueueOutbox(workspaceId: String, commandType: String, payload: String) {
         dao.upsertOutbox(
@@ -370,6 +613,7 @@ class TinyRepository(
                 lastError = null,
             ),
         )
+        requestSync()
     }
 
     private suspend fun audit(

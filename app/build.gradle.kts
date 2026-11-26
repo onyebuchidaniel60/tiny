@@ -25,6 +25,11 @@ android {
 
         buildConfigField("boolean", "MOCK_SERVICES", "true")
         buildConfigField("String", "ENVIRONMENT", "\"dev\"")
+        buildConfigField("String", "FIREBASE_PROJECT_ID", "\"tiny-b9f29\"")
+        buildConfigField("String", "FUNCTIONS_REGION", "\"africa-south1\"")
+        buildConfigField("boolean", "FIREBASE_CONFIGURED", file("google-services.json").exists().toString())
+        buildConfigField("String", "CLOUD_MODEL_NAME", "\"gemini-3.5-flash-lite\"")
+        buildConfigField("boolean", "FUNCTIONS_EMULATOR", (project.findProperty("functionsEmulator")?.toString()?.toBoolean() ?: false).toString())
     }
 
     flavorDimensions += "environment"
@@ -120,13 +125,20 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.functions)
+    implementation(libs.firebase.appcheck.debug)
+    implementation(libs.firebase.appcheck.playintegrity)
+    implementation(libs.firebase.ai)
+    implementation(libs.firebase.ai.ondevice)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.json)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
