@@ -60,6 +60,32 @@
 - Budget/authorization notes: NGN 0; mock SMS only; no Blaze, paid hosting, real parent messages or production data.
 - Next phase/task: Push Phase 1, run GitHub Actions, fix CI failures, verify the APK artifact, then continue Phase 2 Firebase/emulator/rules testing and Phase 3 domain completion.
 
+## Phase 2/3/5 checkpoint — 26 November 2026
+
+- Objective: Complete the offline-command backend, tighten data access, and prove the core flows end-to-end in emulators.
+- Implementation completed:
+  - `syncCommands` now dispatches `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, with per-command receipts and idempotent replay.
+  - Added complete Android outbox payloads (attendance entries, progress fields, message client id, pupil registration details) with JSON escaping tests.
+  - Guardian verification codes and school codes now use unambiguous 8-character random codes, removing a length flake.
+  - Pupil documents store `classId`; guardian documents store `classIds`/`pupilIds`; links store `classId`; inbound conversations store `classId`/`pupilId`.
+  - Firestore rules now scope guardian, link, conversation and message reads to an assigned class; direct writes remain denied.
+  - Added a 10-test backend emulator suite (callables, webhook, scheduler, sync) and grew rules tests to 8.
+  - Startup now waits for the encrypted local seed before composing, fixing a first-launch race that showed zero classes/pending.
+  - Added a Compose instrumentation journey (onboarding → Home → Classes → class detail → Attendance) and a CI emulator job.
+- Tests executed and results:
+  - Android unit: **24 passed, 0 failed**.
+  - Functions domain: **19 passed, 0 failed**; TypeScript build passed.
+  - Firestore rules: **8 passed, 0 failed**.
+  - Backend E2E: **10 passed, 0 failed**.
+  - Compose instrumentation: **1 passed, 0 failed** on API 35 Pixel 5.
+  - GitHub Actions run `45800730704`: **success** for build/test, backend, rules and instrumentation.
+- Manual verification: reviewed demo video frames; identified and fixed the Home zero-classes race before final recapture.
+- Commit hash: `13b7e60`, `7171891`.
+- Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45800730704`.
+- Known limitations: Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
+- Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.
+- Next phase/task: final emulator recapture/demo, docs polish, physical-device/App Distribution gates.
+
 ## Operator confirmations received
 
 - Git: direct commits/pushes to public `main` authorized; no force-push, history rewrite, branch deletion or visibility change.

@@ -47,3 +47,6 @@ artifacts/emulator/logcat.txt
 firebase-debug.log
 firestore-debug.log
 ui-debug.log
+
+# Downloaded CI test-report bundles (evidence is summarized in docs)
+artifacts/instrumentation-ci/

@@ -59,7 +59,7 @@ sleep 3
 screenshot "tiny-02-welcome"
 
 tap_text "Explore the preview" || true
-sleep 4
+sleep 12
 screenshot "tiny-03-home"
 
 # Bottom navigation is 1080 px wide on the Pixel 5 emulator profile.

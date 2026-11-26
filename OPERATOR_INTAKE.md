@@ -76,7 +76,7 @@ Do not claim any missing reference exists. The UI implementation is direct from 
 | Representative low-cost pilot phones | Required before pilot | PENDING | No second device available and operator does not intend to purchase one. Use Note 10+ for general testing and emulators/CI for additional coverage; record the pilot-device gap |
 | Android build environment | Yes | CONFIRMED — GitHub Actions Ubuntu | Primary build/test path is GitHub Actions `ubuntu-24.04`. Local Windows verification used a portable JDK 17 + Android command-line SDK, not full Android Studio. See `docs/CI_ANDROID_BUILD.md` |
 | Firebase App Distribution | Preferred preview route | CONFIRMED PREFERRED — tester access pending | Create `internal-testers` and `judges` groups; tester/judge emails and Firebase project are still needed before first distribution. No public APK link |
-| Firebase Emulator Suite | Strongly required for tests | PENDING — independent of real project | `firebase.json`, Functions, rules and indexes are scaffolded; emulator startup/rules tests still to be run in CI/local. No production data |
+| Firebase Emulator Suite | Strongly required for tests | CONFIRMED — rules + backend E2E pass | `firebase.json`, Functions, rules and indexes present; 8/8 Firestore rules tests and 10/10 callable/webhook/scheduler/sync E2E tests pass in CI. No production data |
 
 **Fixed region decision:** Firestore Standard and Functions Gen2 in `africa-south1` (Johannesburg). This is not Nigerian data residency. Cross-border processing must be assessed in DPIA/legal review. Gemini Developer API AI processing is global; only de-identified/minimized generic context may be sent.
 
@@ -250,10 +250,11 @@ These tasks can proceed without the real Firebase project or a Gemini Nano-suppo
 - **Done:** installed and inspected the official Firebase Agent Skills under `.agents/skills/`; preserved `skills-lock.json`; live catalog renames recorded.
 - **Done:** created the Android Gradle/Kotlin/Compose project, theme/navigation/localization scaffolding and labelled preview shell.
 - **Done:** added the GitHub Actions Ubuntu workflow for lint, unit tests, debug APK and artifact upload (first workflow run pending).
-- **Scaffolded:** Firebase Emulator Suite configuration, Functions, rules, indexes and a demo project alias.
-- **Done:** local Room/SQLCipher database, Keystore-wrapped key, repositories, demo data, attendance/progress/message flows and mock adapters.
+- **Scaffolded + emulator-tested:** Firebase Emulator Suite configuration, Functions, rules, indexes and a demo project alias; 8/8 Firestore rules tests and 10/10 backend E2E tests pass in CI.
+- **Done:** local Room/SQLCipher database, Keystore-wrapped key, repositories, demo data, attendance/progress/message flows, mock adapters and local pupil registration.
 - **Done:** landing page with responsive design system, legal/security/contact pages and preview screenshots.
+- **Done:** CI Android build/test, APK artifact, Firestore rules emulator job, backend callable/webhook/scheduler/sync E2E, Compose instrumentation job and manual emulator smoke evidence.
 - **Blocked:** StageShow installation/verification (harness removed the skill ID); do not claim it complete.
-- **Pending:** actual Firebase project/Auth/Firestore integration and App Distribution upload.
+- **Pending:** actual Firebase project/Auth/Firestore integration, full callable E2E and App Distribution upload.
 
 These tasks do **not** authorize Cloud Functions deployment, Blaze, paid services, live SMS, production resources or real pupil/guardian data. They also do not satisfy the separate on-device Gemini Nano acceptance gate.

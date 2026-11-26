@@ -97,6 +97,14 @@ SCENES = [
         "narration": "A saved 5E lesson opens without internet. It is a teacher-authored scaffold, not a claim of full NERDC coverage.",
     },
     {
+        "id": "08-ai",
+        "kicker": "Optional AI",
+        "title": "Help that never\nblocks the lesson.",
+        "body": "On-device Gemini Nano is unavailable on this emulator. Curated teaching strategies work offline; cloud AI is not configured.",
+        "shot": "tiny-07a-ai-fallback.png",
+        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable, and cloud AI is not configured. Tiny falls back to reviewed teaching strategies that work offline. The core lesson never depends on a model.",
+    },
+    {
         "id": "08-messages",
         "kicker": "Parent SMS",
         "title": "Parents reply\nby ordinary SMS.",
@@ -307,7 +315,7 @@ def build() -> None:
 
     notes = f"""# Tiny demo production notes
 
-- Source: actual Android emulator screenshots from GitHub Actions run 45789068836.
+- Source: actual Android emulator screenshots from the latest GitHub Actions manual smoke run (recorded in AI_HANDOFF.md).
 - Platform: Windows ffmpeg + Pillow + Windows SAPI (Microsoft Zira Desktop).
 - TTS: local, free, offline fallback. No Google AI TTS credentials/paid service were used.
 - Capture limitation: this is a reviewed screenshot slideshow with narration, not motion screen recording. It does not claim real parent SMS delivery or on-device Gemini Nano inference.

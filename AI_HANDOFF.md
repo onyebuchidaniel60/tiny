@@ -2,11 +2,11 @@
 
 **Last updated:** 26 November 2026 (Phase 1 complete; Phase 2/3 backend verified)
 
-**Current status:** Phase 1 local/CI shell and preview are implemented and verified; Phase 2/3 backend/rules foundations are partially implemented. No production deployment, live SMS or Firebase project resources have been created. App Distribution and physical-device/AI gates remain external.
+**Current status:** Phase 1 local/CI shell is implemented and verified; Phase 2/3 backend/rules foundations are emulator-tested. No production deployment, live SMS or Firebase project resources have been created. App Distribution, physical-device and on-device AI gates remain external.
 
-**Current phase:** Phase 1 — repository foundation, skeletal Android app, CI and landing page.
+**Current phase:** Final Phase 1-7 evidence and documentation pass; Phase 8 demo review.
 
-**Next task:** Push this Phase 1 checkpoint, run GitHub Actions, fix any CI failure, verify the APK artifact, then continue Phase 2/3 with Firebase Emulator Suite and rules/domain testing.
+**Next task:** Finish the final emulator recapture/demo, update evidence, and report the remaining external gates. Do not claim production, live SMS, cloud sync from the app, or on-device AI.
 
 ## Product/architecture baseline
 
@@ -53,7 +53,7 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS — 24/24 unit | Domain unit tests incl. JSON outbox escaping; Compose instrumentation journey added and CI-run pending |
+| Android tests | PASS — 24/24 unit | Domain unit tests incl. JSON outbox escaping |\n| Compose instrumentation | PASS | API 35 Pixel 5: onboarding → Home → Classes → class detail → Attendance |
 | Android build | PASS — CI | GitHub Actions APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9` |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
@@ -108,7 +108,7 @@
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
-- Firestore rules: 6/6 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class scope, guardian admin-only).
+- Firestore rules: 8/8 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class-scoped pupils/guardians/links/conversations/messages).
 
 ### Functions / Firebase
 
@@ -125,7 +125,7 @@
 ### CI / distribution
 
 - `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
-- GitHub Actions run `45789068836` succeeded: build/test, rules tests, and manual emulator evidence.
+- GitHub Actions run `45800730704` succeeded: build/test, backend emulator E2E, Firestore rules and Compose instrumentation.
 - App Distribution tester/judge access still pending.
 - GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
@@ -162,9 +162,10 @@
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45789068836` (27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45800730704` (download and record size/hash after the final manual smoke run).
 - GitHub Actions build/test and rules jobs: **success**.
-- Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, logcat excluded from commit.
+- Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, captured after the startup seed fix.
+- Compose instrumentation: **success** in CI on API 35 Pixel 5; onboarding, Home, Classes, class detail and Attendance exercised.
 - App Distribution: not uploaded; no tester group/project.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.
@@ -220,6 +221,9 @@
 3. Firebase project/App Distribution access is not yet available; no judge-facing build or Firebase integration test.
 4. The server-side `syncCommands` dispatcher is implemented and emulator-tested, but the Android WorkManager client is still wired to the mock sync engine; it does not send commands to Firestore without a configured Firebase project.
 5. Firestore rules are now class-scoped for pupils, guardians, links, conversations and messages, with 8/8 emulator tests; a full review is still required before any pilot.
+6. The Android preview uses seeded classes and guardians; in-app workspace/class creation and guardian verification/linking screens are not complete.
+7. The Android client still uses the mock sync engine; server-side sync is emulator-tested but not connected to the app without a Firebase project.
+8. Native translation review and physical low-end device testing remain pending.
 6. App translations are partial draft resources; native review is pending.
 7. No physical device was connected during the checkpoint; general device validation is pending.
 8. StageShow skill was not usable after restart; no claim.

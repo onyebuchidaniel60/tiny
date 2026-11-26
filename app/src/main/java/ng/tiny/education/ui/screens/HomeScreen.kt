@@ -67,6 +67,7 @@ fun HomeScreen(
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val today = remember { LocalDate.now() }
     val dateLabel = remember(today) { today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")) }
+    val statsReady = workspace != null && (classes.isNotEmpty() || pupilCount > 0)
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
@@ -118,9 +119,9 @@ fun HomeScreen(
                     }
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        HomeStat("${classes.size}", stringResource(R.string.nav_classes), TinyCobalt, Modifier.weight(1f))
-                        HomeStat("$pupilCount", "Pupils", TinyTomato, Modifier.weight(1f))
-                        HomeStat("$pending", "Pending", TinyButter, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "${classes.size}" else "—", stringResource(R.string.nav_classes), TinyCobalt, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "$pupilCount" else "—", "Pupils", TinyTomato, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "$pending" else "—", "Pending", TinyButter, Modifier.weight(1f))
                     }
                 }
             }

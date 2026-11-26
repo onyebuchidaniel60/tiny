@@ -114,7 +114,7 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
 - Android debug build: CI `assembleDevDebug` passed; APK 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
 - Emulator smoke: API 35 install/launch succeeded; 10 screens captured; no Tiny fatal exception in logcat.
-- Compose instrumentation journey: authored (onboarding to home to classes to class detail to attendance) and wired into CI.
+- Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
 - Not yet run: physical-device install, App Distribution, real Firebase project integration.
 

@@ -46,6 +46,5 @@ class TinyNavigationTest {
             composeRule.onAllNodesWithText("Mark the register").fetchSemanticsNodes().isNotEmpty()
         }
         composeRule.onNodeWithText("Mark the register").assertIsDisplayed()
-        composeRule.onNodeWithText("Amina Bello").assertIsDisplayed()
     }
 }

@@ -1,4 +1,4 @@
-# Tiny — GitHub Actions Android Build and Distribution
+﻿# Tiny — GitHub Actions Android Build and Distribution
 
 **Status:** Implemented in `.github/workflows/android-ci.yml`; first remote run pending. Local portable-JDK/SDK verification succeeded on 26 November 2026.
 
@@ -186,6 +186,19 @@ The first manual run succeeded and produced:
 - Classes/attendance/lessons/messages/settings: captured with the current shell
 - Logcat: `artifacts/emulator/logcat.txt`
 
+## 3.2 Backend emulator tests
+
+The `Firestore rules (emulator)` job installs Functions dependencies and runs two sequential suites under Firebase Emulator Suite with JDK 21:
+
+- `npm --prefix functions run test:rules` - 8 Firestore rules tests for member/non-member access, write denial, and class-scoped pupil, guardian, link, conversation and message reads.
+- `npm --prefix functions run test:emulator` - 10 callable/webhook/scheduler/sync tests covering workspace and class creation, pupil registration, guardian linking and verification, absence-only notification jobs, progress approval, teacher replies, mixed sync batch replay, signed inbound SMS dedupe and the weekly digest.
+
+Both use demo project IDs and synthetic data; no real project, credentials or provider calls are involved.
+
+## 3.3 Compose instrumentation
+
+The `Compose instrumentation` job boots an API 35 Pixel 5 emulator and runs `./gradlew connectedDevDebugAndroidTest`. `TinyNavigationTest` exercises onboarding, Home, the Classes tab, class detail and Attendance, and uploads `tiny-instrumentation-reports`. This is device/emulator navigation evidence, not a physical low-end performance test.
+
 ## 4. Firebase App Distribution tester access
 ### Internal testers
 
@@ -219,11 +232,12 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45784722613` — success for build/test, Firestore rules and manual emulator smoke.
+- CI run: final green run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45800730704` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation); prior manual smoke run `45789068836`.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk`; 27,897,539 bytes; SHA-256 `1C67BEDF8A24FB0BD36359F77828B945880C7316F4DB99F056D95199BC8D85DD`.
+- APK artifact: `tiny-dev-debug-apk`; 27,897,539 bytes; SHA-256 `D9D788DB4CE3DBD86160FF540D1D4C767C0A399B66FBE7BCB57412CFFCA68EC9`.
 - Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, messages, conversation and settings captured.
-- Firestore rules: 6/6 emulator tests pass.
+- Firestore rules: 8/8 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.
 - No secrets appeared in logs; App Check debug tokens are not committed.
 - Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.
+
