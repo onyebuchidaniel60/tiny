@@ -38,9 +38,15 @@ class TinyNavigationTest {
         composeRule.waitUntil(timeoutMillis = 15_000) {
             composeRule.onAllNodesWithText("Your classes").fetchSemanticsNodes().isNotEmpty()
         }
+        composeRule.waitUntil(timeoutMillis = 20_000) {
+            composeRule.onAllNodesWithText("P4 Blue").fetchSemanticsNodes().isNotEmpty()
+        }
         composeRule.onNodeWithText("P4 Blue").performScrollTo().performClick()
         composeRule.onNodeWithText("Roster").assertIsDisplayed()
 
+        composeRule.waitUntil(timeoutMillis = 15_000) {
+            composeRule.onAllNodesWithText("Mark attendance").fetchSemanticsNodes().isNotEmpty()
+        }
         composeRule.onNodeWithText("Mark attendance").performScrollTo().performClick()
         composeRule.waitUntil(timeoutMillis = 15_000) {
             composeRule.onAllNodesWithText("Mark the register").fetchSemanticsNodes().isNotEmpty()
