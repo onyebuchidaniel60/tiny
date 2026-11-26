@@ -48,6 +48,7 @@
 | `docs/CONFIGURATION.md` | Environment variables, secret handling, build flavors and cost guards |
 | `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` | Exact credential/config names, ownership, secure delivery locations, secret/public classification and timing |
 | `docs/CI_ANDROID_BUILD.md` | GitHub Actions Ubuntu build/test permissions, workflow configuration, App Distribution and judge access |
+| `docs/FIREBASE_INTEGRATION.md` | Exact Firebase authentication, app registration, Auth/Firestore/App Check/AI Logic setup and emulator runbook for `tiny-b9f29` |
 | `docs/TESTING.md` | Unit, integration, emulator, E2E, security and acceptance test strategy |
 | `docs/DEPLOYMENT.md` | Protected native APK preview, staging, CI, release gates and rollback |
 | `docs/OPERATOR_GUIDE.md` | Operator responsibilities, workspace support, messaging operations and incident handling |
@@ -76,7 +77,7 @@
 
 ## Readiness blockers
 
-Phase 0 intake is complete for the current scope and Phase 1 implementation is in progress. References are supplied and recorded. The Android shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, Functions/rules scaffold, CI workflow and landing page exist. Git commit/push to public `main` is authorized. Android builds use GitHub Actions Ubuntu runners; no full Android Studio toolchain is required on Windows. Firebase project creation/App Distribution access remains a later integration gate. The Samsung Galaxy Note 10+ (Android 12) is a general testing device only, not a Gemini Nano-supported device; on-device AI evidence remains a separate blocked acceptance gate. eSMS is mock-only. Cloud/AI/SMS/third-party budgets are NGN 0; production deployment, Blaze, paid hosting and live SMS are not authorized.
+Phase 0 intake is complete. Firebase project `tiny-b9f29` is recorded, and the Android client now has App Check, phone-auth gating, a real callable sync transport, WorkManager processing, Firestore bootstrap, workspace/class/guardian flows and AI Logic hybrid code. Firebase CLI authentication is the current blocker for project-side setup and live verification; see `docs/FIREBASE_INTEGRATION.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
 
 ## Integrity of supplied methodology
 

@@ -1,4 +1,4 @@
-﻿# Tiny — GitHub Actions Android Build and Distribution
+# Tiny — GitHub Actions Android Build and Distribution
 
 **Status:** Implemented in `.github/workflows/android-ci.yml`; first remote run pending. Local portable-JDK/SDK verification succeeded on 26 November 2026.
 
@@ -232,11 +232,11 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: final manual smoke/APK run `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551` (build/test, 8 rules tests, 10 backend E2E tests, Compose instrumentation, manual emulator smoke); latest code regression `45814020102` green after the instrumentation Room-wait fix.
+- CI run: latest integration regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45853884690` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). Manual smoke/demo images came from `45809071551`.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk`; 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+- APK artifact: `tiny-dev-debug-apk`; 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
 - Emulator evidence: `tiny-emulator-evidence` artifact; language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings captured.
-- Firestore rules: 8/8 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
+- Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: not uploaded; no tester group/project or invitation link yet.
 - No secrets appeared in logs; App Check debug tokens are not committed.
 - Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.

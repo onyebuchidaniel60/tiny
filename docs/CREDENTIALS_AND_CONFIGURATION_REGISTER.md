@@ -37,7 +37,7 @@
 | `APP_CHECK_DEBUG_TOKEN` | Local debug App Check attestation | Firebase Console → App Check → Apps → Manage debug tokens | Ignored local `.env`; never commit | Secret | Before local Firebase/AI integration | `PENDING` |
 | `PLAY_INTEGRITY_SHA256` | App signing certificate fingerprint for App Check | Play Console/keystore inspection | Firebase Console → App Check | Public fingerprint | Before production/connected release | `PENDING` |
 | `AI_PROVIDER` | AI route selection | Fixed architecture | Android/config | Public | Before AI integration | `firebase-ai-logic` |
-| `CLOUD_MODEL_NAME` | Exact Gemini cloud model | Current Firebase AI Logic model docs | Android/config | Public | Before cloud AI integration | `PENDING — pin tested model` |
+| `CLOUD_MODEL_NAME` | Exact Gemini cloud model | Current Firebase AI Logic model docs | Android/config | Public | Before cloud AI integration | `gemini-3.5-flash-lite` (free-tier featured model; verify at runtime) |
 | `AI_DAILY_CLOUD_LIMIT_PER_USER` | Conservative cloud request guard | Project policy | Functions/Remote Config/config | Public | Before cloud AI integration | `PENDING — conservative value` |
 | `AI_MAX_OUTPUT_TOKENS` | Output-size cap | Product/config policy | Android/Functions config | Public | Before AI integration | `256` |
 | `GEMINI_API_KEY` | **Not used** — Firebase AI Logic uses Firebase config + App Check, not an API key in the APK | N/A | N/A | Secret if ever created | Not used | Do not create or embed |

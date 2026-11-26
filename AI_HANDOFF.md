@@ -1,4 +1,4 @@
-﻿# Tiny — AI Implementation Handoff
+# Tiny — AI Implementation Handoff
 
 **Last updated:** 26 November 2026 (Firebase integration stage)
 
@@ -7,6 +7,15 @@
 **Current blocker:** operator Firebase CLI authentication. Exact steps are in `docs/FIREBASE_INTEGRATION.md`. No secret should be pasted into chat.
 
 **Next task:** after operator runs `npx --yes firebase-tools@15.14.0 login`, audit `tiny-b9f29`, register the dev app, enable the free-tier services, generate `app/google-services.json`, and run the real client integration tests against Auth/Firestore/AI Logic and the Functions emulator.
+
+## Firebase integration stage (26 November 2026)
+
+- **Project:** `tiny-b9f29`; `.firebaserc`, `.env.example`, configuration and credential registers updated. Project ID is not a secret.
+- **Implemented:** App Check bootstrap (debug + Play Integrity), phone-auth gate/screen, Firebase Functions callable transport, WorkManager durable sync with receipts/conflicts/backoff, Firestore bootstrap reads, workspace/class creation, guardian linking/verification, AI Logic hybrid client, backend `verifyGuardianCode` and class/guardian sync handlers.
+- **Emulator evidence:** backend E2E 10/10 (now includes guardian code verification and class/guardian sync); rules 9/9; Android unit tests 34/34.
+- **Blocked:** no authenticated Firebase CLI account. Run `npx --yes firebase-tools@15.14.0 login` once, then follow `docs/FIREBASE_INTEGRATION.md`.
+- **Spark limits:** real phone verification SMS requires Blaze and is not authorized; use Firebase test phone numbers only. Cloud Functions remain emulator-only.
+- **Not claimed:** live Auth, Firestore, App Check or AI Logic verification; `google-services.json`; App Distribution; on-device Gemini Nano.
 
 ## Product/architecture baseline
 
@@ -104,7 +113,7 @@
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
 - Unit tests: 24/24 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
-- Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+- Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
@@ -125,7 +134,7 @@
 ### CI / distribution
 
 - `.github/workflows/android-ci.yml`: Ubuntu 24.04, JDK 17, Android SDK, Gradle, Node 22, Functions tests, Android lint/unit tests/debug APK, artifact upload; separate Firestore rules emulator job (JDK 21); optional manual App Distribution and manual emulator smoke jobs.
-- GitHub Actions run `45809071551` succeeded: build/test, backend emulator E2E, Firestore rules, Compose instrumentation and manual emulator smoke; latest regression run `45814020102` is also green after the Room-data instrumentation wait fix.
+- GitHub Actions run `45853884690` succeeded: build/test, backend emulator E2E, Firestore rules and Compose instrumentation. The last manual smoke run was `45809071551`; the demo images came from that run.
 - App Distribution tester/judge access still pending.
 - GitHub Pages workflow is manual and not enabled/published; no public URL claimed.
 
@@ -162,7 +171,7 @@
 
 ## Preview / deployment evidence
 
-- CI APK artifact: `tiny-dev-debug-apk` from run `45809071551` (27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`).
+- CI APK artifact: `tiny-dev-debug-apk` from run `45853884690` (31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`).
 - GitHub Actions build/test and rules jobs: **success**.
 - Emulator smoke: **success**; evidence at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png`, captured after the startup seed fix.
 - Compose instrumentation: **success** in CI on API 35 Pixel 5; onboarding, Home, Classes, class detail and Attendance exercised.

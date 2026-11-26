@@ -1,4 +1,4 @@
-﻿# Tiny — Build Log
+# Tiny — Build Log
 
 **Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client transport remains mock. No production deployment, live SMS or Firebase project resources have been created.
 
@@ -40,14 +40,14 @@
   - Android unit tests: **24 passed, 0 failed** (`PhoneNormalizer`, `AttendanceRules`, `SmsSegments`, `ProgressRules`, `DigestBuilder`, `SyncRules`, `JsonStrings`).
   - Firestore rules tests: **8 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message access.
   - Backend emulator E2E: **10 passed, 0 failed** (workspace/class/pupil/guardian/verification, attendance absence job, progress approval, teacher reply, mixed sync batch + replay, signed inbound SMS + dedupe, weekly digest).
-  - Android CI build: **successful**; final APK **27,922,939 bytes**; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`.
+  - Android CI build: **successful**; final APK **31,094,724 bytes**; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
   - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings screens.
   - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog; no lint errors remain.
   - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 8/8; backend E2E suite 10/10.
   - Landing page: local link check passed; responsive layout inspected at 1440 px and 390 px; mobile nav toggles correctly; no broken local links; no images without alt.
 - Manual verification: Desktop/mobile screenshots saved at `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png` and `landing-mobile-revealed.png`. References recorded in `REFERENCE_ASSETS.md`.
 - Commit hash: Phase 1 commits through `13b7e60`, `7171891`, `00318fc`, `2776ba1`.
-- Preview artifact/build URL: GitHub Actions run `45809071551`; artifact `tiny-dev-debug-apk`; APK 27,922,939 bytes; SHA-256 `F2EC24590878B0F34777157C2BF97358BC8975E461E055C42ED261504F0BCA25`. No App Distribution upload.
+- Preview artifact/build URL: GitHub Actions run `45853884690`; artifact `tiny-dev-debug-apk`; APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`. No App Distribution upload.
 - Reference image/skill status: REF-001/REF-002 supplied and recorded. StageShow installation attempted; harness removed the `stageshow` skill ID after a server restart, so it was not used and completion is not claimed. Firebase skills installed and visible in the active tool catalog.
 - Documentation updated: `REFERENCE_ASSETS.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/DESIGN_NOTES.md`, this build log and source docs.
 - Known limitations:
@@ -78,10 +78,10 @@
   - Firestore rules: **8 passed, 0 failed**.
   - Backend E2E: **10 passed, 0 failed**.
   - Compose instrumentation: **1 passed, 0 failed** on API 35 Pixel 5.
-  - GitHub Actions run `45809071551`: **success** for build/test, backend, rules, instrumentation and manual emulator smoke.
+  - GitHub Actions run `45853884690`: **success** for build/test, backend, rules and instrumentation.
 - Manual verification: reviewed demo video frames; identified and fixed the Home zero-classes race before final recapture.
 - Commit hash: `13b7e60`, `7171891`, `00318fc`, `2776ba1`, `0082163`.
-- Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45809071551`.
+- Preview artifact/build URL: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45853884690`.
 - Known limitations: Android sync transport still mock; no live Firebase project, Auth, Firestore, App Check, App Distribution or hosted Functions; no physical device run; no on-device Gemini Nano.
 - Budget/authorization notes: Spark/NGN 0; emulator and synthetic data only.
 - Next phase/task: final emulator recapture/demo, docs polish, physical-device/App Distribution gates.
@@ -161,7 +161,7 @@
 | Phase | Status | Commit | Preview build/URL | Tests/evidence | Issues |
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
-| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45809071551 | 24 Android unit tests, 19 Functions tests, 8 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
+| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 34 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, prior emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
 | 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; live project pending | `13b7e60` | - | Functions build; 8 rules tests; demo project aliases; config/indexes | Real Firebase project/Auth/Firestore integration pending |
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport pending | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Android WorkManager transport needs a configured Firebase project |
 | 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Cloud integration and broader device QA pending |
