@@ -27,9 +27,9 @@
 - **Project:** `tiny-b9f29`; `.firebaserc`, `.env.example`, configuration and credential registers updated. Project ID is not a secret.
 - **Implemented:** App Check bootstrap (debug + Play Integrity), phone-auth gate/screen, Firebase Functions callable transport, WorkManager durable sync with receipts/conflicts/backoff, Firestore bootstrap reads, workspace/class creation, guardian linking/verification, AI Logic hybrid client, backend `verifyGuardianCode` and class/guardian sync handlers.
 - **Emulator evidence:** backend E2E 10/10 (now includes guardian code verification and class/guardian sync); rules 9/9; Android unit tests 34/34.
-- **Blocked:** no authenticated Firebase CLI account. Run `npx --yes firebase-tools@15.14.0 login` once, then follow `docs/FIREBASE_INTEGRATION.md`.
+- **Blocked:** Firebase Authentication must be initialized once in the Firebase Console. The public Identity Platform API returns `BILLING_NOT_ENABLED` on Spark. Follow `docs/FIREBASE_INTEGRATION.md`; do not enable billing.
 - **Spark limits:** real phone verification SMS requires Blaze and is not authorized; use Firebase test phone numbers only. Cloud Functions remain emulator-only.
-- **Not claimed:** live Auth, Firestore, App Check or AI Logic verification; `google-services.json`; App Distribution; on-device Gemini Nano.
+- **Not claimed:** authenticated client Firestore, app-level AI Logic, Phone Auth SMS, App Check enforcement, Play Integrity, hosted Functions, App Distribution or on-device Gemini Nano. App Check token exchange and the AI Logic proxy were verified at protocol level.
 
 ## Product/architecture baseline
 

@@ -1,6 +1,6 @@
 # Tiny — Build Log
 
-**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client transport remains mock. No production deployment, live SMS or Firebase project resources have been created.
+**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, App Check debug exchange and AI Logic proxy verification. Firebase Auth still needs the one-time Console initialization. No production deployment or live SMS has occurred.
 
 ## Planning baseline
 
@@ -113,6 +113,8 @@
   - Real phone SMS is Blaze-only and not authorized; Spark development must use Firebase test phone numbers.
   - Cloud Functions remain emulator-only under Spark/NGN 0.
 - Next task: operator runs `npx --yes firebase-tools@15.14.0 login`; then complete the runbook and run live client integration tests.
+
+**Superseded:** the CLI authentication blocker above was resolved. The live setup checkpoint below records the completed project-side work and the remaining Auth Console gate.
 
 ## Live Firebase setup checkpoint — 26 November 2026
 

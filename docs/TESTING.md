@@ -112,9 +112,9 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
 - Backend emulator E2E: **10 passed, 0 failed** covering workspace/class/pupil/guardian/verification, absence job creation, progress approval, teacher reply, mixed sync batch replay, signed inbound SMS dedupe and weekly digest.
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
-- Android debug build: CI `assembleDevDebug` passed; final APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
-- Emulator smoke: API 35 install/launch succeeded; 11 screens captured including the offline AI fallback; no Tiny fatal exception in logcat.
-- Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI.
+- Android debug build: CI `assembleDevDebug` passed; latest Firebase-enabled APK 31,097,300 bytes; SHA-256 `95C7AE22E882D1949D744B6A4050DEBD741775169DFECA4FF0E1BABA250EB5B1`.
+- Emulator smoke: API 35 install/launch succeeded; the Firebase-enabled build correctly stopped at the phone-auth gate and captured `artifacts/emulator/tiny-03-auth-gate.png`; no Tiny fatal exception in logcat and the debug token was redacted.
+- Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI without Firebase client config.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
-- Not yet run: physical-device install, App Distribution, real Firebase project integration.
+- Not yet run: physical-device install, App Distribution, authenticated Firebase Auth/Firestore/AI client flows.
 

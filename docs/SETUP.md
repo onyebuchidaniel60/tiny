@@ -28,7 +28,7 @@
 - Android physical device (API 26+) or emulator for routine app tests.
 - Separate physically supported Android handset for genuine Firebase on-device AI proof; generic emulator-only evidence is insufficient.
 - Node.js 22 and npm for Firebase Functions.
-- Firebase CLI authenticated to the non-production project with least privilege when integration tests begin; Emulator Suite setup can use a demo project before the real project exists.
+- Firebase CLI authenticated to the non-production project `tiny-b9f29`; Firebase Authentication initialization is the remaining one-time Console step. Emulator Suite setup can use a demo project.
 - Firebase Emulator Suite for Auth, Firestore and Functions integration tests.
 - GitHub Actions or the approved CI environment.
 
@@ -39,11 +39,11 @@
 3. Inspect the existing repository and preserve useful work; do not overwrite source, CI or migrations without review.
 4. Install/inspect the selected Firebase Agent Skills for OpenCode and verify fresh-session discovery; this does not require a real Firebase project.
 5. Set up the GitHub Actions Ubuntu build workflow and credential/configuration placeholders; no full Android Studio installation on Windows.
-6. Set up Firebase Emulator Suite with a demo project for local/CI tests. Create/select the real development Firebase project only when Firebase integration tests begin; do not use production credentials.
-7. Enable Phone Authentication and configure Nigeria (+234) region policy/test numbers in the non-production project when integration begins.
-8. Create Firestore Standard in `africa-south1` only after billing/region approval and project access.
-9. Configure App Check debug provider for local emulator only.
-10. Enable Firebase AI Logic in the development project and validate free-tier quotas when cloud AI integration begins.
+6. Set up Firebase Emulator Suite with a demo project for local/CI tests. Use the non-production `tiny-b9f29` project for client integration; do not use production credentials.
+7. Initialize Firebase Authentication in the Console, then enable Phone Auth and synthetic test numbers. Real verification SMS is Blaze-only and not authorized.
+8. Firestore `(default)` is created in `africa-south1` with delete protection; deploy rules/indexes after changes. Do not change region without an architecture decision.
+9. Configure the App Check debug provider for local debug builds; enforcement remains off until Auth is verified.
+10. Firebase AI Logic with the Gemini Developer API free tier is enabled; verify quota and App Check proxy behavior before app-level claims.
 11. Keep `SMS_MODE=mock`; configure eSMS sandbox secrets only after account access and sandbox authorization are confirmed.
 12. At the start of Phase 6, attempt `npx skills add benjitaylor/skills --skill stageshow`; inspect and use relevant instructions.
 

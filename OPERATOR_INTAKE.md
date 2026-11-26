@@ -201,7 +201,7 @@ If the agent can discover an answer in the repository/environment or operator ma
 | JDK/Java | **Absent** |
 | Android Studio / Android SDK / `adb` | **Absent** |
 | Gradle | **Absent** (no wrapper yet) |
-| Firebase CLI / Google Cloud CLI | **Absent** |
+| Firebase CLI / Google Cloud CLI | **Absent at the 25 Nov inspection**; Firebase CLI authenticated 26 Nov (project owner) |
 | Flutter | Absent (not required) |
 | Connected Android device | **None detected** via USB/PnP; ADB unavailable |
 | Disk space | `C:` has approximately 5.5 GB free (only filesystem drive) |
