@@ -63,3 +63,7 @@ artifacts/instrumentation-ci/
 # Demo build intermediates and extracted review frames (final MP4/docs are kept)
 artifacts/demo/build/
 artifacts/demo/frames/
+
+# Downloaded CI evidence bundles (curated copies live in artifacts/)
+artifacts/emulator-final/
+artifacts/test-evidence/
