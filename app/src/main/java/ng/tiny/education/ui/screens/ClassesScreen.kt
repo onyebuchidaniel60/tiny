@@ -13,10 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material3.Icon
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -28,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -81,6 +81,7 @@ fun ClassesScreen(
                         value = label,
                         onValueChange = { label = it },
                         label = { Text(stringResource(R.string.section_label)) },
+                        supportingText = { Text(stringResource(R.string.section_hint)) },
                         singleLine = true,
                     )
                     Spacer(Modifier.height(8.dp))
@@ -124,13 +125,7 @@ fun ClassesScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             Spacer(Modifier.height(8.dp))
-            InfoBanner(
-                if (viewModel.backendSyncEnabled) {
-                    "Classes are created through the backend when online. Offline class creation is still available in preview mode."
-                } else {
-                    "This preview stores class records locally in an encrypted Room database. Cloud class creation is not connected."
-                },
-            )
+            InfoBanner(stringResource(R.string.class_local_note), tone = TinyCobalt)
         }
         items(classes, key = { it.id }) { classroom ->
             ClassCard(
@@ -141,7 +136,7 @@ fun ClassesScreen(
             )
         }
         if (classes.isEmpty()) {
-            item { PaperCard { Text("Preparing the sample classes…") } }
+            item { PaperCard { Text(stringResource(R.string.loading_workspace)) } }
         }
     }
 }
@@ -154,26 +149,26 @@ private fun ClassCard(
     onAttendance: () -> Unit,
 ) {
     val count by pupilCountFlow.collectAsStateWithLifecycle(initialValue = 0)
+    val subjectCount = classroom.subjectSummary.split("·").count { it.isNotBlank() }
     PaperCard(onClick = onOpen) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TinyAvatar(classroom.teacherName)
+            TinyAvatar(classroom.label)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text("${classroom.gradeLevel} ${classroom.label}", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Text(
-                    "$count pupils · ${classroom.academicYear}",
+                    pluralStringResource(R.plurals.classes_pupil_count, count, count) + " · " +
+                        pluralStringResource(R.plurals.classes_subject_count, subjectCount, subjectCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            StatusPill("Local", TinyCobalt)
+            StatusPill(stringResource(R.string.saved_on_device), TinyCobalt)
         }
-        Spacer(Modifier.height(10.dp))
-        Text(classroom.subjectSummary, style = MaterialTheme.typography.bodyMedium)
         Spacer(Modifier.height(14.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TinyPrimaryButton(stringResource(R.string.mark_attendance), onAttendance, Modifier.weight(1f))
-            TinySecondaryButton("Open", onOpen)
+            TinySecondaryButton(stringResource(R.string.open), onOpen)
         }
     }
 }
@@ -236,19 +231,20 @@ fun ClassDetailScreen(
     ) {
         item {
             classroom?.let { cls ->
+                val subjectCount = cls.subjectSummary.split("·").count { it.isNotBlank() }
                 SectionHeading(
                     title = "${cls.gradeLevel} ${cls.label}",
-                    subtitle = "${cls.academicYear} · ${cls.subjectSummary}",
+                    subtitle = "${cls.academicYear} · " + pluralStringResource(R.plurals.classes_subject_count, subjectCount, subjectCount),
                 )
             }
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TinyPrimaryButton(stringResource(R.string.mark_attendance), onAttendance, Modifier.weight(1f))
-                TinySecondaryButton("Progress", { pupils.firstOrNull()?.let { onProgress(it.id) } })
+                TinySecondaryButton(stringResource(R.string.progress), { pupils.firstOrNull()?.let { onProgress(it.id) } })
             }
         }
         item {
-            SectionHeading(title = stringResource(R.string.roster), subtitle = "Active pupils in this class.")
+            SectionHeading(title = stringResource(R.string.roster), subtitle = stringResource(R.string.active_pupils))
             Spacer(Modifier.height(8.dp))
             TinySecondaryButton(
                 text = stringResource(R.string.add_pupil),
@@ -260,11 +256,11 @@ fun ClassDetailScreen(
             PupilRow(pupil = pupil, onProgress = { onProgress(pupil.id) })
         }
         if (pupils.isEmpty()) {
-            item { PaperCard { Text("No active pupils in this class yet.") } }
+            item { PaperCard { Text(stringResource(R.string.no_pupils_body)) } }
         }
         item {
             InfoBanner(
-                "Pupil names shown here are synthetic demo records. Real pupil data must not be used in this preview.",
+                stringResource(R.string.preview_data_notice),
                 tone = TinyTomato,
             )
         }
@@ -280,12 +276,12 @@ private fun PupilRow(pupil: PupilEntity, onProgress: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Text(pupil.displayName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Text(
-                    pupil.localCode ?: "No local code",
+                    pupil.localCode ?: stringResource(R.string.no_local_code),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Icon(Icons.Outlined.Edit, contentDescription = "Record progress", tint = TinyForest)
+            Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.record_progress), tint = TinyForest)
         }
     }
 }

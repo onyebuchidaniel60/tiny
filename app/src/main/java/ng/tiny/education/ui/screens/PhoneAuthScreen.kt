@@ -29,13 +29,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import ng.tiny.education.BuildConfig
 import ng.tiny.education.R
 import ng.tiny.education.core.auth.AuthRepository
 import ng.tiny.education.core.domain.PhoneNormalizer
 import ng.tiny.education.ui.components.InfoBanner
 import ng.tiny.education.ui.components.PaperCard
-import ng.tiny.education.ui.components.PreviewChip
 import ng.tiny.education.ui.components.TinyPrimaryButton
 import ng.tiny.education.ui.components.TinySecondaryButton
 import ng.tiny.education.ui.components.TinyWordmark
@@ -59,17 +57,17 @@ fun PhoneAuthScreen(
     fun finishSignIn(result: Result<*>) {
         busy = false
         result.onSuccess { onSignedIn() }
-            .onFailure { error = it.message ?: "Sign-in failed." }
+            .onFailure { error = context.getString(R.string.auth_error) }
     }
 
     fun requestCode() {
         val normalized = PhoneNormalizer.normalize(phone)
         if (normalized == null) {
-            error = "Enter a valid Nigerian phone number."
+            error = context.getString(R.string.auth_phone_invalid)
             return
         }
         if (activity == null) {
-            error = "Phone verification needs an Activity."
+            error = context.getString(R.string.auth_activity_required)
             return
         }
         error = null
@@ -84,9 +82,9 @@ fun PhoneAuthScreen(
             onVerificationCompleted = { credential ->
                 scope.launch { finishSignIn(authRepository.signInWithCredential(credential)) }
             },
-            onVerificationFailed = { exception ->
+            onVerificationFailed = {
                 busy = false
-                error = exception.message ?: "Phone verification failed."
+                error = context.getString(R.string.auth_verification_failed)
             },
         )
     }
@@ -100,8 +98,6 @@ fun PhoneAuthScreen(
     ) {
         TinyWordmark(modifier = Modifier.align(Alignment.Start))
         Spacer(Modifier.height(36.dp))
-        PreviewChip("FIREBASE")
-        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.auth_title),
             style = MaterialTheme.typography.displaySmall,
@@ -117,12 +113,6 @@ fun PhoneAuthScreen(
         Spacer(Modifier.height(24.dp))
         PaperCard {
             Column {
-                Text(
-                    text = stringResource(R.string.auth_project_label, BuildConfig.FIREBASE_PROJECT_ID),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = TinyCobalt,
-                )
-                Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = phone,
                     onValueChange = { phone = it },

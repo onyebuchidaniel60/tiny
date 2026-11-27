@@ -53,6 +53,9 @@ object DemoIds {
 
 object DemoData {
     suspend fun seedIfEmpty(dao: TinyDao) {
+        // Remove the old evaluation-only label from devices that already have
+        // the local sample workspace. The data itself is unchanged.
+        dao.renameWorkspace("Kofar Demo Primary", "Kofar Primary")
         if (dao.workspaceCount() > 0) return
         val now = System.currentTimeMillis()
         val today = LocalDate.now()
@@ -61,7 +64,7 @@ object DemoData {
         dao.upsertWorkspace(
             WorkspaceEntity(
                 id = DemoIds.WORKSPACE,
-                name = "Kofar Demo Primary",
+                name = "Kofar Primary",
                 type = WorkspaceType.SCHOOL,
                 schoolCode = "KOFAR001",
                 verificationStatus = VerificationStatus.ACTIVE_UNVERIFIED,
@@ -266,7 +269,7 @@ object DemoData {
                 action = "demo.seeded",
                 resourceType = "workspace",
                 resourceId = DemoIds.WORKSPACE,
-                summary = "Synthetic demo workspace seeded locally.",
+                summary = "Sample workspace seeded locally.",
                 createdAt = now,
             ),
         )

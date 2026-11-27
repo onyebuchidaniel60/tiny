@@ -5,11 +5,15 @@ on:
     branches: [main]
     paths:
       - 'web/**'
+      - 'shared/**'
+      - 'tools/**'
       - 'firebase.json'
       - '.github/workflows/web-ci.yml'
   pull_request:
     paths:
       - 'web/**'
+      - 'shared/**'
+      - 'tools/**'
       - 'firebase.json'
       - '.github/workflows/web-ci.yml'
   workflow_dispatch:
@@ -36,6 +40,11 @@ jobs:
       - name: Install web dependencies
         working-directory: web
         run: npm ci
+
+      - name: Translation and hardcoded-string guard
+        run: |
+          node tools/generate-i18n.mjs --check
+          node tools/check-ui-strings.mjs
 
       - name: Typecheck
         working-directory: web

@@ -1,10 +1,16 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icon';
-import { Button, Card, PageHeader, Pill, formatDate, formatTime } from '../components/ui';
+import { Button, Card, PageHeader, Pill } from '../components/ui';
+import { TourDialog } from '../components/Tour';
 import { useStore } from '../data/store';
+import { useI18n } from '../i18n';
+import { useTeacherTour } from '../tours';
 
 export function DashboardPage() {
   const { state } = useStore();
+  const { t, formatDate, formatTime, tn } = useI18n();
+  const tour = useTeacherTour();
   const today = new Date().toISOString().slice(0, 10);
   const pending = state.outbox.filter((item) => item.state === 'pending' || item.state === 'retryable').length;
   const unread = state.conversations.reduce((sum, item) => sum + item.unread, 0);
@@ -13,51 +19,51 @@ export function DashboardPage() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .filter((message) => message.direction === 'inbound')
     .slice(0, 3);
+  const firstClass = state.classes[0];
+
+  useEffect(() => {
+    if (!tour.done) tour.start();
+    // The tour opens once per device; skip marks it complete.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tour.done]);
 
   return (
     <div className="page-stack">
       <PageHeader
-        eyebrow="Teacher workspace"
-        title="Good morning, Ms. Bello"
-        subtitle={`${formatDate(new Date().toISOString(), { weekday: 'long', day: 'numeric', month: 'long' })} · ${state.workspace.name}`}
-        actions={<Link to="/attendance/class_p4_blue"><Button><Icon name="attendance" size={17} /> Start attendance</Button></Link>}
+        eyebrow={t('today')}
+        title={t('home_greeting', { name: t('demo_teacher_name') })}
+        subtitle={`${formatDate(new Date(), { weekday: 'long', day: 'numeric', month: 'long' })} · ${state.workspace.name}`}
+        actions={firstClass && <Link to={`/attendance/${firstClass.id}`}><Button><Icon name="attendance" size={17} /> {t('home_start_attendance')}</Button></Link>}
       />
 
-      <div className="hero-grid">
-        <Card className="hero-card">
-          <div className="hero-top">
-            <Pill tone="cobalt">Offline-first</Pill>
-            <span className="hero-code">School code {state.workspace.schoolCode}</span>
-          </div>
-          <h2>Teach the lesson.<br />Keep the record.</h2>
-          <p>
-            Classes, attendance, lessons and family messages stay usable when the network drops.
-            No pupil account. No parent app.
-          </p>
-          <div className="hero-actions">
-            <Link to="/classes"><Button variant="secondary">Open classes <Icon name="arrow" size={16} /></Button></Link>
-            <Link to="/ai"><Button variant="ghost">Teaching helper <Icon name="spark" size={16} /></Button></Link>
-          </div>
-        </Card>
-        <Card className="metric-card">
-          <div className="metric-grid">
-            <div><strong>{state.classes.length}</strong><span>Classes</span></div>
-            <div><strong>{state.pupils.length}</strong><span>Pupils</span></div>
-            <div><strong>{pending}</strong><span>Queued</span></div>
-            <div><strong>{unread}</strong><span>Unread</span></div>
-          </div>
-          <div className="metric-foot">
-            <span><Icon name="wifi" size={15} /> {pending ? 'Local edits waiting for a server path' : 'No server writes pending'}</span>
-            <Link to="/sync">Sync centre</Link>
-          </div>
-        </Card>
+      <div className="summary-strip" role="group" aria-label={t('home_today')}>
+        <div className="summary-item">
+          <strong>{state.classes.length}</strong>
+          <span>{t('home_classes')}</span>
+        </div>
+        <div className="summary-item">
+          <strong>{state.pupils.length}</strong>
+          <span>{t('home_pupils')}</span>
+        </div>
+        <div className="summary-item">
+          <strong>{pending}</strong>
+          <span>{t('home_pending')}</span>
+        </div>
+        <div className="summary-item">
+          <strong>{unread}</strong>
+          <span>{t('home_unread')}</span>
+        </div>
+        <Link to="/sync" className="summary-link">
+          <Icon name={pending ? 'sync' : 'wifi'} size={16} />
+          {pending ? t('sync_pending') : t('saved_on_device')} <Icon name="arrow" size={14} />
+        </Link>
       </div>
 
       <div className="two-column">
         <Card>
           <div className="card-heading">
-            <div><div className="eyebrow">Today</div><h3>Classes and attendance</h3></div>
-            <Link to="/classes" className="text-link">All classes</Link>
+            <div><div className="eyebrow">{t('today')}</div><h3>{t('home_classes')}</h3></div>
+            <Link to="/classes" className="text-link">{t('view_all')}</Link>
           </div>
           <div className="class-list compact">
             {state.classes.map((classroom) => {
@@ -68,10 +74,10 @@ export function DashboardPage() {
                   <span className="class-avatar">{classroom.gradeLevel}{classroom.sectionLabel.slice(0, 1)}</span>
                   <span className="class-row-main">
                     <strong>{classroom.gradeLevel} {classroom.sectionLabel}</strong>
-                    <small>{pupils.length} pupils · {pupils.length ? 'register ready' : 'add pupils'}</small>
+                    <small>{tn('classes_pupil_count', pupils.length)} · {pupils.length ? t('home_register_ready') : t('home_add_pupils')}</small>
                   </span>
                   <Pill tone={session?.status === 'submitted' ? 'forest' : 'butter'}>
-                    {session?.status === 'submitted' ? 'Submitted' : 'Not started'}
+                    {session?.status === 'submitted' ? t('home_submitted') : t('home_not_started')}
                   </Pill>
                   <Icon name="arrow" size={16} />
                 </Link>
@@ -82,11 +88,11 @@ export function DashboardPage() {
 
         <Card>
           <div className="card-heading">
-            <div><div className="eyebrow">Family contact</div><h3>Recent messages</h3></div>
-            <Link to="/messages" className="text-link">Inbox</Link>
+            <div><div className="eyebrow">{t('home_parent_messages')}</div><h3>{t('home_recent_messages')}</h3></div>
+            <Link to="/messages" className="text-link">{t('home_view_messages')}</Link>
           </div>
           {recentMessages.length === 0 ? (
-            <p className="muted">No inbound messages yet. The SMS adapter is mocked in this preview.</p>
+            <p className="muted">{t('home_no_messages')}</p>
           ) : (
             <div className="message-preview-list">
               {recentMessages.map((message) => {
@@ -96,7 +102,7 @@ export function DashboardPage() {
                   <Link to={`/messages/${message.conversationId}`} className="message-preview" key={message.id}>
                     <span className="avatar">{guardian?.displayName.slice(0, 1) ?? 'G'}</span>
                     <span>
-                      <strong>{guardian?.displayName ?? 'Guardian'}</strong>
+                      <strong>{guardian?.displayName ?? t('guardian')}</strong>
                       <span>{message.body}</span>
                     </span>
                     <small>{formatTime(message.createdAt)}</small>
@@ -105,16 +111,30 @@ export function DashboardPage() {
               })}
             </div>
           )}
-          <div className="mock-note"><Icon name="message" size={15} /> SMS is mocked. Nothing is sent to a real phone.</div>
+          <div className="mock-note"><Icon name="message" size={15} /> {t('home_message_simulated')}</div>
         </Card>
       </div>
 
       <div className="quick-grid">
-        <Link to="/lessons" className="quick-card"><span className="quick-icon"><Icon name="book" /></span><strong>Lesson plans</strong><span>Open a 5E plan offline</span></Link>
-        <Link to="/progress/pupil_amina" className="quick-card"><span className="quick-icon"><Icon name="check" /></span><strong>Record progress</strong><span>Teacher-authored observations</span></Link>
-        <Link to="/guardians" className="quick-card"><span className="quick-icon"><Icon name="people" /></span><strong>Guardians</strong><span>Endpoints, links and consent</span></Link>
-        <Link to="/ai" className="quick-card"><span className="quick-icon"><Icon name="spark" /></span><strong>Teaching helper</strong><span>On-device first, cloud fallback</span></Link>
+        <Link to="/lessons" className="quick-card"><span className="quick-icon"><Icon name="book" /></span><strong>{t('home_lesson_plans')}</strong><span>{t('home_lesson_plans_body')}</span></Link>
+        <Link to={`/progress/${state.pupils[0]?.id ?? 'pupil_amina'}`} className="quick-card"><span className="quick-icon"><Icon name="check" /></span><strong>{t('home_record_progress')}</strong><span>{t('home_record_progress_body')}</span></Link>
+        <Link to="/guardians" className="quick-card"><span className="quick-icon"><Icon name="people" /></span><strong>{t('home_guardians')}</strong><span>{t('home_guardians_body')}</span></Link>
+        <Link to="/ai" className="quick-card"><span className="quick-icon"><Icon name="spark" /></span><strong>{t('home_teaching_helper')}</strong><span>{t('ai_subtitle')}</span></Link>
       </div>
+
+      <Card className="soft-card home-note">
+        <Icon name="shield" size={18} />
+        <p>{t('home_absence_note')}</p>
+      </Card>
+
+      <TourDialog
+        open={tour.open}
+        title={tour.title}
+        intro={tour.intro}
+        steps={tour.steps}
+        onClose={tour.close}
+        onFinish={tour.finish}
+      />
     </div>
   );
 }

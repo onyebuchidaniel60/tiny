@@ -63,6 +63,11 @@ jobs:
           cache: npm
           cache-dependency-path: functions/package-lock.json
 
+      - name: Translation and hardcoded-string guard
+        run: |
+          node tools/generate-i18n.mjs --check
+          node tools/check-ui-strings.mjs
+
       - name: Functions install and tests
         run: |
           if [ -f functions/package.json ]; then

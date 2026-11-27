@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,9 @@ import ng.tiny.education.ui.theme.TinyCobalt
 import ng.tiny.education.ui.theme.TinyForest
 import ng.tiny.education.ui.theme.TinyTomato
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun AttendanceScreen(
@@ -50,8 +54,11 @@ fun AttendanceScreen(
     viewModel: TinyViewModel,
     onBack: () -> Unit,
 ) {
-    val date = remember { LocalDate.now().toString() }
-    val dateLabel = remember { LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("EEEE, d MMMM")) }
+    val today = remember { LocalDate.now() }
+    val date = today.toString()
+    val dateLabel = remember(today, Locale.getDefault()) {
+        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+    }
     val session by viewModel.observeAttendance(classId, date).collectAsStateWithLifecycle(initialValue = null)
     val entries by remember(session?.id) {
         val id = session?.id
@@ -77,19 +84,19 @@ fun AttendanceScreen(
         item {
             SectionHeading(
                 title = stringResource(R.string.attendance_heading),
-                subtitle = "$dateLabel · ${pupils.size} active pupils",
+                subtitle = "$dateLabel · " + pluralStringResource(R.plurals.classes_pupil_count, pupils.size, pupils.size),
             )
             Spacer(Modifier.height(8.dp))
             InfoBanner(
-                "Selected status is saved only when you tap Save draft or Submit attendance. The encrypted local database is the source of truth.",
+                stringResource(R.string.attendance_local_note),
                 tone = TinyCobalt,
             )
         }
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                StatusPill("${summary.present} present", TinyForest)
-                StatusPill("${summary.absent} absent", TinyTomato)
-                StatusPill("${summary.late} late", TinyButter)
+                StatusPill("${summary.present} ${stringResource(R.string.present)}", TinyForest)
+                StatusPill("${summary.absent} ${stringResource(R.string.absent)}", TinyTomato)
+                StatusPill("${summary.late} ${stringResource(R.string.late)}", TinyButter)
             }
         }
         items(pupils, key = { it.id }) { pupil ->
@@ -99,7 +106,7 @@ fun AttendanceScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(pupil.displayName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                        Text(pupil.localCode ?: "Synthetic demo pupil", style = MaterialTheme.typography.bodySmall)
+                        Text(pupil.localCode ?: stringResource(R.string.no_local_code), style = MaterialTheme.typography.bodySmall)
                     }
                 }
                 Spacer(Modifier.height(10.dp))
@@ -128,7 +135,7 @@ fun AttendanceScreen(
         item {
             if (unmarked > 0) {
                 InfoBanner(
-                    text = stringResource(R.string.attendance_incomplete, unmarked),
+                    text = pluralStringResource(R.plurals.attendance_incomplete, unmarked, unmarked),
                     tone = TinyTomato,
                 )
             } else {
@@ -142,15 +149,15 @@ fun AttendanceScreen(
             if (isSubmitted) {
                 PaperCard {
                     Column {
-                        StatusPill(stringResource(R.string.synced), TinyCobalt)
+                        StatusPill(stringResource(R.string.status_submitted), TinyCobalt)
                         Spacer(Modifier.height(8.dp))
-                        Text("This register is already submitted locally. Corrections are a later-phase flow.", style = MaterialTheme.typography.bodyMedium)
+                        Text(stringResource(R.string.attendance_already_submitted), style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TinySecondaryButton(
-                        text = "Save draft",
+                        text = stringResource(R.string.save_draft),
                         onClick = {
                             viewModel.saveAttendanceDraft(classId, date, statuses.toMap())
                         },
@@ -169,14 +176,14 @@ fun AttendanceScreen(
         }
         item {
             TinySecondaryButton(
-                text = stringResource(R.string.attendance_mark_all_present),
+                text = stringResource(R.string.mark_all_present),
                 onClick = { pupils.forEach { statuses[it.id] = AttendanceStatus.PRESENT } },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         item {
             Text(
-                "Mock mode: a submitted absence does not send an SMS. The local outbox records the command for a future server.",
+                stringResource(R.string.attendance_absence_only_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -196,7 +203,7 @@ private fun StatusChoice(
         onClick = onClick,
         label = { Text(label) },
         colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = color.copy(alpha = 0.20f),
+            selectedContainerColor = color.copy(alpha = 0.22f),
             selectedLabelColor = MaterialTheme.colorScheme.onSurface,
         ),
     )

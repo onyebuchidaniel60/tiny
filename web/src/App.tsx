@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from './components/Icon';
-import { formatDate, Pill } from './components/ui';
+import { LanguageSelect } from './components/LanguageSelect';
+import { TinyMark } from './components/TinyMark';
 import { useAuth } from './firebase/auth';
 import { isFirebaseConfigured } from './firebase/config';
 import { useStore } from './data/store';
+import { useI18n } from './i18n';
 import { SignInPage } from './pages/SignInPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { ClassesPage } from './pages/ClassesPage';
@@ -20,16 +22,15 @@ import { SyncPage } from './pages/SyncPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { AiPage } from './pages/AiPage';
 import { GuardianSimulatorPage } from './pages/GuardianSimulatorPage';
+import { HelpPage } from './pages/HelpPage';
 
-const navItems = [
-  { to: '/', label: 'Home', icon: 'home' as const, end: true },
-  { to: '/classes', label: 'Classes', icon: 'classes' as const },
-  { to: '/lessons', label: 'Lessons', icon: 'book' as const },
-  { to: '/messages', label: 'Messages', icon: 'message' as const },
-  { to: '/guardians', label: 'Guardians', icon: 'people' as const },
-  { to: '/sync', label: 'Sync', icon: 'sync' as const },
-  { to: '/settings', label: 'Settings', icon: 'settings' as const },
-];
+type NavItem = {
+  to: string;
+  label: string;
+  icon: Parameters<typeof Icon>[0]['name'];
+  end?: boolean;
+  mobile?: boolean;
+};
 
 function useOnline() {
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -48,11 +49,12 @@ function useOnline() {
 
 function SyncPill() {
   const { state } = useStore();
+  const { t } = useI18n();
   const online = useOnline();
   const pending = state.outbox.filter((item) => item.state === 'pending' || item.state === 'retryable').length;
-  const label = !online ? 'Offline' : pending > 0 ? `${pending} pending` : state.mode === 'firebase' ? 'Firebase read' : 'Local demo';
+  const label = !online ? t('offline') : pending > 0 ? `${pending} ${t('pending')}` : t('local_only');
   return (
-    <NavLink to="/sync" className={`sync-pill ${!online ? 'offline' : pending ? 'pending' : 'ok'}`}>
+    <NavLink to="/sync" className={`sync-pill ${!online ? 'offline' : pending ? 'pending' : 'ok'}`} aria-label={t('sync_title')}>
       <Icon name={online ? (pending ? 'sync' : 'wifi') : 'offline'} size={16} />
       <span>{label}</span>
     </NavLink>
@@ -62,10 +64,22 @@ function SyncPill() {
 function TeacherLayout() {
   const { state, message, clearMessage } = useStore();
   const { signOut, user } = useAuth();
+  const { t, formatDate } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
   const online = useOnline();
-  const isMain = navItems.some((item) => (item.end ? location.pathname === '/' : location.pathname.startsWith(item.to)));
+  const navItems: NavItem[] = [
+    { to: '/', label: t('nav_home'), icon: 'home', end: true, mobile: true },
+    { to: '/classes', label: t('nav_classes'), icon: 'classes', mobile: true },
+    { to: '/lessons', label: t('nav_lessons'), icon: 'book', mobile: true },
+    { to: '/messages', label: t('nav_messages'), icon: 'message', mobile: true },
+    { to: '/guardians', label: t('nav_guardians'), icon: 'people', mobile: true },
+    { to: '/sync', label: t('nav_sync'), icon: 'sync' },
+    { to: '/help', label: t('nav_help'), icon: 'search' },
+    { to: '/settings', label: t('nav_settings'), icon: 'settings' },
+  ];
+  const mobileItems = navItems.filter((item) => item.mobile);
+  const isMain = mobileItems.some((item) => (item.end ? location.pathname === '/' : location.pathname.startsWith(item.to)));
   const pending = state.outbox.filter((item) => item.state === 'pending' || item.state === 'retryable').length;
 
   useEffect(() => {
@@ -75,15 +89,16 @@ function TeacherLayout() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">{t('cd_skip_to_content')}</a>
       <aside className="sidebar">
-        <div className="sidebar-brand">
-          <div className="brand-mark small" aria-hidden="true"><span>T</span><i /></div>
-          <div>
+        <NavLink to="/" className="sidebar-brand" aria-label={`Tiny — ${t('nav_home')}`}>
+          <TinyMark size={44} />
+          <span>
             <strong>Tiny</strong>
-            <small>Teacher workspace</small>
-          </div>
-        </div>
-        <nav className="side-nav" aria-label="Main navigation">
+            <small>{t('brand_teacher_workspace')}</small>
+          </span>
+        </NavLink>
+        <nav className="side-nav" aria-label={t('cd_main_nav')}>
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Icon name={item.icon} size={19} />
@@ -101,7 +116,7 @@ function TeacherLayout() {
             </div>
           </div>
           <button className="text-button" onClick={() => void signOut()}>
-            {user ? 'Sign out' : 'Leave demo'}
+            {user ? t('sign_out') : t('leave_evaluation')}
           </button>
         </div>
       </aside>
@@ -109,39 +124,41 @@ function TeacherLayout() {
       <div className="main-column">
         <header className="topbar">
           <div className="topbar-title">
-            <span className="topbar-kicker">{state.mode === 'firebase' ? 'Firebase workspace' : 'Offline demo workspace'}</span>
+            <span className="topbar-kicker">{state.mode === 'firebase' ? t('firebase') : t('evaluation_workspace')}</span>
             <strong>{state.workspace.name}</strong>
           </div>
           <div className="topbar-actions">
             <span className={`connectivity ${online ? 'on' : 'off'}`}>
               <Icon name={online ? 'wifi' : 'offline'} size={15} />
-              {online ? 'Online' : 'Offline'}
+              {online ? t('online') : t('offline')}
             </span>
+            <LanguageSelect compact />
             <SyncPill />
-            <NavLink to="/settings" className="topbar-icon" aria-label="Settings"><Icon name="settings" size={19} /></NavLink>
+            <NavLink to="/help" className="topbar-icon" aria-label={t('cd_help')}><Icon name="search" size={19} /></NavLink>
+            <NavLink to="/settings" className="topbar-icon" aria-label={t('cd_settings')}><Icon name="settings" size={19} /></NavLink>
           </div>
         </header>
 
         {state.mode === 'demo' && (
           <div className="mode-banner">
             <Icon name="shield" size={16} />
-            <span>Synthetic demo data. Saved on this device. Server sync is not available on Spark.</span>
+            <span>{t('evaluation_mode')} · {t('saved_on_device')}</span>
           </div>
         )}
         {!online && (
           <div className="mode-banner offline-banner">
             <Icon name="offline" size={16} />
-            <span>You are offline. Edits still save locally and will be reviewed when connectivity returns.</span>
+            <span>{t('help_offline_body')}</span>
           </div>
         )}
 
-        <main className={`content ${isMain ? '' : 'content-detail'}`}>
+        <main id="main-content" className={`content ${isMain ? '' : 'content-detail'}`}>
           <Outlet />
         </main>
       </div>
 
-      <nav className="bottom-nav" aria-label="Mobile navigation">
-        {navItems.slice(0, 5).map((item) => (
+      <nav className="bottom-nav" aria-label={t('cd_mobile_nav')}>
+        {mobileItems.map((item) => (
           <NavLink key={item.to} to={item.to} end={item.end} className={({ isActive }) => `bottom-link ${isActive ? 'active' : ''}`}>
             <Icon name={item.icon} size={20} />
             <span>{item.label}</span>
@@ -152,17 +169,17 @@ function TeacherLayout() {
       {message && (
         <div className="toast" role="status">
           <span>{message}</span>
-          <button onClick={clearMessage} aria-label="Dismiss"><Icon name="close" size={16} /></button>
+          <button onClick={clearMessage} aria-label={t('dismiss')}><Icon name="close" size={16} /></button>
         </div>
       )}
       {pending > 0 && location.pathname !== '/sync' && (
         <button className="pending-fab" onClick={() => navigate('/sync')}>
-          <Icon name="sync" size={16} /> {pending} queued
+          <Icon name="sync" size={16} /> {pending} {t('queued')}
         </button>
       )}
       <footer className="app-footer">
-        <span>Tiny · {formatDate(new Date().toISOString())} · synthetic data</span>
-        <span>{isFirebaseConfigured ? 'Firebase configured' : 'Local preview'}</span>
+        <span className="footer-brand"><TinyMark size={18} /> Tiny · {formatDate(new Date())} · {t('evaluation_workspace')}</span>
+        <span>{isFirebaseConfigured ? t('firebase_configured') : t('local_workspace')}</span>
       </footer>
     </div>
   );
@@ -170,6 +187,7 @@ function TeacherLayout() {
 
 export default function App() {
   const auth = useAuth();
+  const { t } = useI18n();
   const { ready, receiveGuardianMessage, receiveTeacherMessage } = useStore();
 
   useEffect(() => {
@@ -188,9 +206,9 @@ export default function App() {
   if (auth.loading || !ready) {
     return (
       <div className="splash">
-        <div className="brand-mark" aria-hidden="true"><span>T</span><i /></div>
+        <TinyMark size={72} />
         <h1>Tiny</h1>
-        <p>Opening your local workspace…</p>
+        <p>{t('loading_workspace')}</p>
       </div>
     );
   }
@@ -215,6 +233,7 @@ export default function App() {
         <Route path="guardians" element={<GuardiansPage />} />
         <Route path="sync" element={<SyncPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="help" element={<HelpPage />} />
         <Route path="ai" element={<AiPage />} />
       </Route>
     </Routes>

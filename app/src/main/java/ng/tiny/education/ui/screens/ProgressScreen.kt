@@ -62,39 +62,40 @@ fun ProgressScreen(
     var showAddGuardian by remember { mutableStateOf(false) }
     var guardianName by remember { mutableStateOf("") }
     var guardianPhone by remember { mutableStateOf("") }
-    var guardianRelationship by remember { mutableStateOf("Parent") }
+    val defaultRelationship = stringResource(R.string.parent_relationship)
+    var guardianRelationship by remember(defaultRelationship) { mutableStateOf(defaultRelationship) }
     var verifyingGuardianId by remember { mutableStateOf<String?>(null) }
     var verificationCode by remember { mutableStateOf("") }
 
     if (showAddGuardian) {
         AlertDialog(
             onDismissRequest = { showAddGuardian = false },
-            title = { Text("Add guardian") },
+            title = { Text(stringResource(R.string.add_guardian)) },
             text = {
                 Column {
                     OutlinedTextField(
                         value = guardianName,
                         onValueChange = { guardianName = it },
-                        label = { Text("Guardian name") },
+                        label = { Text(stringResource(R.string.guardian_name)) },
                         singleLine = true,
                     )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = guardianPhone,
                         onValueChange = { guardianPhone = it },
-                        label = { Text("Nigerian phone, e.g. 0803 123 4567") },
+                        label = { Text(stringResource(R.string.guardian_phone)) },
                         singleLine = true,
                     )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = guardianRelationship,
                         onValueChange = { guardianRelationship = it },
-                        label = { Text("Relationship") },
+                        label = { Text(stringResource(R.string.relationship)) },
                         singleLine = true,
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Synthetic test numbers only. A shared endpoint is reused for siblings.",
+                        stringResource(R.string.guardian_synthetic_note),
                         style = MaterialTheme.typography.labelSmall,
                     )
                 }
@@ -114,9 +115,9 @@ fun ProgressScreen(
                         guardianPhone = ""
                     },
                     enabled = guardianName.isNotBlank() && guardianPhone.isNotBlank(),
-                ) { Text("Add") }
+                ) { Text(stringResource(R.string.add)) }
             },
-            dismissButton = { TextButton(onClick = { showAddGuardian = false }) { Text("Cancel") } },
+            dismissButton = { TextButton(onClick = { showAddGuardian = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 
@@ -127,19 +128,19 @@ fun ProgressScreen(
                 verificationCode = ""
                 viewModel.clearGuardianCode()
             },
-            title = { Text("Verify guardian") },
+            title = { Text(stringResource(R.string.verify_guardian)) },
             text = {
                 Column {
                     Text(
-                        guardianCode?.let { "In-person code: $it" }
-                            ?: "Request a code, read it to the guardian, then enter it here.",
+                        guardianCode?.let { stringResource(R.string.in_person_code, it) }
+                            ?: stringResource(R.string.verification_prompt),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
                         value = verificationCode,
                         onValueChange = { verificationCode = it },
-                        label = { Text("Verification code") },
+                        label = { Text(stringResource(R.string.verification_code)) },
                         singleLine = true,
                     )
                 }
@@ -152,7 +153,7 @@ fun ProgressScreen(
                         verificationCode = ""
                     },
                     enabled = verificationCode.isNotBlank(),
-                ) { Text("Verify") }
+                ) { Text(stringResource(R.string.verify)) }
             },
             dismissButton = {
                 TextButton(
@@ -161,7 +162,7 @@ fun ProgressScreen(
                         verificationCode = ""
                         viewModel.clearGuardianCode()
                     },
-                ) { Text("Cancel") }
+                ) { Text(stringResource(R.string.cancel)) }
             },
         )
     }
@@ -176,32 +177,32 @@ fun ProgressScreen(
                 subtitle = stringResource(R.string.progress_subtitle),
             )
             Spacer(Modifier.height(8.dp))
-            InfoBanner(stringResource(R.string.progress_not_assessed_note), tone = TinyCobalt)
+            InfoBanner(stringResource(R.string.not_assessed_note), tone = TinyCobalt)
         }
         item {
             PaperCard {
                 Column {
-                    Text("New observation", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.new_observation), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(10.dp))
-                    Text("Indicator", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.indicator), style = MaterialTheme.typography.labelLarge)
                     Spacer(Modifier.height(6.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IndicatorChoice("Doing well", indicator == ProgressIndicator.DOING_WELL, TinyForest) { indicator = ProgressIndicator.DOING_WELL }
-                        IndicatorChoice("Developing", indicator == ProgressIndicator.DEVELOPING, TinyButter) { indicator = ProgressIndicator.DEVELOPING }
+                        IndicatorChoice(stringResource(R.string.doing_well), indicator == ProgressIndicator.DOING_WELL, TinyForest) { indicator = ProgressIndicator.DOING_WELL }
+                        IndicatorChoice(stringResource(R.string.developing), indicator == ProgressIndicator.DEVELOPING, TinyButter) { indicator = ProgressIndicator.DEVELOPING }
                     }
                     Spacer(Modifier.height(6.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        IndicatorChoice("Needs support", indicator == ProgressIndicator.NEEDS_SUPPORT, TinyTomato) { indicator = ProgressIndicator.NEEDS_SUPPORT }
-                        IndicatorChoice("Not assessed", indicator == ProgressIndicator.NOT_ASSESSED, TinyCobalt) { indicator = ProgressIndicator.NOT_ASSESSED }
+                        IndicatorChoice(stringResource(R.string.needs_support), indicator == ProgressIndicator.NEEDS_SUPPORT, TinyTomato) { indicator = ProgressIndicator.NEEDS_SUPPORT }
+                        IndicatorChoice(stringResource(R.string.not_assessed), indicator == ProgressIndicator.NOT_ASSESSED, TinyCobalt) { indicator = ProgressIndicator.NOT_ASSESSED }
                     }
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
                         value = note,
                         onValueChange = { note = it.take(300) },
-                        label = { Text(stringResource(R.string.teacher_note)) },
+                        label = { Text(stringResource(R.string.factual_observation)) },
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 3,
-                        supportingText = { Text("${note.length}/300 · factual and constructive") },
+                        supportingText = { Text("${note.length}/300 · ${stringResource(R.string.factual_hint)}") },
                     )
                     Spacer(Modifier.height(8.dp))
                     OutlinedTextField(
@@ -210,7 +211,7 @@ fun ProgressScreen(
                         label = { Text(stringResource(R.string.home_activity)) },
                         modifier = Modifier.fillMaxWidth(),
                         minLines = 2,
-                        supportingText = { Text("${homeActivity.length}/240 · optional") },
+                        supportingText = { Text("${homeActivity.length}/240 · ${stringResource(R.string.optional)}") },
                     )
                     Spacer(Modifier.height(10.dp))
                     TinyPrimaryButton(
@@ -232,7 +233,7 @@ fun ProgressScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        "Editing an approved entry creates a new revision and resets approval.",
+                        stringResource(R.string.approval_reset_notice),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -240,10 +241,11 @@ fun ProgressScreen(
             }
         }
         item {
-            SectionHeading(title = "Family contacts", subtitle = "Verified, opted-in endpoints receive child-specific SMS.")}
+            SectionHeading(title = stringResource(R.string.family_contacts), subtitle = stringResource(R.string.family_contacts_subtitle))
+        }
         item {
             TinySecondaryButton(
-                text = "Add guardian",
+                text = stringResource(R.string.add_guardian),
                 onClick = { showAddGuardian = true },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -260,16 +262,16 @@ fun ProgressScreen(
             )
         }
         if (links.isEmpty()) {
-            item { PaperCard { Text("No guardian is linked to this pupil yet.") } }
+            item { PaperCard { Text(stringResource(R.string.no_guardian)) } }
         }
         item {
-            SectionHeading(title = "History", subtitle = "Only approved entries can enter a parent digest.")
+            SectionHeading(title = stringResource(R.string.history), subtitle = stringResource(R.string.digest_note))
         }
         items(entries, key = { it.id }) { entry ->
             ProgressEntryCard(entry = entry, onApprove = { viewModel.approveProgress(entry.id) })
         }
         if (entries.isEmpty()) {
-            item { PaperCard { Text("No progress observations recorded yet.") } }
+            item { PaperCard { Text(stringResource(R.string.no_progress_entries)) } }
         }
     }
 }
@@ -281,7 +283,7 @@ private fun IndicatorChoice(label: String, selected: Boolean, color: androidx.co
         onClick = onClick,
         label = { Text(label) },
         colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = color.copy(alpha = 0.20f),
+            selectedContainerColor = color.copy(alpha = 0.22f),
             selectedLabelColor = MaterialTheme.colorScheme.onSurface,
         ),
     )
@@ -300,18 +302,18 @@ private fun GuardianContactCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(
-                        guardian?.displayName ?: "Guardian",
+                        guardian?.displayName ?: stringResource(R.string.guardian),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        "${guardian?.phoneE164 ?: "No phone"} · ${link.relationshipLabel}",
+                        "${guardian?.phoneE164 ?: "—"} · ${link.relationshipLabel}",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
                 val verified = guardian?.verificationStatus == GuardianVerificationStatus.VERIFIED
                 StatusPill(
-                    if (verified) "Verified" else "Pending",
+                    stringResource(if (verified) R.string.verified else R.string.pending),
                     if (verified) TinyForest else TinyTomato,
                 )
             }
@@ -319,12 +321,12 @@ private fun GuardianContactCard(
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TinySecondaryButton(
-                        text = "Request code",
+                        text = stringResource(R.string.request_code),
                         onClick = onRequestCode,
                         modifier = Modifier.weight(1f),
                     )
                     TinyPrimaryButton(
-                        text = "Enter code",
+                        text = stringResource(R.string.enter_code),
                         onClick = onVerify,
                         modifier = Modifier.weight(1f),
                     )
@@ -336,26 +338,43 @@ private fun GuardianContactCard(
 
 @Composable
 private fun ProgressEntryCard(entry: ProgressEntryEntity, onApprove: () -> Unit) {
+    val indicatorLabel = when (entry.indicator) {
+        ProgressIndicator.DOING_WELL -> stringResource(R.string.doing_well)
+        ProgressIndicator.DEVELOPING -> stringResource(R.string.developing)
+        ProgressIndicator.NEEDS_SUPPORT -> stringResource(R.string.needs_support)
+        ProgressIndicator.NOT_ASSESSED -> stringResource(R.string.not_assessed)
+    }
+    val indicatorColor = when (entry.indicator) {
+        ProgressIndicator.DOING_WELL -> TinyForest
+        ProgressIndicator.DEVELOPING -> TinyButter
+        ProgressIndicator.NEEDS_SUPPORT -> TinyTomato
+        ProgressIndicator.NOT_ASSESSED -> TinyCobalt
+    }
     PaperCard {
         Column {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                StatusPill(entry.indicator.name.lowercase().replace('_', ' '), when (entry.indicator) {
-                    ProgressIndicator.DOING_WELL -> TinyForest
-                    ProgressIndicator.DEVELOPING -> TinyButter
-                    ProgressIndicator.NEEDS_SUPPORT -> TinyTomato
-                    ProgressIndicator.NOT_ASSESSED -> TinyCobalt
-                })
+                StatusPill(indicatorLabel, indicatorColor)
                 Spacer(Modifier.weight(1f))
-                StatusPill(entry.approvalStatus.name.lowercase(), if (entry.approvalStatus == ApprovalStatus.APPROVED) TinyForest else TinyCobalt)
+                StatusPill(
+                    stringResource(if (entry.approvalStatus == ApprovalStatus.APPROVED) R.string.approved else R.string.pending_approval),
+                    if (entry.approvalStatus == ApprovalStatus.APPROVED) TinyForest else TinyCobalt,
+                )
             }
             Spacer(Modifier.height(8.dp))
-            Text(entry.teacherNote ?: "No note recorded.", style = MaterialTheme.typography.bodyMedium)
+            Text(entry.teacherNote ?: stringResource(R.string.no_note), style = MaterialTheme.typography.bodyMedium)
             entry.homeActivity?.let {
                 Spacer(Modifier.height(6.dp))
-                Text("Home activity: $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(
+                    stringResource(R.string.home_prefix, it),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
             Spacer(Modifier.height(8.dp))
-            Text("Revision ${entry.revision} · ${entry.periodStart} to ${entry.periodEnd}", style = MaterialTheme.typography.labelSmall)
+            Text(
+                stringResource(R.string.revision_label, entry.revision) + " · ${entry.periodStart} – ${entry.periodEnd}",
+                style = MaterialTheme.typography.labelSmall,
+            )
             if (entry.approvalStatus != ApprovalStatus.APPROVED) {
                 Spacer(Modifier.height(8.dp))
                 TinySecondaryButton(

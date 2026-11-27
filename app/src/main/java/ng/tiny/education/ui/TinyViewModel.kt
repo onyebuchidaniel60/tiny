@@ -1,5 +1,6 @@
 package ng.tiny.education.ui
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
@@ -14,6 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ng.tiny.education.AppContainer
+import ng.tiny.education.R
+import ng.tiny.education.core.ai.AiTask
+import ng.tiny.education.core.ai.DeviceAiStatus
 import ng.tiny.education.core.database.AttendanceSessionEntity
 import ng.tiny.education.core.database.ClassroomEntity
 import ng.tiny.education.core.database.ConversationEntity
@@ -24,11 +28,12 @@ import ng.tiny.education.core.model.ProgressIndicator
 import ng.tiny.education.core.preferences.TinyPreferences
 
 data class AiUiState(
-    val deviceStatus: String = "Not checked",
+    val deviceStatus: DeviceAiStatus = DeviceAiStatus.UNAVAILABLE,
+    val task: AiTask = AiTask.LESSON_PLAN,
     val busy: Boolean = false,
     val text: String? = null,
     val source: String? = null,
-    val error: String? = null,
+    val error: Boolean = false,
 )
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
@@ -70,8 +75,8 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
         .map { list -> list.sumOf { it.unreadCount } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
-    private val _message = MutableStateFlow<String?>(null)
-    val message: StateFlow<String?> = _message.asStateFlow()
+    private val _message = MutableStateFlow<UiMessage?>(null)
+    val message: StateFlow<UiMessage?> = _message.asStateFlow()
 
     val authUser = container.authRepository.user
     val backendSyncEnabled: Boolean
@@ -88,6 +93,10 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
         _message.value = null
     }
 
+    fun showMessage(@StringRes resId: Int, vararg args: Any) {
+        _message.value = UiMessage(resId, args.toList())
+    }
+
     fun setLanguage(language: String) = viewModelScope.launch {
         preferencesRepository.setLanguage(language)
     }
@@ -99,6 +108,14 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
 
     fun setWifiOnly(enabled: Boolean) = viewModelScope.launch {
         preferencesRepository.setWifiOnly(enabled)
+    }
+
+    fun setTeacherTourCompleted(completed: Boolean) = viewModelScope.launch {
+        preferencesRepository.setTeacherTourCompleted(completed)
+    }
+
+    fun setGuardianTourCompleted(completed: Boolean) = viewModelScope.launch {
+        preferencesRepository.setGuardianTourCompleted(completed)
     }
 
     fun signOut() = viewModelScope.launch {
@@ -122,22 +139,22 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     fun addPupil(classId: String, displayName: String, localPupilCode: String?) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.addPupil(ws.id, classId, displayName, localPupilCode)
-            .onSuccess { _message.value = "Pupil added locally and queued." }
-            .onFailure { _message.value = it.message ?: "Could not add pupil." }
+            .onSuccess { _message.value = UiMessage(R.string.pupil_saved_local) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun saveAttendanceDraft(classId: String, schoolDate: String, statuses: Map<String, AttendanceStatus>) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.saveAttendanceDraft(ws.id, classId, schoolDate, statuses)
-            .onSuccess { _message.value = "Draft saved on this phone." }
-            .onFailure { _message.value = it.message ?: "Could not save draft." }
+            .onSuccess { _message.value = UiMessage(R.string.attendance_saved) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun submitAttendance(classId: String, schoolDate: String, statuses: Map<String, AttendanceStatus>) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.submitAttendance(ws.id, classId, schoolDate, statuses)
-            .onSuccess { _message.value = "Attendance submitted locally and queued for mock sync." }
-            .onFailure { _message.value = it.message ?: "Could not submit attendance." }
+            .onSuccess { _message.value = UiMessage(R.string.attendance_submitted) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun saveProgress(
@@ -151,21 +168,21 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     ) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.saveProgress(ws.id, pupilId, classId, subjectId, indicator, note, homeActivity, existingEntryId)
-            .onSuccess { _message.value = "Progress draft saved locally." }
-            .onFailure { _message.value = it.message ?: "Could not save progress." }
+            .onSuccess { _message.value = UiMessage(R.string.progress_saved) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun approveProgress(entryId: String) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         repository.approveProgress(ws.id, entryId)
-            .onSuccess { _message.value = "Progress approved for the next digest." }
-            .onFailure { _message.value = it.message ?: "Could not approve progress." }
+            .onSuccess { _message.value = UiMessage(R.string.progress_approved) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun sendReply(conversationId: String, body: String) = viewModelScope.launch {
         repository.sendReply(conversationId, body)
-            .onSuccess { _message.value = "Reply queued through the mock adapter." }
-            .onFailure { _message.value = it.message ?: "Could not queue reply." }
+            .onSuccess { _message.value = UiMessage(R.string.reply_queued) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }
 
     fun markConversationRead(conversationId: String) = viewModelScope.launch {
@@ -175,29 +192,29 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     fun syncNow() = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         val result = repository.syncNow(ws.id)
-        _message.value = result.message
-    }
-
-    fun showMessage(value: String) {
-        _message.value = value
+        _message.value = if (result.usedBackend) {
+            UiMessage(if (result.retryable) R.string.sync_failed else R.string.sync_complete)
+        } else {
+            UiMessage(R.string.sync_unavailable)
+        }
     }
 
     fun createWorkspace(name: String, type: ng.tiny.education.core.model.WorkspaceType) = viewModelScope.launch {
         if (name.isBlank()) {
-            _message.value = "Workspace name is required."
+            _message.value = UiMessage(R.string.required_field)
             return@launch
         }
         if (backendSyncEnabled && container.accountService.configured) {
             container.accountService.createWorkspace(name.trim(), type.name.lowercase())
                 .onSuccess { remote ->
                     repository.saveRemoteWorkspace(remote.workspaceId, name.trim(), type, remote.schoolCode)
-                    _message.value = "Workspace created: ${remote.schoolCode}"
+                    _message.value = UiMessage(R.string.workspace_created, remote.schoolCode)
                 }
-                .onFailure { _message.value = it.message ?: "Could not create workspace." }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         } else {
             repository.createLocalWorkspace(name, type)
-                .onSuccess { _message.value = "Local workspace created." }
-                .onFailure { _message.value = it.message ?: "Could not create workspace." }
+                .onSuccess { _message.value = UiMessage(R.string.local_workspace_created) }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         }
     }
 
@@ -217,13 +234,13 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
                         subjectSummary = subjectSummary,
                         teacherName = preferences.value.teacherName,
                     )
-                    _message.value = "Class created with the backend."
+                    _message.value = UiMessage(R.string.class_created_backend)
                 }
-                .onFailure { _message.value = it.message ?: "Could not create class." }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         } else {
             repository.createLocalClass(ws.id, gradeLevel, label, academicYear, subjectSummary, preferences.value.teacherName)
-                .onSuccess { _message.value = "Class created locally and queued." }
-                .onFailure { _message.value = it.message ?: "Could not create class." }
+                .onSuccess { _message.value = UiMessage(R.string.class_created_local) }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         }
     }
 
@@ -236,7 +253,7 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     ) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch
         if (displayName.isBlank() || phone.isBlank()) {
-            _message.value = "Guardian name and phone are required."
+            _message.value = UiMessage(R.string.required_field)
             return@launch
         }
         if (backendSyncEnabled && container.accountService.configured) {
@@ -248,15 +265,15 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
                             repository.saveRemoteGuardianAndLink(
                                 ws.id, pupilId, guardianId, displayName, phone, locale, relationship,
                             )
-                            _message.value = "Guardian linked with the backend."
+                            _message.value = UiMessage(R.string.guardian_linked_backend)
                         }
-                        .onFailure { _message.value = it.message ?: "Could not link guardian." }
+                        .onFailure { _message.value = UiMessage(R.string.error_generic) }
                 }
-                .onFailure { _message.value = it.message ?: "Could not add guardian." }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         } else {
             repository.addLocalGuardianAndLink(ws.id, pupilId, displayName, phone, locale, relationship)
-                .onSuccess { _message.value = "Guardian added locally; verification required." }
-                .onFailure { _message.value = it.message ?: "Could not add guardian." }
+                .onSuccess { _message.value = UiMessage(R.string.guardian_saved) }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         }
     }
 
@@ -266,14 +283,14 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
             container.accountService.requestGuardianVerification(ws.id, guardianId)
                 .onSuccess {
                     _guardianCode.value = it
-                    _message.value = "Verification code issued. Read it to the guardian in person."
+                    _message.value = UiMessage(R.string.verification_code_issued)
                 }
-                .onFailure { _message.value = it.message ?: "Could not request verification." }
+                .onFailure { _message.value = UiMessage(R.string.error_generic) }
         } else {
             val code = (100000..999999).random().toString()
             localGuardianChallenges[guardianId] = code
             _guardianCode.value = code
-            _message.value = "Preview verification code: $code"
+            _message.value = UiMessage(R.string.preview_verification_code, code)
         }
     }
 
@@ -284,18 +301,18 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
                 .onSuccess {
                     repository.markGuardianVerified(guardianId)
                     _guardianCode.value = null
-                    _message.value = "Guardian verified and opt-in recorded."
+                    _message.value = UiMessage(R.string.guardian_verified)
                 }
-                .onFailure { _message.value = it.message ?: "Verification failed." }
+                .onFailure { _message.value = UiMessage(R.string.verification_code_mismatch) }
         } else {
             val expected = localGuardianChallenges[guardianId]
             if (expected != null && expected == code.trim()) {
                 repository.markGuardianVerified(guardianId)
                 localGuardianChallenges.remove(guardianId)
                 _guardianCode.value = null
-                _message.value = "Guardian marked verified in the local preview."
+                _message.value = UiMessage(R.string.guardian_verified)
             } else {
-                _message.value = "The preview verification code does not match."
+                _message.value = UiMessage(R.string.verification_code_mismatch)
             }
         }
     }
@@ -306,16 +323,20 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
 
     fun refreshAiStatus() = viewModelScope.launch {
         if (!container.aiService.configured) {
-            _aiState.value = _aiState.value.copy(deviceStatus = "Firebase not configured")
+            _aiState.value = _aiState.value.copy(deviceStatus = DeviceAiStatus.NOT_CONFIGURED)
             return@launch
         }
         _aiState.value = _aiState.value.copy(deviceStatus = container.aiService.onDeviceStatus())
     }
 
+    fun setAiTask(task: AiTask) {
+        _aiState.value = _aiState.value.copy(task = task, text = null, source = null, error = false)
+    }
+
     fun requestAiSuggestion() = viewModelScope.launch {
         if (_aiState.value.busy) return@launch
-        _aiState.value = _aiState.value.copy(busy = true, error = null)
-        container.aiService.generateTeachingStrategy()
+        _aiState.value = _aiState.value.copy(busy = true, error = false)
+        container.aiService.generateTeachingStrategy(_aiState.value.task)
             .onSuccess { generation ->
                 _aiState.value = _aiState.value.copy(
                     busy = false,
@@ -324,10 +345,7 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
                 )
             }
             .onFailure {
-                _aiState.value = _aiState.value.copy(
-                    busy = false,
-                    error = it.message ?: "AI request failed.",
-                )
+                _aiState.value = _aiState.value.copy(busy = false, error = true)
             }
     }
 
@@ -341,7 +359,7 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
             repository.applyRemoteBootstrap(bootstrap)
             container.syncScheduler.requestSync()
         }.onFailure {
-            _message.value = "Firebase bootstrap failed: ${it.message ?: "unknown error"}"
+            _message.value = UiMessage(R.string.storage_bootstrap_failed)
         }
     }
 

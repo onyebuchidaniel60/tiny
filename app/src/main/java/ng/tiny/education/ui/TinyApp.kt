@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,11 +30,15 @@ import ng.tiny.education.R
 import ng.tiny.education.ui.components.TinyBottomBar
 import ng.tiny.education.ui.components.TinyTab
 import ng.tiny.education.ui.components.TinyTopBar
-import ng.tiny.education.ui.screens.AttendanceScreen
+import ng.tiny.education.ui.components.TourDialog
+import ng.tiny.education.ui.components.guardianTourSteps
+import ng.tiny.education.ui.components.teacherTourSteps
 import ng.tiny.education.ui.screens.AiAssistantScreen
+import ng.tiny.education.ui.screens.AttendanceScreen
 import ng.tiny.education.ui.screens.ClassDetailScreen
 import ng.tiny.education.ui.screens.ClassesScreen
 import ng.tiny.education.ui.screens.ConversationScreen
+import ng.tiny.education.ui.screens.HelpScreen
 import ng.tiny.education.ui.screens.HomeScreen
 import ng.tiny.education.ui.screens.LanguageScreen
 import ng.tiny.education.ui.screens.LessonDetailScreen
@@ -56,6 +62,10 @@ private const val ROUTE_CONVERSATION = "conversation/{conversationId}"
 private const val ROUTE_PROGRESS = "progress/{pupilId}"
 private const val ROUTE_SETTINGS = "settings"
 private const val ROUTE_SYNC = "sync"
+private const val ROUTE_HELP = "help"
+
+private const val TOUR_TEACHER = "teacher"
+private const val TOUR_GUARDIAN = "guardian"
 
 @Composable
 fun TinyApp(container: AppContainer) {
@@ -106,16 +116,30 @@ fun TinyApp(container: AppContainer) {
 private fun MainShell(viewModel: TinyViewModel) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     val message by viewModel.message.collectAsStateWithLifecycle()
+    val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val route = backStackEntry?.destination?.route
     val isMainRoute = route == ROUTE_HOME || route == ROUTE_CLASSES || route == ROUTE_LESSONS || route == ROUTE_MESSAGES
+    var activeTour by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(message) {
         message?.let {
-            snackbarHostState.showSnackbar(it)
+            snackbarHostState.showSnackbar(context.getString(it.resId, *it.args.toTypedArray()))
             viewModel.clearMessage()
         }
+    }
+
+    // First-use teacher tour. Skipping also marks it complete so it does not
+    // block the classroom workflow again.
+    LaunchedEffect(preferences.onboarded, preferences.teacherTourCompleted) {
+        if (preferences.onboarded && !preferences.teacherTourCompleted) activeTour = TOUR_TEACHER
+    }
+    // Guardian families use SMS, not this app. The guide is shown once when the
+    // teacher first opens the family inbox so its limits are clear.
+    LaunchedEffect(route, preferences.guardianTourCompleted) {
+        if (route == ROUTE_MESSAGES && !preferences.guardianTourCompleted) activeTour = TOUR_GUARDIAN
     }
 
     Scaffold(
@@ -124,7 +148,8 @@ private fun MainShell(viewModel: TinyViewModel) {
             TinyTopBar(
                 title = titleForRoute(route),
                 onSettings = { navController.navigate(ROUTE_SETTINGS) },
-                onBack = if (isMainRoute) null else ({ navController.popBackStack() }),
+                onHelp = { navController.navigate(ROUTE_HELP) },
+                onBack = if (isMainRoute || route == ROUTE_HELP) null else ({ navController.popBackStack() }),
             )
         },
         bottomBar = {
@@ -153,6 +178,7 @@ private fun MainShell(viewModel: TinyViewModel) {
                     onOpenMessages = { navController.navigate(ROUTE_MESSAGES) },
                     onOpenLesson = { navController.navigate(ROUTE_LESSONS) },
                     onOpenSync = { navController.navigate(ROUTE_SYNC) },
+                    onShowTour = { activeTour = TOUR_TEACHER },
                 )
             }
             composable(ROUTE_CLASSES) {
@@ -229,12 +255,54 @@ private fun MainShell(viewModel: TinyViewModel) {
                 )
             }
             composable(ROUTE_SETTINGS) {
-                SettingsScreen(viewModel = viewModel, onOpenSync = { navController.navigate(ROUTE_SYNC) })
+                SettingsScreen(
+                    viewModel = viewModel,
+                    onOpenSync = { navController.navigate(ROUTE_SYNC) },
+                    onOpenHelp = { navController.navigate(ROUTE_HELP) },
+                    onShowTeacherTour = { activeTour = TOUR_TEACHER },
+                    onShowGuardianTour = { activeTour = TOUR_GUARDIAN },
+                )
             }
             composable(ROUTE_SYNC) {
                 SyncScreen(viewModel = viewModel, onBack = { navController.popBackStack() })
             }
+            composable(ROUTE_HELP) {
+                HelpScreen(
+                    onBack = { navController.popBackStack() },
+                    onShowTeacherTour = { activeTour = TOUR_TEACHER },
+                    onShowGuardianTour = { activeTour = TOUR_GUARDIAN },
+                )
+            }
         }
+    }
+
+    when (activeTour) {
+        TOUR_TEACHER -> TourDialog(
+            titleRes = R.string.tour_teacher_title,
+            introRes = R.string.tour_teacher_intro,
+            steps = teacherTourSteps(),
+            onComplete = {
+                viewModel.setTeacherTourCompleted(true)
+                activeTour = null
+            },
+            onDismiss = {
+                viewModel.setTeacherTourCompleted(true)
+                activeTour = null
+            },
+        )
+        TOUR_GUARDIAN -> TourDialog(
+            titleRes = R.string.tour_guardian_title,
+            introRes = R.string.tour_guardian_intro,
+            steps = guardianTourSteps(),
+            onComplete = {
+                viewModel.setGuardianTourCompleted(true)
+                activeTour = null
+            },
+            onDismiss = {
+                viewModel.setGuardianTourCompleted(true)
+                activeTour = null
+            },
+        )
     }
 }
 
@@ -242,15 +310,16 @@ private fun MainShell(viewModel: TinyViewModel) {
 private fun titleForRoute(route: String?): String = when (route) {
     ROUTE_HOME -> stringResource(R.string.nav_home)
     ROUTE_CLASSES -> stringResource(R.string.nav_classes)
-    ROUTE_CLASS_DETAIL -> stringResource(R.string.class_detail_title)
+    ROUTE_CLASS_DETAIL -> stringResource(R.string.classes_title)
     ROUTE_ATTENDANCE -> stringResource(R.string.attendance_title)
     ROUTE_LESSONS -> stringResource(R.string.nav_lessons)
     ROUTE_LESSON_DETAIL -> stringResource(R.string.lesson_plan)
     ROUTE_AI -> stringResource(R.string.ai_title)
     ROUTE_MESSAGES -> stringResource(R.string.nav_messages)
-    ROUTE_CONVERSATION -> stringResource(R.string.conversation_title)
+    ROUTE_CONVERSATION -> stringResource(R.string.conversation)
     ROUTE_PROGRESS -> stringResource(R.string.progress_title)
     ROUTE_SETTINGS -> stringResource(R.string.settings_title)
     ROUTE_SYNC -> stringResource(R.string.sync_center_title)
+    ROUTE_HELP -> stringResource(R.string.help_title)
     else -> stringResource(R.string.app_name)
 }

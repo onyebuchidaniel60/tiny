@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.MailOutline
 import androidx.compose.material.icons.outlined.Refresh
@@ -28,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,20 +35,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ng.tiny.education.R
 import ng.tiny.education.core.database.ClassroomEntity
 import ng.tiny.education.ui.TinyViewModel
-import ng.tiny.education.ui.components.DoodleUnderline
 import ng.tiny.education.ui.components.InfoBanner
 import ng.tiny.education.ui.components.PaperCard
-import ng.tiny.education.ui.components.PreviewChip
 import ng.tiny.education.ui.components.SectionHeading
 import ng.tiny.education.ui.components.StatusPill
 import ng.tiny.education.ui.components.TinyAvatar
 import ng.tiny.education.ui.components.TinyPrimaryButton
+import ng.tiny.education.ui.components.TinySecondaryButton
 import ng.tiny.education.ui.theme.TinyButter
 import ng.tiny.education.ui.theme.TinyCobalt
 import ng.tiny.education.ui.theme.TinyForest
 import ng.tiny.education.ui.theme.TinyTomato
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -58,6 +59,7 @@ fun HomeScreen(
     onOpenMessages: () -> Unit,
     onOpenLesson: () -> Unit,
     onOpenSync: () -> Unit,
+    onShowTour: () -> Unit,
 ) {
     val workspace by viewModel.workspace.collectAsStateWithLifecycle()
     val classes by viewModel.classes.collectAsStateWithLifecycle()
@@ -66,7 +68,9 @@ fun HomeScreen(
     val unread by viewModel.unreadMessageCount.collectAsStateWithLifecycle()
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val today = remember { LocalDate.now() }
-    val dateLabel = remember(today) { today.format(DateTimeFormatter.ofPattern("EEEE, d MMMM")) }
+    val dateLabel = remember(today, Locale.getDefault()) {
+        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+    }
     val statsReady = workspace != null && (classes.isNotEmpty() || pupilCount > 0)
 
     LazyColumn(
@@ -76,12 +80,6 @@ fun HomeScreen(
         item {
             Row(verticalAlignment = Alignment.Top) {
                 Column(Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        StatusPill(stringResource(R.string.preview_build), TinyCobalt)
-                        Spacer(Modifier.width(8.dp))
-                        StatusPill(stringResource(R.string.home_sample_data), TinyTomato)
-                    }
-                    Spacer(Modifier.height(10.dp))
                     Text(
                         text = stringResource(R.string.home_greeting, preferences.teacherName),
                         style = MaterialTheme.typography.headlineMedium,
@@ -92,20 +90,19 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
-                PreviewChip()
+                StatusPill(stringResource(R.string.saved_on_device), TinyForest)
             }
-            DoodleUnderline(Modifier.width(150.dp), TinyTomato)
         }
 
         item {
             PaperCard {
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        TinyAvatar(workspace?.name ?: "Tiny")
+                        TinyAvatar(workspace?.name ?: stringResource(R.string.demo_school_name))
                         Spacer(Modifier.width(12.dp))
                         Column(Modifier.weight(1f)) {
                             Text(
-                                workspace?.name ?: stringResource(R.string.school_demo_name),
+                                workspace?.name ?: stringResource(R.string.demo_school_name),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                             )
@@ -115,13 +112,12 @@ fun HomeScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
-                        StatusPill(stringResource(R.string.mock_mode), TinyForest)
                     }
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        HomeStat(if (statsReady) "${classes.size}" else "—", stringResource(R.string.nav_classes), TinyCobalt, Modifier.weight(1f))
-                        HomeStat(if (statsReady) "$pupilCount" else "—", "Pupils", TinyTomato, Modifier.weight(1f))
-                        HomeStat(if (statsReady) "$pending" else "—", "Pending", TinyButter, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "${classes.size}" else "—", stringResource(R.string.home_classes), TinyCobalt, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "$pupilCount" else "—", stringResource(R.string.home_pupils), TinyTomato, Modifier.weight(1f))
+                        HomeStat(if (statsReady) "$pending" else "—", stringResource(R.string.home_pending), TinyButter, Modifier.weight(1f))
                     }
                 }
             }
@@ -137,23 +133,23 @@ fun HomeScreen(
         item {
             SectionHeading(
                 title = stringResource(R.string.home_quick_actions),
-                subtitle = "Get the classroom work done with fewer taps.",
+                subtitle = stringResource(R.string.home_today),
             )
         }
 
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 QuickAction(
-                    title = "Attendance",
-                    subtitle = "Mark a register",
+                    title = stringResource(R.string.attendance_title),
+                    subtitle = stringResource(R.string.mark_attendance),
                     icon = Icons.Outlined.List,
                     tint = TinyForest,
                     onClick = { classes.firstOrNull()?.let { onOpenAttendance(it.id) } },
                     modifier = Modifier.weight(1f),
                 )
                 QuickAction(
-                    title = "Lesson",
-                    subtitle = "Open a 5E plan",
+                    title = stringResource(R.string.lessons_title),
+                    subtitle = stringResource(R.string.home_lesson_plans_body),
                     icon = Icons.Outlined.Star,
                     tint = TinyCobalt,
                     onClick = onOpenLesson,
@@ -165,16 +161,16 @@ fun HomeScreen(
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 QuickAction(
-                    title = "Messages",
-                    subtitle = if (unread > 0) "$unread unread" else "Parent inbox",
+                    title = stringResource(R.string.messages_title),
+                    subtitle = if (unread > 0) stringResource(R.string.unread_count, unread) else stringResource(R.string.home_no_unread),
                     icon = Icons.Outlined.MailOutline,
                     tint = TinyTomato,
                     onClick = onOpenMessages,
                     modifier = Modifier.weight(1f),
                 )
                 QuickAction(
-                    title = "Sync",
-                    subtitle = if (pending > 0) "$pending local" else "Up to date",
+                    title = stringResource(R.string.sync_title),
+                    subtitle = if (pending > 0) stringResource(R.string.sync_pending) else stringResource(R.string.saved_on_device),
                     icon = Icons.Outlined.Refresh,
                     tint = TinyForest,
                     onClick = onOpenSync,
@@ -186,14 +182,14 @@ fun HomeScreen(
         item {
             SectionHeading(
                 title = stringResource(R.string.home_today),
-                subtitle = "Your classes and the next useful action.",
+                subtitle = stringResource(R.string.classes_subtitle),
             )
         }
 
         if (classes.isEmpty()) {
             item {
                 PaperCard {
-                    Text("Preparing your demo workspace…", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.loading_workspace), style = MaterialTheme.typography.bodyLarge)
                 }
             }
         } else {
@@ -213,9 +209,9 @@ fun HomeScreen(
                     Icon(Icons.Outlined.MailOutline, contentDescription = null, tint = TinyTomato)
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(stringResource(R.string.home_messages), style = MaterialTheme.typography.titleMedium)
+                        Text(stringResource(R.string.home_parent_messages), style = MaterialTheme.typography.titleMedium)
                         Text(
-                            if (unread > 0) "$unread conversation needs a reply" else "No unread parent messages",
+                            if (unread > 0) pluralStringResource(R.plurals.home_unread_needs_reply, unread, unread) else stringResource(R.string.home_no_unread),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -226,16 +222,23 @@ fun HomeScreen(
         }
 
         item {
-            TinyPrimaryButton(
-                text = "Open the preview workspace",
-                onClick = onOpenClasses,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                TinyPrimaryButton(
+                    text = stringResource(R.string.home_open_classes),
+                    onClick = onOpenClasses,
+                    modifier = Modifier.weight(1f),
+                )
+                TinySecondaryButton(
+                    text = stringResource(R.string.home_tour_start),
+                    onClick = onShowTour,
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
 
         item {
             Text(
-                stringResource(R.string.preview_notice),
+                stringResource(R.string.preview_data_notice),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 8.dp),
@@ -246,10 +249,7 @@ fun HomeScreen(
 
 @Composable
 private fun HomeStat(value: String, label: String, color: Color, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .padding(vertical = 4.dp),
-    ) {
+    Column(modifier = modifier.padding(vertical = 4.dp)) {
         Text(value, style = MaterialTheme.typography.headlineSmall, color = color, fontWeight = FontWeight.Black)
         Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
@@ -284,11 +284,7 @@ private fun ClassTodayCard(
     val count by pupilCountFlow.collectAsStateWithLifecycle(initialValue = 0)
     PaperCard(onClick = onOpenClass) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .padding(0.dp),
-            ) {
+            Box(modifier = Modifier.size(48.dp)) {
                 Text(
                     classroom.gradeLevel,
                     style = MaterialTheme.typography.headlineSmall,
@@ -300,7 +296,7 @@ private fun ClassTodayCard(
             Column(Modifier.weight(1f)) {
                 Text("${classroom.gradeLevel} ${classroom.label}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(
-                    "$count pupils · ${classroom.subjectSummary}",
+                    pluralStringResource(R.plurals.classes_pupil_count, count, count),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -313,7 +309,7 @@ private fun ClassTodayCard(
                 onClick = onOpenAttendance,
                 modifier = Modifier.weight(1f),
             )
-            StatusPill("Local", TinyCobalt)
+            StatusPill(stringResource(R.string.saved_on_device), TinyCobalt)
         }
     }
 }

@@ -10,6 +10,7 @@ import {
 import { httpsCallable } from 'firebase/functions';
 import { db, functions, isEmulatorMode } from '../firebase/config';
 import { useAuth } from '../firebase/auth';
+import { useI18n } from '../i18n';
 import { seedState } from '../data/seed';
 import { clearLocalData, loadState, saveState } from '../data/db';
 import { validateAttendance } from '../domain';
@@ -33,9 +34,6 @@ import type {
 
 const id = (prefix: string) => `${prefix}_${crypto.randomUUID()}`;
 const now = () => new Date().toISOString();
-
-const remoteSyncUnavailable =
-  'Server sync is unavailable in this Spark preview. Cloud Functions are emulator-only; this item is saved on this device.';
 
 interface StoreValue {
   state: AppState;
@@ -100,7 +98,11 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
   const data = workspaceSnap.data();
   const workspace: Workspace = {
     id: workspaceId,
-    name: remoteString(data.name, 'Workspace'),
+    // The project's non-production evaluation workspace was seeded with a
+    // development label. Present the same sample school without that label.
+    name: remoteString(data.name, 'Workspace') === 'Tiny Synthetic E2E'
+      ? 'Kofar Primary'
+      : remoteString(data.name, 'Workspace'),
     type: data.type === 'independent' ? 'independent' : 'school',
     schoolCode: remoteString(data.schoolCode, '--------'),
     verificationStatus: remoteString(data.verificationStatus, 'active_unverified'),
@@ -289,6 +291,8 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { user, mode: authMode } = useAuth();
+  const { t } = useI18n();
+  const remoteSyncUnavailable = t('sync_unavailable');
   const [state, setState] = useState<AppState>(seedState);
   const stateRef = useRef(state);
   const [ready, setReady] = useState(false);
@@ -323,7 +327,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     try {
       const remote = await readRemote(user.uid);
       if (!remote) {
-        setMessage('Signed in. No remote workspace exists for this account; showing the synthetic local workspace.');
+        setMessage(t('storage_no_remote'));
         return;
       }
       update((current) => ({
@@ -334,9 +338,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         version: 1,
         workspace: remote.workspace ?? current.workspace,
       }));
-      setMessage('Firestore workspace loaded. Writes remain local until a server sync path is available.');
-    } catch (error) {
-      setMessage(`Firestore bootstrap failed: ${error instanceof Error ? error.message : 'unknown error'}`);
+      setMessage(t('storage_remote_loaded'));
+    } catch {
+      setMessage(t('storage_bootstrap_failed'));
     }
   };
 
@@ -387,7 +391,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       return current;
     });
-    setMessage('Class saved locally. It will sync only where a server sync path is available.');
+    setMessage(t('class_saved_local'));
     return classroom;
   };
 
@@ -406,7 +410,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       enqueue(current, 'pupil.register', { classId, pupilId: pupil.id, displayName, localPupilCode: localCode });
       return current;
     });
-    setMessage('Pupil registered on this device; server sync is queued.');
+    setMessage(t('pupil_saved_local'));
     return pupil;
   };
 
@@ -432,14 +436,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       return current;
     });
-    setMessage('Guardian saved locally. Verify consent before any real parent message.');
+    setMessage(t('guardian_saved'));
     return guardian;
   };
 
   const linkGuardian: StoreValue['linkGuardian'] = (pupilId, guardianId, relationshipLabel) => {
     const pupil = state.pupils.find((item) => item.id === pupilId);
     const guardian = state.guardians.find((item) => item.id === guardianId);
-    if (!pupil || !guardian) throw new Error('Pupil or guardian not found.');
+    if (!pupil || !guardian) throw new Error(t('pupil_guardian_required'));
     const link: PupilGuardianLink = {
       id: id('link'),
       workspaceId: state.workspace.id,
@@ -459,7 +463,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       enqueue(current, 'guardian.link', { pupilId, guardianId, relationshipLabel, notificationEligible: true });
       return current;
     });
-    setMessage('Guardian linked to pupil on this device.');
+    setMessage(t('guardian_link_saved'));
   };
 
   const saveAttendance: StoreValue['saveAttendance'] = (classId, schoolDate, entries, submit) => {
@@ -467,12 +471,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (submit) {
       const validation = validateAttendance(active.map((pupil) => pupil.id), entries);
       if (!validation.valid) {
-        const details = validation.missing.length > 0
-          ? `${validation.missing.length} pupil(s) unmarked`
-          : validation.unknown.length > 0
-            ? 'Unknown pupil entry'
-            : 'Duplicate pupil entry';
-        throw new Error(`Mark all ${active.length} active pupils before submitting. ${details}.`);
+        throw new Error(t('attendance_submit_incomplete', { count: active.length }));
       }
     }
     const session: AttendanceSession = {
@@ -490,7 +489,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (submit) enqueue(current, 'attendance.submit', { classId, schoolDate, entries });
       return current;
     });
-    setMessage(submit ? 'Attendance submitted locally. Absence messages are not sent until the server accepts the register.' : 'Attendance draft saved on this device.');
+    setMessage(submit ? t('attendance_submitted_body') : t('attendance_saved'));
   };
 
   const saveLesson: StoreValue['saveLesson'] = (lesson) => {
@@ -505,7 +504,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       current.lessons = upsert(current.lessons, saved);
       return current;
     });
-    setMessage('Lesson saved locally and available offline.');
+    setMessage(t('lesson_saved'));
     return saved;
   };
 
@@ -533,7 +532,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       });
       return current;
     });
-    setMessage(approve ? 'Progress approved locally. It can be shared only after server acceptance.' : 'Progress draft saved on this device.');
+    setMessage(approve ? t('progress_approved') : t('progress_saved'));
     return saved;
   };
 
@@ -548,14 +547,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       }
       return current;
     });
-    setMessage('Progress approved locally; server sync is queued.');
+    setMessage(t('progress_approved'));
   };
 
   const sendMessage: StoreValue['sendMessage'] = (conversationId, body) => {
     const trimmed = body.trim();
     if (!trimmed) return;
     const conversation = state.conversations.find((item) => item.id === conversationId);
-    if (!conversation) throw new Error('Conversation not found.');
+    if (!conversation) throw new Error(t('conversation_not_found'));
     const message: Message = {
       id: id('msg'),
       conversationId,
@@ -589,7 +588,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     } catch {
       // BroadcastChannel is optional.
     }
-    setMessage('Reply queued on this device. It is not a delivery confirmation.');
+    setMessage(t('reply_queued'));
   };
 
   const receiveGuardianMessage: StoreValue['receiveGuardianMessage'] = (conversationId, body, broadcast = true) => {
@@ -664,7 +663,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setSyncing(true);
     try {
       if (pending.length === 0) {
-        setMessage('No queued commands to sync.');
+        setMessage(t('no_queued_commands'));
         return;
       }
       if (!functions || !isEmulatorMode) {
@@ -676,7 +675,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           );
           return current;
         });
-        setMessage('Server sync is unavailable in this Spark preview. Queued work remains saved locally.');
+        setMessage(t('sync_unavailable'));
         return;
       }
       const callable = httpsCallable(functions, 'syncCommands');
@@ -711,7 +710,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         });
         return current;
       });
-      setMessage('Emulator sync completed. Review any conflict or rejected items.');
+      setMessage(t('sync_complete'));
     } catch (error) {
       update((current) => {
         current.outbox = current.outbox.map((item) =>
@@ -721,7 +720,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         );
         return current;
       });
-      setMessage('Sync attempt failed. Queued work remains on this device.');
+      setMessage(t('sync_failed'));
     } finally {
       setSyncing(false);
     }
@@ -740,7 +739,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     stateRef.current = seed;
     setState(seed);
     void saveState(seed);
-    setMessage('Local demo data reset. This does not delete any Firebase data.');
+    setMessage(t('reset_local_done'));
   };
 
   const value = useMemo<StoreValue>(() => ({
@@ -765,7 +764,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     refreshRemote,
     updateSettings,
     resetDemo,
-  }), [state, ready, message, syncing, user]);
+  }), [state, ready, message, syncing, user, t]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

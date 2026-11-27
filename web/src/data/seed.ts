@@ -11,7 +11,7 @@ export function seedState(): AppState {
     mode: 'demo',
     workspace: {
       id: ws,
-      name: 'Kofar Demo Primary',
+      name: 'Kofar Primary',
       type: 'school',
       schoolCode: 'KOFAR001',
       verificationStatus: 'active_unverified',

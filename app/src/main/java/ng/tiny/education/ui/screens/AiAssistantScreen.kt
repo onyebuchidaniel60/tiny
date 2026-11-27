@@ -1,6 +1,7 @@
 package ng.tiny.education.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ng.tiny.education.R
+import ng.tiny.education.core.ai.AiTask
+import ng.tiny.education.core.ai.DeviceAiStatus
 import ng.tiny.education.ui.TinyViewModel
 import ng.tiny.education.ui.components.InfoBanner
 import ng.tiny.education.ui.components.PaperCard
@@ -47,6 +51,15 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
         stringResource(R.string.ai_strategy_3_title) to stringResource(R.string.ai_strategy_3_body),
     )
     LaunchedEffect(Unit) { viewModel.refreshAiStatus() }
+    val available = aiState.deviceStatus == DeviceAiStatus.AVAILABLE
+    val statusLabel = when (aiState.deviceStatus) {
+        DeviceAiStatus.AVAILABLE -> stringResource(R.string.ai_status_available_value)
+        DeviceAiStatus.DOWNLOADABLE -> stringResource(R.string.ai_status_downloadable_value)
+        DeviceAiStatus.DOWNLOADING -> stringResource(R.string.ai_status_downloading_value)
+        DeviceAiStatus.NOT_CONFIGURED -> stringResource(R.string.ai_status_not_configured_value)
+        DeviceAiStatus.UNAVAILABLE -> stringResource(R.string.ai_status_unavailable_value)
+    }
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -64,30 +77,74 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Outlined.Info, contentDescription = null, tint = TinyCobalt)
                     Spacer(Modifier.width(12.dp))
-                    androidx.compose.foundation.layout.Column(Modifier.weight(1f)) {
-                        Text("On-device model: ${aiState.deviceStatus}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Column(Modifier.weight(1f)) {
                         Text(
-                            if (aiState.deviceStatus == "Available") "Gemini Nano is available on this device."
-                            else "Cloud inference is used when the on-device model is unavailable; the curated fallback remains available.",
+                            stringResource(R.string.ai_device_model, statusLabel),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Text(
+                            if (available) stringResource(R.string.ai_device_available) else stringResource(R.string.ai_device_unavailable),
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
-                    StatusPill(if (aiState.deviceStatus == "Available") "Nano" else "Fallback", if (aiState.deviceStatus == "Available") TinyForest else TinyTomato)
+                    StatusPill(
+                        stringResource(if (available) R.string.ai_nano_short else R.string.ai_fallback_short),
+                        if (available) TinyForest else TinyTomato,
+                    )
                 }
             }
         }
         item {
             PaperCard {
-                androidx.compose.foundation.layout.Column {
-                    Text("Ask the teaching helper", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Column {
+                    Text(stringResource(R.string.ai_ask_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(6.dp))
-                    Text(
-                        "Uses a de-identified Primary 4 science prompt. Teacher review is required before using or sharing any suggestion.",
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                    Text(stringResource(R.string.ai_ask_body), style = MaterialTheme.typography.bodySmall)
+                    Spacer(Modifier.height(10.dp))
+                    Text(stringResource(R.string.ai_mode_label), style = MaterialTheme.typography.labelLarge)
+                    Spacer(Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = aiState.task == AiTask.LESSON_PLAN,
+                            onClick = { viewModel.setAiTask(AiTask.LESSON_PLAN) },
+                            label = { Text(stringResource(R.string.ai_mode_lesson_plan)) },
+                        )
+                        FilterChip(
+                            selected = aiState.task == AiTask.EXPLAIN,
+                            onClick = { viewModel.setAiTask(AiTask.EXPLAIN) },
+                            label = { Text(stringResource(R.string.ai_mode_explain)) },
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = aiState.task == AiTask.ADAPT,
+                            onClick = { viewModel.setAiTask(AiTask.ADAPT) },
+                            label = { Text(stringResource(R.string.ai_mode_adapt)) },
+                        )
+                        FilterChip(
+                            selected = aiState.task == AiTask.ASSESS,
+                            onClick = { viewModel.setAiTask(AiTask.ASSESS) },
+                            label = { Text(stringResource(R.string.ai_mode_assess)) },
+                        )
+                    }
+                    Spacer(Modifier.height(6.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(
+                            selected = aiState.task == AiTask.SUPPORT,
+                            onClick = { viewModel.setAiTask(AiTask.SUPPORT) },
+                            label = { Text(stringResource(R.string.ai_mode_support)) },
+                        )
+                        FilterChip(
+                            selected = aiState.task == AiTask.PARENT_NOTE,
+                            onClick = { viewModel.setAiTask(AiTask.PARENT_NOTE) },
+                            label = { Text(stringResource(R.string.ai_mode_parent_note)) },
+                        )
+                    }
                     Spacer(Modifier.height(10.dp))
                     TinyPrimaryButton(
-                        text = if (aiState.busy) "Thinking..." else "Generate a strategy",
+                        text = if (aiState.busy) stringResource(R.string.ai_thinking) else stringResource(R.string.ai_generate),
                         onClick = { viewModel.requestAiSuggestion() },
                         enabled = !aiState.busy,
                         modifier = Modifier.fillMaxWidth(),
@@ -97,21 +154,21 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
                         Text(text, style = MaterialTheme.typography.bodyMedium)
                         Spacer(Modifier.height(6.dp))
                         Text(
-                            "Source: ${aiState.source ?: "unknown"}",
+                            stringResource(R.string.ai_source) + ": " + (aiState.source ?: stringResource(R.string.status_unknown)),
                             style = MaterialTheme.typography.labelSmall,
                             color = TinyCobalt,
                         )
                     }
-                    aiState.error?.let { error ->
+                    if (aiState.error) {
                         Spacer(Modifier.height(10.dp))
-                        InfoBanner(error, tone = TinyTomato)
+                        InfoBanner(stringResource(R.string.ai_error), tone = TinyTomato)
                     }
                 }
             }
         }
         item {
             PaperCard {
-                androidx.compose.foundation.layout.Column {
+                Column {
                     Text(stringResource(R.string.ai_offline_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(6.dp))
                     StatusPill(stringResource(R.string.ai_source_offline), TinyForest)
@@ -123,7 +180,7 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
                     Text(strategies[strategyIndex].second, style = MaterialTheme.typography.bodyLarge)
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "${stringResource(R.string.ai_source_label)}: ${stringResource(R.string.ai_source_offline)}",
+                        stringResource(R.string.ai_source) + ": " + stringResource(R.string.ai_source_offline),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -131,7 +188,7 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
             }
         }
         item {
-            TinyPrimaryButton(
+            TinySecondaryButton(
                 text = stringResource(R.string.ai_try),
                 onClick = { strategyIndex = (strategyIndex + 1) % strategies.size },
                 modifier = Modifier.fillMaxWidth(),
@@ -139,7 +196,7 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
         }
         item {
             Text(
-                "Hybrid AI acceptance: on-device Gemini Nano requires supported physical hardware and is not claimed here. Cloud AI uses the non-production Firebase project, and the source label comes from the SDK response, never from configuration alone.",
+                stringResource(R.string.ai_acceptance_note),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -31,18 +31,28 @@ function db() {
   return dbPromise;
 }
 
+function migrateState(state: AppState): AppState {
+  // Remove the development-only school label from previously saved local
+  // workspaces without touching any pupil, guardian or attendance record.
+  if (state.workspace?.name === 'Kofar Demo Primary') {
+    return { ...state, workspace: { ...state.workspace, name: 'Kofar Primary' } };
+  }
+  return state;
+}
+
 export async function loadState(): Promise<AppState | null> {
   // localStorage is written synchronously before IndexedDB. Reading it first
   // avoids restoring a stale IndexedDB record when a page navigates or reloads
   // immediately after an edit. IndexedDB remains the durable primary store.
   try {
     const raw = localStorage.getItem(LOCAL_BACKUP);
-    if (raw) return JSON.parse(raw) as AppState;
+    if (raw) return migrateState(JSON.parse(raw) as AppState);
   } catch {
     // Fall through to IndexedDB if localStorage is unavailable or corrupt.
   }
   try {
-    return await (await db()).get('state', STATE_KEY) ?? null;
+    const saved = await (await db()).get('state', STATE_KEY) ?? null;
+    return saved ? migrateState(saved) : null;
   } catch {
     // IndexedDB may be unavailable in private mode.
     return null;

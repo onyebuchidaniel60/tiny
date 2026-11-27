@@ -1,5 +1,6 @@
 package ng.tiny.education.ui.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +38,14 @@ import ng.tiny.education.ui.theme.TinyCobalt
 import ng.tiny.education.ui.theme.TinyForest
 import ng.tiny.education.ui.theme.TinyTomato
 
+@StringRes
+private fun subjectLabelRes(subjectId: String): Int = when (subjectId) {
+    "mathematics" -> R.string.subject_mathematics
+    "english" -> R.string.subject_english
+    "social_studies" -> R.string.subject_social_studies
+    else -> R.string.subject_basic_science
+}
+
 @Composable
 fun LessonsScreen(
     viewModel: TinyViewModel,
@@ -55,7 +64,7 @@ fun LessonsScreen(
             )
             Spacer(Modifier.height(8.dp))
             InfoBanner(
-                "These plans are stored locally. They are teacher-authored scaffolds, not a claim of full NERDC curriculum coverage.",
+                stringResource(R.string.honest_scope_body),
                 tone = TinyCobalt,
             )
         }
@@ -66,9 +75,9 @@ fun LessonsScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
                         Text(stringResource(R.string.ai_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                        Text("Curated offline help when a model is unavailable.", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.ai_subtitle), style = MaterialTheme.typography.bodySmall)
                     }
-                    StatusPill("Optional", TinyCobalt)
+                    StatusPill(stringResource(R.string.ai_optional), TinyCobalt)
                 }
             }
         }
@@ -85,13 +94,13 @@ fun LessonsScreen(
             }
         }
         item {
-            SectionHeading(title = "Saved plans", subtitle = "5E structure, available without a network.")
+            SectionHeading(title = stringResource(R.string.saved_plans), subtitle = stringResource(R.string.saved_plans_subtitle))
         }
         items(lessons, key = { it.id }) { lesson ->
             LessonCard(lesson = lesson, onClick = { onOpenLesson(lesson.id) })
         }
         if (lessons.isEmpty()) {
-            item { PaperCard { Text("No lesson plans yet.") } }
+            item { PaperCard { Text(stringResource(R.string.no_lessons)) } }
         }
     }
 }
@@ -103,7 +112,7 @@ private fun LessonCard(lesson: LessonPlanEntity, onClick: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                     StatusPill(lesson.gradeLevel, TinyForest)
-                    StatusPill(lesson.subjectId.replace('_', ' '), TinyCobalt)
+                    StatusPill(stringResource(subjectLabelRes(lesson.subjectId)), TinyCobalt)
                 }
                 Spacer(Modifier.height(8.dp))
                 Text(lesson.topic, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
@@ -133,20 +142,26 @@ fun LessonDetailScreen(
     ) {
         item {
             lesson?.let { plan ->
-                SectionHeading(title = plan.topic, subtitle = "${plan.gradeLevel} · ${plan.subjectId.replace('_', ' ')}")
+                SectionHeading(
+                    title = plan.topic,
+                    subtitle = "${plan.gradeLevel} · ${stringResource(subjectLabelRes(plan.subjectId))}",
+                )
                 Spacer(Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     StatusPill(stringResource(R.string.duration_minutes, plan.durationMinutes), TinyCobalt)
-                    StatusPill("Offline", TinyForest)
+                    StatusPill(stringResource(R.string.offline_available), TinyForest)
                 }
             }
         }
         lesson?.let { plan ->
-            item { LessonSection(stringResource(R.string.objective_label), plan.objective) }
+            item { LessonSection(stringResource(R.string.lesson_objective), plan.objective) }
             item { LessonSection(stringResource(R.string.materials), plan.materials) }
             item { LessonSection(stringResource(R.string.prior_knowledge), plan.priorKnowledge) }
             item {
-                SectionHeading(title = stringResource(R.string.lesson_5e), subtitle = "A practical sequence, not a script.")
+                SectionHeading(
+                    title = stringResource(R.string.lesson_5e),
+                    subtitle = stringResource(R.string.honest_scope_body),
+                )
             }
             item { LessonSection(stringResource(R.string.engage), plan.engage) }
             item { LessonSection(stringResource(R.string.explore), plan.explore) }
@@ -156,19 +171,19 @@ fun LessonDetailScreen(
             item {
                 TinyPrimaryButton(
                     text = stringResource(R.string.save_lesson),
-                    onClick = { viewModel.showMessage("Lesson is already saved locally in this preview.") },
+                    onClick = { viewModel.showMessage(R.string.lesson_saved) },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
             item {
                 InfoBanner(
-                    "Curriculum source/version metadata is not yet attached to this demo plan. Do not present it as a verified NERDC pack.",
+                    stringResource(R.string.curriculum_note),
                     tone = TinyTomato,
                 )
             }
         }
         if (lesson == null) {
-            item { PaperCard { Text("Lesson not found.") } }
+            item { PaperCard { Text(stringResource(R.string.lesson_not_found_body)) } }
         }
     }
 }

@@ -91,10 +91,8 @@ android {
     lint {
         abortOnError = true
         warningsAsErrors = false
-        // Draft Hausa/Yoruba/Igbo resources are partial and pending native review.
-        // Missing strings fall back to English; do not fail the build on the
-        // translation backlog while the functional gate is being completed.
-        disable += "MissingTranslation"
+        // Every locale now defines the same string/plural keys. Native language
+        // review remains a separate content-quality gate; see docs/LOCALIZATION.md.
     }
 }
 

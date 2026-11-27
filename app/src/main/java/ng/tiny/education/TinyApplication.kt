@@ -1,6 +1,8 @@
 package ng.tiny.education
 
 import android.app.Application
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,9 @@ class TinyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(PreferencesRepository.storedLanguage(this)),
+        )
         FirebaseRuntime.initialize(this)
         container = AppContainer(this)
         container.applicationScope.launch {

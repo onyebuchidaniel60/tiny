@@ -19,6 +19,9 @@ interface TinyDao {
     @Query("SELECT COUNT(*) FROM workspaces")
     suspend fun workspaceCount(): Int
 
+    @Query("UPDATE workspaces SET name = :replacement WHERE name = :oldName")
+    suspend fun renameWorkspace(oldName: String, replacement: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertWorkspace(workspace: WorkspaceEntity)
 

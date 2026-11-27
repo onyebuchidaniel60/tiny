@@ -1,5 +1,6 @@
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
 import { Icon } from './Icon';
+import { statusLabel, useI18n } from '../i18n';
 
 export function Card({ children, className = '', onClick }: { children: ReactNode; className?: string; onClick?: () => void }) {
   if (onClick) {
@@ -72,17 +73,9 @@ export function EmptyState({ icon = 'book', title, body, action }: { icon?: Para
 }
 
 export function StatusDot({ status }: { status: string }) {
+  const { t } = useI18n();
   const tone = status === 'synced' ? 'ok' : status === 'conflict' || status === 'failed' ? 'bad' : status === 'retryable' ? 'warn' : 'wait';
-  return <span className={`status-dot status-${tone}`} aria-label={status} />;
-}
-
-export function formatDate(value: string | null | undefined, options?: Intl.DateTimeFormatOptions) {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('en-NG', options ?? { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(value));
-}
-
-export function formatTime(value: string) {
-  return new Intl.DateTimeFormat('en-NG', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
+  return <span className={`status-dot status-${tone}`} aria-label={statusLabel(t, status)} />;
 }
 
 export function maskPhone(phone: string) {

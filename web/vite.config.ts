@@ -12,8 +12,8 @@ export default defineConfig({
         name: 'Tiny — teacher workspace',
         short_name: 'Tiny',
         description: 'Offline-first teacher workspace for rural primary schools.',
-        theme_color: '#1e5b48',
-        background_color: '#f7f0e1',
+        theme_color: '#1d5b47',
+        background_color: '#f7f1e5',
         display: 'standalone',
         start_url: '/',
         icons: [

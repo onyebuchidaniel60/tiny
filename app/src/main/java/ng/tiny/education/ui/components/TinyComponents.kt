@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.List
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import ng.tiny.education.R
 import ng.tiny.education.ui.theme.TinyButter
@@ -75,6 +77,7 @@ enum class TinyTab(val route: String) {
 fun TinyTopBar(
     title: String,
     onSettings: () -> Unit,
+    onHelp: () -> Unit,
     onBack: (() -> Unit)? = null,
 ) {
     CenterAlignedTopAppBar(
@@ -91,13 +94,16 @@ fun TinyTopBar(
         navigationIcon = {
             if (onBack != null) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Outlined.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.Outlined.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                 }
             }
         },
         actions = {
+            IconButton(onClick = onHelp) {
+                Icon(Icons.Outlined.HelpOutline, contentDescription = stringResource(R.string.cd_help))
+            }
             IconButton(onClick = onSettings) {
-                Icon(Icons.Outlined.Settings, contentDescription = "Settings")
+                Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings))
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -152,13 +158,14 @@ fun TinyScaffold(
     currentRoute: String?,
     onNavigate: (TinyTab) -> Unit,
     onSettings: () -> Unit,
+    onHelp: () -> Unit,
     onBack: (() -> Unit)? = null,
     bottomBar: Boolean = true,
     content: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        topBar = { TinyTopBar(title = title, onSettings = onSettings, onBack = onBack) },
+        topBar = { TinyTopBar(title = title, onSettings = onSettings, onHelp = onHelp, onBack = onBack) },
         bottomBar = {
             if (bottomBar) {
                 TinyBottomBar(currentRoute = currentRoute, onNavigate = onNavigate)
@@ -172,30 +179,23 @@ fun TinyWordmark(modifier: Modifier = Modifier) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         Box(
             modifier = Modifier
-                .size(38.dp)
+                .size(40.dp)
                 .background(TinyForest, CircleShape)
-                .border(1.dp, TinyInk, CircleShape),
+                .border(1.dp, TinyForest.copy(alpha = 0.6f), CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = "T",
-                color = TinyPaper,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Black,
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(4.dp)
-                    .size(8.dp)
-                    .background(TinyTomato, CircleShape),
+            Icon(
+                painter = painterResource(R.drawable.ic_tiny_mark),
+                contentDescription = stringResource(R.string.cd_app_logo),
+                tint = TinyPaper,
+                modifier = Modifier.size(24.dp),
             )
         }
         Spacer(Modifier.width(10.dp))
         Column {
-            Text("Tiny", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
+            Text(stringResource(R.string.app_name), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Black)
             Text(
-                "Big impact. Small requirements.",
+                stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -204,15 +204,15 @@ fun TinyWordmark(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PreviewChip(text: String = "PREVIEW") {
+fun PreviewChip(text: String? = null) {
     Surface(
         color = TinyButter,
         contentColor = TinyInk,
         shape = RoundedCornerShape(50),
-        modifier = Modifier.border(1.dp, TinyInk, RoundedCornerShape(50)),
+        modifier = Modifier.border(1.dp, TinyInk.copy(alpha = 0.55f), RoundedCornerShape(50)),
     ) {
         Text(
-            text = text,
+            text = text ?: stringResource(R.string.preview_build),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
@@ -229,8 +229,8 @@ fun PaperCard(
     val shape = MaterialTheme.shapes.large
     val base = modifier
         .fillMaxWidth()
-        .shadow(3.dp, shape)
-        .border(1.dp, TinyLine.copy(alpha = 0.55f), shape)
+        .shadow(2.dp, shape)
+        .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), shape)
     if (onClick == null) {
         Surface(color = MaterialTheme.colorScheme.surface, shape = shape, modifier = base) {
             Column(Modifier.padding(18.dp)) { content() }

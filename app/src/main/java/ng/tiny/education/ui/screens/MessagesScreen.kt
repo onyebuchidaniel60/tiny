@@ -99,29 +99,31 @@ private fun ConversationCard(
     }.collectAsStateWithLifecycle(initialValue = null)
     PaperCard(onClick = onClick) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            TinyAvatar(guardian?.displayName ?: "Parent")
+            TinyAvatar(guardian?.displayName ?: stringResource(R.string.guardian))
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(
-                    guardian?.displayName ?: "Parent conversation",
+                    guardian?.displayName ?: stringResource(R.string.guardian),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    pupil?.let { "About ${it.displayName}" } ?: "Learner context pending",
+                    pupil?.let { stringResource(R.string.about_pupil, it.displayName) }
+                        ?: stringResource(R.string.learner_context_pending),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             if (conversation.unreadCount > 0) {
-                StatusPill("${conversation.unreadCount} new", TinyTomato)
+                StatusPill(stringResource(R.string.unread_count, conversation.unreadCount), TinyTomato)
             } else {
-                StatusPill(conversation.status.name.lowercase().replace('_', ' '), TinyCobalt)
+                StatusPill(conversationStatusLabel(conversation.status), TinyCobalt)
             }
         }
         Spacer(Modifier.height(10.dp))
         Text(
-            "Preferred language: ${guardian?.preferredLocale?.uppercase() ?: "EN"} · Mock SMS",
+            stringResource(R.string.preferred_language) + ": " +
+                (guardian?.preferredLocale?.uppercase() ?: "EN"),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -154,11 +156,12 @@ fun ConversationScreen(
 
     Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 16.dp)) {
         SectionHeading(
-            title = guardian?.displayName ?: "Parent conversation",
-            subtitle = pupil?.let { "About ${it.displayName}" } ?: "Learner context pending",
+            title = guardian?.displayName ?: stringResource(R.string.guardian),
+            subtitle = pupil?.let { stringResource(R.string.about_pupil, it.displayName) }
+                ?: stringResource(R.string.learner_context_pending),
         )
         Spacer(Modifier.height(8.dp))
-        InfoBanner("Mock SMS only. No message leaves this device and no provider is charged.", tone = TinyTomato)
+        InfoBanner(stringResource(R.string.mock_inbox_notice), tone = TinyTomato)
         Spacer(Modifier.height(10.dp))
         LazyColumn(
             state = listState,
@@ -176,14 +179,14 @@ fun ConversationScreen(
             modifier = Modifier.fillMaxWidth(),
             minLines = 2,
             maxLines = 4,
-            label = { Text(stringResource(R.string.reply_hint)) },
+            label = { Text(stringResource(R.string.write_reply)) },
             supportingText = {
-                Text("Mock queued reply. Teacher approval is implicit when you press send.", style = MaterialTheme.typography.labelSmall)
+                Text(stringResource(R.string.queued_reply_note), style = MaterialTheme.typography.labelSmall)
             },
         )
         Spacer(Modifier.height(8.dp))
         TinyPrimaryButton(
-            text = stringResource(R.string.send_reply),
+            text = stringResource(R.string.queue_reply),
             onClick = {
                 if (reply.isNotBlank()) {
                     viewModel.sendReply(conversationId, reply)
@@ -195,7 +198,7 @@ fun ConversationScreen(
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            "Provider status: ${conversation?.status?.name?.lowercase()?.replace('_', ' ') ?: "open"}",
+            stringResource(R.string.provider_status, conversationStatusLabel(conversation?.status)),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -212,7 +215,7 @@ private fun MessageBubble(message: MessageEntity) {
         PaperCard(modifier = Modifier.fillMaxWidth(0.86f)) {
             Column {
                 Text(
-                    if (isTeacher) "Teacher" else "Parent",
+                    stringResource(if (isTeacher) R.string.teacher else R.string.parent),
                     style = MaterialTheme.typography.labelSmall,
                     color = if (isTeacher) TinyForest else TinyTomato,
                     fontWeight = FontWeight.Bold,
@@ -221,7 +224,7 @@ private fun MessageBubble(message: MessageEntity) {
                 Text(message.body, style = MaterialTheme.typography.bodyMedium)
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    statusLabel(message.status),
+                    messageStatusLabel(message.status),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -230,12 +233,21 @@ private fun MessageBubble(message: MessageEntity) {
     }
 }
 
-private fun statusLabel(status: MessageStatus): String = when (status) {
-    MessageStatus.RECEIVED -> "Received"
-    MessageStatus.QUEUED -> "Queued (mock)"
-    MessageStatus.ACCEPTED -> "Accepted by mock provider"
-    MessageStatus.DELIVERED -> "Delivered"
-    MessageStatus.FAILED -> "Failed"
-    MessageStatus.UNKNOWN -> "Unknown"
-    MessageStatus.SUPPRESSED -> "Suppressed"
+@Composable
+private fun conversationStatusLabel(status: ConversationStatus?): String = when (status) {
+    ConversationStatus.WAITING_TEACHER -> stringResource(R.string.needs_reply)
+    ConversationStatus.WAITING_PARENT -> stringResource(R.string.waiting)
+    ConversationStatus.RESOLVED -> stringResource(R.string.status_ready)
+    else -> stringResource(R.string.open)
+}
+
+@Composable
+private fun messageStatusLabel(status: MessageStatus): String = when (status) {
+    MessageStatus.RECEIVED -> stringResource(R.string.status_received)
+    MessageStatus.QUEUED -> stringResource(R.string.status_queued)
+    MessageStatus.ACCEPTED -> stringResource(R.string.status_accepted)
+    MessageStatus.DELIVERED -> stringResource(R.string.status_delivered)
+    MessageStatus.FAILED -> stringResource(R.string.status_failed)
+    MessageStatus.UNKNOWN -> stringResource(R.string.status_unknown)
+    MessageStatus.SUPPRESSED -> stringResource(R.string.status_suppressed)
 }

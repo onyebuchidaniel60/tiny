@@ -18,6 +18,8 @@ data class TinyPreferences(
     val activeWorkspaceId: String? = null,
     val wifiOnly: Boolean = true,
     val teacherName: String = "Ms. Bello",
+    val teacherTourCompleted: Boolean = false,
+    val guardianTourCompleted: Boolean = false,
 )
 
 class PreferencesRepository(private val context: Context) {
@@ -27,7 +29,11 @@ class PreferencesRepository(private val context: Context) {
         val activeWorkspaceId = stringPreferencesKey("active_workspace_id")
         val wifiOnly = booleanPreferencesKey("wifi_only")
         val teacherName = stringPreferencesKey("teacher_name")
+        val teacherTourCompleted = booleanPreferencesKey("teacher_tour_completed")
+        val guardianTourCompleted = booleanPreferencesKey("guardian_tour_completed")
     }
+
+    private val localeMirror = context.getSharedPreferences("tiny_locale", Context.MODE_PRIVATE)
 
     val preferences: Flow<TinyPreferences> = context.tinyDataStore.data.map { prefs ->
         TinyPreferences(
@@ -36,11 +42,24 @@ class PreferencesRepository(private val context: Context) {
             activeWorkspaceId = prefs[Keys.activeWorkspaceId],
             wifiOnly = prefs[Keys.wifiOnly] ?: true,
             teacherName = prefs[Keys.teacherName] ?: "Ms. Bello",
+            teacherTourCompleted = prefs[Keys.teacherTourCompleted] ?: false,
+            guardianTourCompleted = prefs[Keys.guardianTourCompleted] ?: false,
         )
     }
 
     suspend fun setLanguage(language: String) {
         context.tinyDataStore.edit { it[Keys.language] = language }
+        // Mirrored synchronously so a cold start can apply the locale before the
+        // first activity is composed, avoiding an English flash.
+        localeMirror.edit().putString(KEY_LANGUAGE, language).apply()
+    }
+
+    suspend fun setTeacherTourCompleted(completed: Boolean) {
+        context.tinyDataStore.edit { it[Keys.teacherTourCompleted] = completed }
+    }
+
+    suspend fun setGuardianTourCompleted(completed: Boolean) {
+        context.tinyDataStore.edit { it[Keys.guardianTourCompleted] = completed }
     }
 
     suspend fun setOnboarded(onboarded: Boolean) {
@@ -61,6 +80,18 @@ class PreferencesRepository(private val context: Context) {
         context.tinyDataStore.edit { prefs ->
             prefs[Keys.onboarded] = false
             prefs.remove(Keys.activeWorkspaceId)
+        }
+    }
+
+    companion object {
+        private const val KEY_LANGUAGE = "language"
+        private val supportedLanguages = setOf("en", "ha", "yo", "ig")
+
+        /** Read before Compose starts so the correct resources are loaded. */
+        fun storedLanguage(context: Context): String {
+            val value = context.getSharedPreferences("tiny_locale", Context.MODE_PRIVATE)
+                .getString(KEY_LANGUAGE, "en")
+            return if (value in supportedLanguages) value.orEmpty() else "en"
         }
     }
 }

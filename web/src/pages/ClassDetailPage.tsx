@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Icon } from '../components/Icon';
-import { Button, Card, EmptyState, Field, PageHeader, Pill, TextInput, formatDate } from '../components/ui';
+import { Button, Card, EmptyState, Field, PageHeader, Pill, TextInput } from '../components/ui';
 import { useStore } from '../data/store';
+import { subjectLabel, useI18n } from '../i18n';
 
 export function ClassDetailPage() {
   const { classId } = useParams();
   const { state, addPupil } = useStore();
+  const { t, tn, formatDate } = useI18n();
   const classroom = state.classes.find((item) => item.id === classId);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
@@ -14,7 +16,7 @@ export function ClassDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   if (!classroom) {
-    return <EmptyState title="Class not found" body="The class may have been removed from this device." action={<Link to="/classes"><Button>Back to classes</Button></Link>} />;
+    return <EmptyState title={t('class_not_found')} body={t('class_not_found_body')} action={<Link to="/classes"><Button>{t('back_to_classes')}</Button></Link>} />;
   }
 
   const pupils = state.pupils.filter((pupil) => pupil.classId === classroom.id);
@@ -23,7 +25,7 @@ export function ClassDetailPage() {
   function submit(event: React.FormEvent) {
     event.preventDefault();
     if (!name.trim()) {
-      setError('Add a pupil name.');
+      setError(t('required_field'));
       return;
     }
     addPupil(classroom!.id, name.trim(), code.trim());
@@ -38,39 +40,39 @@ export function ClassDetailPage() {
       <PageHeader
         eyebrow={`${classroom.academicYear} · ${classroom.teacherName}`}
         title={`${classroom.gradeLevel} ${classroom.sectionLabel}`}
-        subtitle={`${pupils.filter((pupil) => pupil.enrollmentStatus === 'active').length} active pupils · ${classroom.subjectIds.length} subjects`}
+        subtitle={`${tn('classes_pupil_count', pupils.filter((pupil) => pupil.enrollmentStatus === 'active').length)} · ${tn('classes_subject_count', classroom.subjectIds.length)}`}
         actions={
           <div className="button-row">
-            <Link to={`/attendance/${classroom.id}`}><Button><Icon name="attendance" size={17} /> Register</Button></Link>
-            <Button variant="secondary" onClick={() => setOpen((value) => !value)}><Icon name="plus" size={16} /> Pupil</Button>
+            <Link to={`/attendance/${classroom.id}`}><Button><Icon name="attendance" size={17} /> {t('register')}</Button></Link>
+            <Button variant="secondary" onClick={() => setOpen((value) => !value)}><Icon name="plus" size={16} /> {t('pupil')}</Button>
           </div>
         }
       />
 
       {open && (
         <Card className="form-card">
-          <div className="card-heading"><div><div className="eyebrow">Roster</div><h3>Register a pupil</h3></div></div>
+          <div className="card-heading"><div><div className="eyebrow">{t('roster')}</div><h3>{t('register_pupil')}</h3></div></div>
           <form className="form-grid" onSubmit={submit}>
-            <Field label="Display name">
-              <TextInput value={name} onChange={(event) => setName(event.target.value)} placeholder="Synthetic pupil name" />
+            <Field label={t('pupil_name')}>
+              <TextInput value={name} onChange={(event) => setName(event.target.value)} placeholder={t('pupil_name_placeholder')} />
             </Field>
-            <Field label="Local code" hint="Optional short code for this device">
+            <Field label={t('local_code')} hint={t('local_code_hint')}>
               <TextInput value={code} onChange={(event) => setCode(event.target.value)} placeholder="KOF009" />
             </Field>
             <div className="form-actions">
-              <Button type="submit">Save pupil locally</Button>
-              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="submit">{t('save_pupil')}</Button>
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>{t('cancel')}</Button>
             </div>
-            {error && <div className="inline-error">{error}</div>}
+            {error && <div className="inline-error" role="alert">{error}</div>}
           </form>
         </Card>
       )}
 
       <div className="two-column wide-left">
         <Card>
-          <div className="card-heading"><div><div className="eyebrow">Roster</div><h3>Pupils</h3></div><Pill tone="muted">{pupils.length}</Pill></div>
+          <div className="card-heading"><div><div className="eyebrow">{t('roster')}</div><h3>{t('pupils')}</h3></div><Pill tone="muted">{pupils.length}</Pill></div>
           {pupils.length === 0 ? (
-            <EmptyState icon="people" title="No pupils yet" body="Add a synthetic pupil to begin a register." action={<Button onClick={() => setOpen(true)}>Add pupil</Button>} />
+            <EmptyState icon="people" title={t('no_pupils')} body={t('no_pupils_body')} action={<Button onClick={() => setOpen(true)}>{t('add_pupil')}</Button>} />
           ) : (
             <div className="list">
               {pupils.map((pupil) => {
@@ -78,8 +80,8 @@ export function ClassDetailPage() {
                 return (
                   <div className="list-row" key={pupil.id}>
                     <span className="avatar">{pupil.displayName.slice(0, 1)}</span>
-                    <div className="list-main"><strong>{pupil.displayName}</strong><small>{pupil.localPupilCode || 'No local code'} · {links.length} guardian link{links.length === 1 ? '' : 's'}</small></div>
-                    <Link to={`/progress/${pupil.id}`} className="text-link">Progress</Link>
+                    <div className="list-main"><strong>{pupil.displayName}</strong><small>{pupil.localPupilCode || t('no_local_code')} · {tn('classes_guardian_links', links.length)}</small></div>
+                    <Link to={`/progress/${pupil.id}`} className="text-link">{t('progress')}</Link>
                   </div>
                 );
               })}
@@ -88,16 +90,16 @@ export function ClassDetailPage() {
         </Card>
 
         <Card>
-          <div className="card-heading"><div><div className="eyebrow">History</div><h3>Registers</h3></div><Link to={`/attendance/${classroom.id}`} className="text-link">Open register</Link></div>
-          {sessions.length === 0 ? <p className="muted">No register saved for this class yet.</p> : (
+          <div className="card-heading"><div><div className="eyebrow">{t('history')}</div><h3>{t('registers')}</h3></div><Link to={`/attendance/${classroom.id}`} className="text-link">{t('open_register')}</Link></div>
+          {sessions.length === 0 ? <p className="muted">{t('no_registers')}</p> : (
             <div className="list">
               {sessions.slice(0, 6).map((session) => {
                 const absent = session.entries.filter((entry) => entry.status === 'absent').length;
                 return (
                   <div className="list-row" key={session.id}>
                     <span className="date-square">{formatDate(session.schoolDate, { day: '2-digit', month: 'short' })}</span>
-                    <div className="list-main"><strong>{session.status === 'submitted' ? 'Submitted' : 'Draft'}</strong><small>{absent} absent · {session.entries.length} marked</small></div>
-                    <Pill tone={session.status === 'submitted' ? 'forest' : 'butter'}>{session.status}</Pill>
+                    <div className="list-main"><strong>{session.status === 'submitted' ? t('submitted_register') : t('saved_draft')}</strong><small>{tn('absent_count', absent)} · {tn('marked_count', session.entries.length)}</small></div>
+                    <Pill tone={session.status === 'submitted' ? 'forest' : 'butter'}>{session.status === 'submitted' ? t('status_submitted') : t('status_draft')}</Pill>
                   </div>
                 );
               })}
@@ -107,13 +109,13 @@ export function ClassDetailPage() {
       </div>
 
       <Card>
-        <div className="card-heading"><div><div className="eyebrow">Class plan</div><h3>Lessons for this class</h3></div><Link to="/lessons" className="text-link">All lessons</Link></div>
+        <div className="card-heading"><div><div className="eyebrow">{t('lessons_title')}</div><h3>{t('lessons_for_class')}</h3></div><Link to="/lessons" className="text-link">{t('all_lessons')}</Link></div>
         <div className="mini-card-grid">
           {state.lessons.filter((lesson) => lesson.classId === classroom.id).slice(0, 4).map((lesson) => (
             <Link to={`/lessons/${lesson.id}`} key={lesson.id} className="mini-card">
-              <span className="eyebrow">{lesson.subjectId.replace('_', ' ')}</span>
+              <span className="eyebrow">{subjectLabel(t, lesson.subjectId)}</span>
               <strong>{lesson.title}</strong>
-              <small>{lesson.gradeLevel} · {lesson.status}</small>
+              <small>{lesson.gradeLevel} · {lesson.status === 'ready' ? t('status_ready') : t('status_draft')}</small>
             </Link>
           ))}
         </div>

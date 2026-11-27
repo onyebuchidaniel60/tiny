@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import ng.tiny.education.core.ai.AiLogicService
+import ng.tiny.education.core.ai.DeviceAiStatus
 import ng.tiny.education.core.firebase.FirebaseRuntime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -28,7 +29,7 @@ class AiLogicLiveTest {
 
         val service = AiLogicService(context)
         val deviceStatus = service.onDeviceStatus()
-        assertFalse("A generic emulator must not claim on-device Gemini Nano", deviceStatus == "Available")
+        assertFalse("A generic emulator must not claim on-device Gemini Nano", deviceStatus == DeviceAiStatus.AVAILABLE)
 
         val result = service.generateTeachingStrategy()
         assertTrue("AI Logic call failed: ${result.exceptionOrNull()?.message}", result.isSuccess)

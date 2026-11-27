@@ -26,14 +26,20 @@ class TinyNavigationTest {
         composeRule.onNodeWithText("Continue").performScrollTo().performClick()
 
         composeRule.waitUntil(timeoutMillis = 15_000) {
-            composeRule.onAllNodesWithText("Explore the preview").fetchSemanticsNodes().isNotEmpty()
+            composeRule.onAllNodesWithText("Open my workspace").fetchSemanticsNodes().isNotEmpty()
         }
-        composeRule.onNodeWithText("Explore the preview").performScrollTo().performClick()
+        composeRule.onNodeWithText("Open my workspace").performScrollTo().performClick()
 
         composeRule.waitUntil(timeoutMillis = 30_000) {
             composeRule.onAllNodesWithText("Good morning, Ms. Bello").fetchSemanticsNodes().isNotEmpty()
         }
         composeRule.onNodeWithText("Good morning, Ms. Bello").assertIsDisplayed()
+
+        // The first-use teacher tour is skippable and must not block navigation.
+        composeRule.waitUntil(timeoutMillis = 10_000) {
+            composeRule.onAllNodesWithText("Skip tour").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText("Skip tour").performClick()
 
         composeRule.onNodeWithTag("tab_classes").performClick()
         composeRule.waitUntil(timeoutMillis = 15_000) {
@@ -43,7 +49,7 @@ class TinyNavigationTest {
             composeRule.onAllNodesWithText("P4 Blue").fetchSemanticsNodes().isNotEmpty()
         }
         composeRule.onNodeWithText("Add class").performScrollTo().performClick()
-        composeRule.onNodeWithText("Section label, for example Blue").performTextInput("A")
+        composeRule.onNodeWithText("Section label").performTextInput("A")
         composeRule.onNodeWithText("Add").performClick()
         composeRule.waitUntil(timeoutMillis = 15_000) {
             composeRule.onAllNodesWithText("P4 A").fetchSemanticsNodes().isNotEmpty()

@@ -38,7 +38,6 @@ import ng.tiny.education.ui.components.CheckBullet
 import ng.tiny.education.ui.components.DotAccent
 import ng.tiny.education.ui.components.DoodleUnderline
 import ng.tiny.education.ui.components.PaperCard
-import ng.tiny.education.ui.components.PreviewChip
 import ng.tiny.education.ui.components.TinyPrimaryButton
 import ng.tiny.education.ui.components.TinyWordmark
 import ng.tiny.education.ui.theme.TinyButter
@@ -69,11 +68,7 @@ fun LanguageScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 20.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TinyWordmark()
-            Spacer(Modifier.weight(1f))
-            PreviewChip()
-        }
+        TinyWordmark()
         Spacer(Modifier.height(44.dp))
         Box {
             Text(
@@ -156,11 +151,7 @@ fun WelcomeScreen(onExplore: () -> Unit) {
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp, vertical = 20.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            TinyWordmark()
-            Spacer(Modifier.weight(1f))
-            PreviewChip()
-        }
+        TinyWordmark()
         Spacer(Modifier.height(38.dp))
         Text(
             text = stringResource(R.string.welcome_title),
@@ -176,22 +167,24 @@ fun WelcomeScreen(onExplore: () -> Unit) {
         Spacer(Modifier.height(28.dp))
         PaperCard {
             Column {
-                Text("What is in this preview", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.welcome_whats_inside), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(12.dp))
-                CheckBullet("A navigable teacher shell with Home, Classes, Lessons, Messages and Settings.")
+                CheckBullet(stringResource(R.string.welcome_bullet_1))
                 Spacer(Modifier.height(8.dp))
-                CheckBullet("Local attendance, progress and conversation flows backed by an encrypted Room database.")
+                CheckBullet(stringResource(R.string.welcome_bullet_2))
                 Spacer(Modifier.height(8.dp))
-                CheckBullet("Synthetic demo data only. Cloud sync and live SMS are not connected.")
+                CheckBullet(stringResource(R.string.welcome_bullet_3))
                 Spacer(Modifier.height(8.dp))
-                CheckBullet("A mock adapter makes the parent-SMS journey inspectable without spending money.")
+                CheckBullet(stringResource(R.string.welcome_bullet_4))
+                Spacer(Modifier.height(8.dp))
+                CheckBullet(stringResource(R.string.welcome_bullet_5))
             }
         }
         Spacer(Modifier.height(20.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-            FeatureChip("Offline-first", TinyForest)
-            FeatureChip("SMS for parents", TinyCobalt)
-            FeatureChip("4 languages", TinyTomato)
+            FeatureChip(stringResource(R.string.welcome_offline), TinyForest)
+            FeatureChip(stringResource(R.string.welcome_sms), TinyCobalt)
+            FeatureChip(stringResource(R.string.welcome_languages), TinyTomato)
         }
         Spacer(Modifier.height(28.dp))
         TinyPrimaryButton(

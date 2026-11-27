@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="launcher_background">#F3E6C8</color>
+    <color name="launcher_background">#F8F1E2</color>
     <color name="tiny_ink">#1D2A24</color>
     <color name="tiny_paper">#F8F1E2</color>
     <color name="tiny_forest">#1E5B48</color>

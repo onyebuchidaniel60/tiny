@@ -3,6 +3,31 @@ import { app } from '../firebase/config';
 
 export const CLOUD_MODEL = 'gemini-3.5-flash-lite';
 
+export type AiMode = 'lesson_plan' | 'explain' | 'adapt' | 'assess' | 'support' | 'parent_note';
+
+export const aiModes: AiMode[] = ['lesson_plan', 'explain', 'adapt', 'assess', 'support', 'parent_note'];
+
+export const modePrompts: Record<AiMode, string> = {
+  lesson_plan:
+    'Draft a short Primary 4 basic science lesson outline about sources and uses of water using the 5E structure. ' +
+    'Use at most 140 English words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
+  explain:
+    'Explain the water cycle in simple English for a Primary 4 teacher, with one local example. ' +
+    'Use at most 100 words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
+  adapt:
+    'Suggest three ways to adapt a Primary 4 lesson on water for pupils with mixed reading levels, using low-cost classroom materials. ' +
+    'Use at most 120 English words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
+  assess:
+    'Suggest a five-question quick check for understanding after a Primary 4 lesson on sources and uses of water. Include answers. ' +
+    'Use at most 140 English words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
+  support:
+    'Suggest two practical ways a teacher can support a pupil who is still unsure about sources of water, without labelling or diagnosing the child. ' +
+    'Use at most 100 English words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
+  parent_note:
+    'Draft a short, factual, friendly family message about the week\'s water lesson and one home activity. ' +
+    'Do not mention any pupil name, phone number, grade or diagnosis. Use at most 60 English words. Return plain text only.',
+};
+
 export const curatedStrategies = [
   {
     title: 'Think, pair, share',
@@ -25,6 +50,7 @@ export interface AiResult {
   source: AiSource;
   title?: string;
   detail?: string;
+  fallback?: boolean;
 }
 
 export function sourceLabel(source: InferenceSource | undefined): AiSource {
@@ -40,21 +66,23 @@ export function fallbackStrategy(index = 0): AiResult {
     text: strategy.body,
     source: 'Curated offline library',
     detail: 'No model was used. This reviewed strategy is bundled in the app and works without a network.',
+    fallback: true,
   };
 }
 
-export function onDeviceBrowserStatus(): string {
-  if (typeof window === 'undefined') return 'No browser';
+export type BrowserAiState = 'unavailable' | 'detected' | 'server';
+
+export function browserAiAvailability(): BrowserAiState {
+  if (typeof window === 'undefined') return 'server';
   const languageModel = (window as unknown as { LanguageModel?: { availability?: () => Promise<string> } }).LanguageModel;
-  if (!languageModel) return 'Chrome built-in AI unavailable';
-  return 'Chrome built-in AI detected; status is checked at generation';
+  return languageModel ? 'detected' : 'unavailable';
 }
 
-export async function generateTeachingStrategy(index = 0): Promise<AiResult> {
+export async function generateTeachingStrategy(index = 0, mode: AiMode = 'lesson_plan'): Promise<AiResult> {
   if (!app) {
     return {
       ...fallbackStrategy(index),
-      detail: 'Firebase is not configured in this build, so the curated offline strategy is used.',
+      detail: 'Firebase is not configured in this build, so the reviewed offline strategy is used.',
     };
   }
   try {
@@ -66,10 +94,7 @@ export async function generateTeachingStrategy(index = 0): Promise<AiResult> {
       mode: InferenceMode.PREFER_ON_DEVICE,
       inCloudParams: { model: CLOUD_MODEL },
     });
-    const response = await model.generateContent(
-      'Suggest one short, practical classroom strategy for a Primary 4 basic science lesson about sources and uses of water. ' +
-      'Use at most 90 English words. Do not mention any pupil, phone number, school record or diagnosis. Return plain text only.',
-    );
+    const response = await model.generateContent(modePrompts[mode]);
     const text = response.response.text().trim();
     if (!text) throw new Error('The model returned no text.');
     return {
@@ -81,10 +106,7 @@ export async function generateTeachingStrategy(index = 0): Promise<AiResult> {
           ? 'The SDK reported cloud inference.'
           : 'The SDK did not report an inference source.',
     };
-  } catch (error) {
-    return {
-      ...fallbackStrategy(index),
-      detail: `Model unavailable: ${error instanceof Error ? error.message : 'unknown error'}. The curated strategy is shown instead.`,
-    };
+  } catch {
+    return fallbackStrategy(index);
   }
 }
