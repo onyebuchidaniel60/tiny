@@ -36,7 +36,7 @@ Earlier responsive evidence remains in `artifacts/web/`:
 
 Directory: `artifacts/emulator/`
 
-The manual `android-ci` emulator job runs `tools/android-emulator-smoke.sh` and captures:
+Latest manual emulator evidence: run [46008299481](https://github.com/onyebuchidaniel60/tiny/actions/runs/46008299481). The script clears stale PNGs before each run. It captures:
 
 - Onboarding language screen and welcome screen
 - Auth gate (Firebase-configured build)
@@ -47,11 +47,12 @@ The manual `android-ci` emulator job runs `tools/android-emulator-smoke.sh` and 
 - Settings
 - Per-language Home and Settings screenshots: `tiny-i18n-<language>-home.png`, `tiny-i18n-<language>-settings.png`
 
-Existing evidence from the previous checkpoint remains until the new manual run replaces it:
+Curated in `artifacts/emulator/`:
 
 - `tiny-01-language.png` … `tiny-10-settings.png`
 - `tiny-04-authenticated.png`
-- `tiny-ai-cloud.png`
+- `tiny-i18n-{en,ha,yo,ig}-home.png` and `tiny-i18n-{en,ha,yo,ig}-settings.png`
+- `tiny-ai-cloud.png` (older cloud-AI evidence retained separately)
 
 **Physical-device screenshots are not claimed.** The operator’s Samsung Galaxy Note 10+ (Android 12) requires a manual installation from the public APK; no device was connected to this session. On-device Gemini Nano is not supported on that device.
 
