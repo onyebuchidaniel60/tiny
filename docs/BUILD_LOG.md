@@ -264,8 +264,9 @@
 - Deployment: Firebase Hosting, `web/dist`, SPA rewrite, no-cache `index.html`/`sw.js`, immutable hashed assets. Vercel CLI was unauthenticated; no Vercel claim.
 - Security/limitations: synthetic data only; unencrypted browser storage; dedicated revocable web App Check debug token embedded in the hosted client and stored in GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN`; App Check enforcement off; no live SMS; no hosted callable sync or cross-device sync; no on-device AI proof.
 - Documentation: `docs/WEB_APP.md`, README, configuration, security, testing, deployment, setup, troubleshooting, judge access, hackathon submission, package index and this log.
-- Commit: `PENDING`.
-- CI: `PENDING`.
+- Commit: `2ae6a81` (web app), `581d89d` (immediate persistence/hit target), `86c9717` (deterministic browser tests).
+- CI: web run [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944) passed; Android regression run [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893) passed. The first web run (`45973072502`) exposed an IndexedDB/navigation timing gap and a headless mobile fixed-nav hit-testing issue. The app now persists at action time and reads the synchronous recovery copy first; functional tests open routes directly while the responsive test asserts the mobile nav and href. The rerun is green.
+- Final hosted assets: `assets/index-CyhjhdBZ.js`, `assets/index-Cl8rntFh.css`; index HTML fetched from Hosting matches the local build.
 - Next: keep hosted preview and tokens live through judging; complete Devpost/YouTube/eligibility gates; revoke web and APK debug tokens after 16 December 2026.
 
 ## Checkpoint entry template

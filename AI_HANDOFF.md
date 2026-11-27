@@ -23,8 +23,8 @@
 - **Deployment:** Firebase Hosting `tiny-b9f29`, `web/dist`, SPA rewrite, no-cache `index.html`/`sw.js`, immutable hashed assets. Vercel CLI was unauthenticated; no Vercel claim.
 - **Security/limits:** synthetic data only; browser storage unencrypted; dedicated revocable web App Check debug token embedded in the hosted client (GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN`, never committed); App Check enforcement off; no real SMS; no hosted callable sync; no cross-device sync; no on-device AI proof.
 - **Evidence/docs:** `docs/WEB_APP.md`, `docs/JUDGE_ACCESS.md`, `docs/TESTING.md`, `.github/workflows/web-ci.yml`, `web/e2e/`, `artifacts/web/`.
-- **Commit:** `PENDING`.
-- **CI:** `PENDING`.
+- **Commit:** app `2ae6a81`; immediate-persistence and CI-stable test fixes `581d89d`, `86c9717`.
+- **CI:** web run [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944) passed; Android regression run [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893) passed. The first web run (`45973072502`) failed on two Playwright timing/navigation assertions; the fixes are recorded in `docs/BUILD_LOG.md`, and the rerun is green.
 
 ## Live Firebase setup checkpoint (26 November 2026)
 

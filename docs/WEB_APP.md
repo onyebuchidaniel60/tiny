@@ -369,13 +369,20 @@ It runs on pushes/PRs touching `web/**` or `firebase.json`:
 
 The workflow does not require Firebase credentials because the default browser journeys use the synthetic offline demo. The live Firebase check is intentionally manual.
 
+Latest green runs:
+
+- Web CI: [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944).
+- Android/backend regression on the same commit: [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893).
+
+The first web run (`45973072502`) surfaced two timing issues: an immediate navigation could outrun the IndexedDB write, and headless mobile Chromium could not hit the fixed bottom-nav link reliably. The app now persists state at action time and prefers the synchronous localStorage recovery copy; functional tests open routes directly while the responsive test asserts the mobile nav and href. The rerun is green.
+
 ### Manual evidence
 
 - Hosted sign-in and Firestore bootstrap: verified on 27 November 2026.
 - Hosted AI request: `Cloud Gemini`, detail `The SDK reported cloud inference.`
 - Hosted screenshot: `artifacts/web/tiny-web-ai-cloud.png`.
-- Latest deployed asset: `assets/index-D6QjJnP_.js` (hash changes on rebuild).
-- Build output: approximately 981 kB JavaScript (299 kB gzip) and 27 kB CSS (5.8 kB gzip). The bundle is a preview, not yet optimized with route-level code splitting.
+- Latest deployed assets after the final redeploy: `assets/index-CyhjhdBZ.js` and `assets/index-Cl8rntFh.css` (hashes change on rebuild).
+- Build output: approximately 981.5 kB JavaScript (298.7 kB gzip) and 27.2 kB CSS (5.8 kB gzip). The bundle is a preview, not yet optimized with route-level code splitting.
 
 ## 14. Deployment and rollback
 

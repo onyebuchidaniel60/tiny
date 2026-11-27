@@ -140,7 +140,8 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - Hosted AI evidence: `artifacts/web/tiny-web-ai-cloud.png` shows the result plus `Cloud Gemini` and `The SDK reported cloud inference.`
 - Offline-startup regression: the offline demo now initializes without waiting for Firebase Auth, so a slow or unavailable Auth iframe cannot block the local workspace. The Playwright suite waits for service-worker control before simulating disconnection.
 - Test-environment note: Firebase Auth creates a hidden iframe. On a slow network the browser `load` event can lag after the app is already usable, so browser tests wait for DOM readiness and assert visible UI rather than relying on `load`.
-- CI: `.github/workflows/web-ci.yml` runs install, typecheck, unit tests, build, Playwright Chromium and accessibility checks, and uploads screenshots/report.
+- CI: `.github/workflows/web-ci.yml` runs install, typecheck, unit tests, build, Playwright Chromium and accessibility checks, and uploads screenshots/report. Web run [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944) and Android/backend regression run [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893) passed on commit `86c9717`.
+- CI hardening: the first web run (`45973072502`) exposed an immediate-navigation persistence race and a headless mobile fixed-nav hit-test issue. The app persists at action time and reads the synchronous recovery copy first; browser tests open routes directly while the responsive test verifies the mobile nav and href. The rerun is green.
 - Not claimed: on-device Gemini Nano, hosted callable sync, live SMS, App Check enforcement, production deployment or cross-device synchronization.
 
 See `docs/WEB_APP.md` for the full browser architecture and manual test guide.
