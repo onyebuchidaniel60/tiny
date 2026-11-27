@@ -34,7 +34,7 @@ function db() {
 function migrateState(state: AppState): AppState {
   // Remove the development-only school label from previously saved local
   // workspaces without touching any pupil, guardian or attendance record.
-  if (state.workspace?.name === 'Kofar Demo Primary') {
+  if (['Kofar Demo Primary', 'Tiny Web Demo Primary', 'Tiny Synthetic E2E'].includes(state.workspace?.name ?? '')) {
     return { ...state, workspace: { ...state.workspace, name: 'Kofar Primary' } };
   }
   return state;

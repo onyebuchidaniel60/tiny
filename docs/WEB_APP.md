@@ -265,13 +265,15 @@ The available environment (Samsung Galaxy Note 10+, Android 12) is not a support
 
 ## 10. Responsive design and accessibility
 
-- Desktop: fixed sidebar, topbar connectivity/sync status, two-column work areas.
-- Mobile: bottom navigation, topbar Settings shortcut, stacked cards, full-width forms and touch-sized controls.
-- `prefers-reduced-motion`-equivalent setting via the in-app **Reduce motion** toggle.
+- Desktop: fixed sidebar, topbar connectivity/sync status, language selector, help/settings shortcuts and two-column work areas.
+- Tablet: single-column work areas below 1120 px; sidebar remains until 820 px.
+- Mobile: bottom navigation, stacked cards, full-width forms, touch-sized controls and wrapping class rows.
+- `prefers-reduced-motion`-equivalent setting via the in-app **Reduce motion** toggle and system media query.
 - **Large text** increases the base font size.
-- Focus-visible outlines, labelled form fields, ARIA groups for attendance toggles, status roles and accessible empty states.
+- Focus-visible outlines, labelled form fields, ARIA groups for attendance toggles, status roles, accessible empty states, focus-trapped tours and a skip link.
+- Language selector updates the whole interface immediately and persists across reloads. All four teacher languages are captured at every viewport.
 - Playwright axe scan on the home page: **0 serious or critical WCAG 2 A/AA violations**.
-- Screenshots: `artifacts/web/desktop-chromium-home.png`, `artifacts/web/desktop-chromium-class.png`, `artifacts/web/mobile-chromium-home.png`, `artifacts/web/mobile-chromium-class.png`.
+- Screenshots: 60 localized captures in `artifacts/web/i18n/` plus the representative responsive set in `artifacts/web/`. See `docs/SCREENSHOTS.md`.
 
 ## 11. Local development
 
@@ -335,21 +337,25 @@ No Cloud Functions were deployed. No billing, Blaze, live SMS, App Distribution 
 | Suite | Result |
 |---|---|
 | TypeScript | `npm run typecheck` passed |
-| Vitest unit/component | 14 passed, 0 failed (5 files) |
+| Translation guard | 754 keys × 4 languages; 0 hardcoded UI strings |
+| Vitest unit/component | 23 passed, 0 failed (6 files) |
 | Production build | passed; PWA precache 7 entries |
-| Playwright desktop | 5 passed, 1 skipped |
-| Playwright mobile | 5 passed, 1 skipped |
+| Playwright desktop | 12 passed, 1 skipped |
+| Playwright tablet | 12 passed, 1 skipped |
+| Playwright mobile | 12 passed, 1 skipped |
 | Live Firebase/AI check | 1 passed with `TINY_LIVE_FIREBASE=1` |
 | Axe serious/critical violations | 0 |
-| Android/backend regression | unchanged; see `docs/TESTING.md` and `AI_HANDOFF.md` |
+| Android/backend regression | passed in CI run [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913) |
 
 The Playwright suite covers:
 
 - Teacher class creation, refresh recovery, attendance submission and progress approval.
 - Teacher and guardian simulator message exchange.
 - Offline banner, local draft persistence and offline reload after service-worker activation.
+- Teacher tour skip/persist/replay, guardian guide completion, language switching and reload persistence.
+- All four languages at desktop/tablet/mobile with no horizontal overflow and 60 screenshots.
 - Home accessibility scan.
-- Desktop/mobile responsive screenshots and navigation.
+- Desktop/tablet/mobile responsive screenshots and navigation.
 
 The live test is skipped by default so ordinary CI does not consume Firebase AI quota or require App Check secrets. Run it manually with `TINY_LIVE_FIREBASE=1`.
 
@@ -357,22 +363,23 @@ The live test is skipped by default so ordinary CI does not consume Firebase AI 
 
 Workflow: `.github/workflows/web-ci.yml`.
 
-It runs on pushes/PRs touching `web/**` or `firebase.json`:
+It runs on pushes/PRs touching `web/**`, `shared/**`, `tools/**` or `firebase.json`:
 
 1. `npm ci`
-2. `npm run typecheck`
-3. `npm test`
-4. `npm run build`
-5. Playwright Chromium install
-6. `npx playwright test`
-7. Upload screenshots and Playwright report
+2. translation generator check + hardcoded-string guard
+3. `npm run typecheck`
+4. `npm test`
+5. `npm run build`
+6. Playwright Chromium install
+7. `npx playwright test`
+8. Upload screenshots and Playwright report
 
 The workflow does not require Firebase credentials because the default browser journeys use the synthetic offline demo. The live Firebase check is intentionally manual.
 
 Latest green runs:
 
-- Web CI: [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944).
-- Android/backend regression on the same commit: [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893).
+- Web CI: [45999218456](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218456).
+- Android/backend regression on the same commit: [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913).
 
 The first web run (`45973072502`) surfaced two timing issues: an immediate navigation could outrun the IndexedDB write, and headless mobile Chromium could not hit the fixed bottom-nav link reliably. The app now persists state at action time and prefers the synchronous localStorage recovery copy; functional tests open routes directly while the responsive test asserts the mobile nav and href. The rerun is green.
 
@@ -381,8 +388,8 @@ The first web run (`45973072502`) surfaced two timing issues: an immediate navig
 - Hosted sign-in and Firestore bootstrap: verified on 27 November 2026.
 - Hosted AI request: `Cloud Gemini`, detail `The SDK reported cloud inference.`
 - Hosted screenshot: `artifacts/web/tiny-web-ai-cloud.png`.
-- Latest deployed assets after the final redeploy: `assets/index-CyhjhdBZ.js` and `assets/index-Cl8rntFh.css` (hashes change on rebuild).
-- Build output: approximately 981.5 kB JavaScript (298.7 kB gzip) and 27.2 kB CSS (5.8 kB gzip). The bundle is a preview, not yet optimized with route-level code splitting.
+- Latest deployed assets after the final redeploy: `assets/index-*.js` and `assets/index-*.css` (hashed file names change on rebuild; verify from the Hosting release).
+- Build output: approximately 1.17 MB JavaScript (351 kB gzip) and 36 kB CSS (7.4 kB gzip), including Firebase SDK and the four-language catalogue. The bundle is a preview, not yet route-split.
 
 ## 14. Deployment and rollback
 
@@ -426,7 +433,7 @@ Operator-only actions:
 ## 16. Manual test guide
 
 1. Open <https://tiny-b9f29.web.app>. Sign in with the synthetic account or choose **Continue in offline demo**.
-2. Confirm the workspace shows **Tiny Web Demo Primary**, two classes and eight pupils.
+2. Confirm the workspace shows **Kofar Primary** (the display name for the synthetic Firestore workspace), two classes and eight pupils.
 3. Open **Classes**, create a class, reload, and confirm it remains.
 4. Open **P4 Blue**, add a synthetic pupil, then open **Register**.
 5. Mark every pupil, submit, reload and confirm the submitted state and local queue.

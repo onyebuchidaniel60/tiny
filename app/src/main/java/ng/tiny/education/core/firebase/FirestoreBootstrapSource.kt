@@ -38,9 +38,15 @@ class FirestoreBootstrapSource(context: Context) {
         val workspaceRef = firestore.collection("workspaces").document(workspaceId)
         val workspaceSnap = workspaceRef.get().await()
         if (!workspaceSnap.exists()) return null
+        val remoteName = workspaceSnap.getString("name") ?: "Workspace"
         val workspace = WorkspaceEntity(
             id = workspaceSnap.id,
-            name = workspaceSnap.getString("name") ?: "Workspace",
+            // Known non-production workspaces were seeded with development
+            // labels. Present the same sample school without that wording.
+            name = when (remoteName) {
+                "Tiny Synthetic E2E", "Tiny Web Demo Primary", "Kofar Demo Primary" -> "Kofar Primary"
+                else -> remoteName
+            },
             type = if (workspaceSnap.getString("type") == "independent") WorkspaceType.INDEPENDENT else WorkspaceType.SCHOOL,
             schoolCode = workspaceSnap.getString("schoolCode") ?: "--------",
             verificationStatus = when (workspaceSnap.getString("verificationStatus")) {

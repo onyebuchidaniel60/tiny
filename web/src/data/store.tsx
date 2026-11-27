@@ -100,7 +100,7 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
     id: workspaceId,
     // The project's non-production evaluation workspace was seeded with a
     // development label. Present the same sample school without that label.
-    name: remoteString(data.name, 'Workspace') === 'Tiny Synthetic E2E'
+    name: ['Tiny Synthetic E2E', 'Tiny Web Demo Primary', 'Kofar Demo Primary'].includes(remoteString(data.name, 'Workspace'))
       ? 'Kofar Primary'
       : remoteString(data.name, 'Workspace'),
     type: data.type === 'independent' ? 'independent' : 'school',

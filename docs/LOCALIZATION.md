@@ -70,7 +70,7 @@ Authentication, onboarding, language selection, Home/dashboard, Classes, class d
 - `LocalizationTest` (Android JVM): every language has the same string/plural keys and placeholders; core classroom vocabulary exists.
 - `web/src/i18n/i18n.test.tsx`: catalogue parity, placeholder parity, immediate re-render, persistence and locale-aware date/plural output.
 - `web/e2e/i18n-visual.spec.ts`: every language at desktop, tablet and mobile widths; checks no horizontal overflow and captures Home, class, attendance, Help and Settings screenshots.
-- Visual evidence: `artifacts/web/i18n/` (48 screenshots across 4 languages × 3 viewports × 4 representative screens, plus additional captures). Android evidence is captured by `tools/android-emulator-smoke.sh` when the manual emulator job runs.
+- Visual evidence: `artifacts/web/i18n/` (60 screenshots across 4 languages × 3 viewports × 5 representative screens). Android evidence is captured by `tools/android-emulator-smoke.sh` when the manual emulator job runs.
 
 ## 7. Adding a string
 
