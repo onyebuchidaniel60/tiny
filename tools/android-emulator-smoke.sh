@@ -211,14 +211,23 @@ open_settings() {
   dismiss_anr
 }
 
+go_home() {
+  # Settings and Sync have no bottom navigation, so a tab tap is not reliable.
+  # Restarting the activity preserves the persisted session/language and starts
+  # Compose navigation at Home.
+  adb shell am force-stop "$PACKAGE" || true
+  adb shell am start -n "$ACTIVITY" || true
+  sleep 5
+  dismiss_anr
+}
+
 capture_language_home() {
   local suffix="$1"
   local expected="$2"
+  open_settings
   screenshot "tiny-i18n-${suffix}-settings"
-  tap_coord 130 2200 || true
-  sleep 3
-  dismiss_anr
-  wait_for_text "$expected" 15 || true
+  go_home
+  wait_for_text "$expected" 25 || true
   screenshot "tiny-i18n-${suffix}-home"
   open_settings
 }

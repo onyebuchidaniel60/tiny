@@ -116,7 +116,7 @@
 | Android tests | PASS - 35/35 unit | Domain, JSON, sync outcome, source label and durable processor tests |
 | Compose instrumentation | PASS | API 35 Pixel 5 journey in run 45891064395 |
 | Android build | PASS - CI | `tiny-dev-debug-apk` from run 45891064395; Firebase config injected |
-| Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
+| Android lint | PASS | No `MissingTranslation` suppression; all four locales define the complete key set |
 | Functions domain | PASS — 19/19 | TypeScript build and Vitest suites |
 | Firestore rules | PASS - 9/9 | Emulator tests incl. class-scoped records and own workspace index |
 | Functions callables/webhooks | IMPLEMENTED — E2E 10/10 | Workspace/class/pupil/guardian/attendance/progress/message callables, signed webhook, digest, sync dispatcher |
@@ -177,7 +177,7 @@
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
 - Unit tests: 35/35 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules, JSON escaping and AI source labels.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
 - Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
-- Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
+- Lint: `lintDevDebug` passes with all four locales complete; the old `MissingTranslation` suppression has been removed.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
 - Emulator smoke: manual Ubuntu job installed/launched the APK on API 35, captured language/welcome/home/classes/class detail/attendance/lessons/messages/conversation/settings screens, and uploaded evidence. Logcat contained no Tiny fatal exception; Pixel Launcher ANR on the slow emulator was transient and dismissed.
 - Firestore rules: 9/9 emulator tests pass (unauthenticated/nonmember denial, member reads, direct write denial, class-scoped pupils/guardians/links/conversations/messages).
@@ -208,7 +208,7 @@
 - Installed: `firebase-basics`, `firebase-auth-basics`, `firebase-firestore`, `firebase-security-rules-auditor`, `firestore-rules-creation`.
 - Live catalog mapping: `firebase-firestore-standard` → `firebase-firestore`; `firestore-security-rules-auditor` → `firebase-security-rules-auditor`; `firebase-local-env-setup` absent (covered by `firebase-basics` + official emulator docs).
 - Discovery: Firebase skills are visible in the active OpenCode tool catalog. `opencode` CLI is not on PATH, so a separate fresh-session CLI check was not possible; recorded as a limitation.
-- StageShow: install attempted; files appeared but the harness removed the `stageshow` skill ID after a server restart. Incomplete directory removed; **not used** and completion is not claimed.
+- StageShow: installed successfully on 27 November 2026 with `npx skills add benjitaylor/skills --skill stageshow`; complete skill under `.agents/skills/stageshow/`. Read `SKILL.md`, `references/craft.md` and `references/review.md` and applied its craft rules to the real product. The earlier interrupted attempt is superseded and is no longer a limitation.
 - Firebase MCP: disabled until non-production project/access and operation scope are authorized.
 
 ### Landing page
@@ -227,7 +227,7 @@
 | App Check enforcement / Play Integrity | Debug exchange and app-level cloud AI work, but enforcement is off and release attestation is unconfigured | Register the CI/release SHA-256 and enable enforcement deliberately after the remaining app checks |
 | Supported on-device AI device | Note 10+ (Android 12) is general testing only; separate acceptance gate | Provide a currently supported physical device, or accept on-device demo blocked |
 | App Distribution tester emails | Public APK is available, but App Distribution invitations need approved emails | Supply judge/tester emails privately; groups `internal-testers` and `judges` exist |
-| Native translation review | Hausa/Yoruba/Igbo app strings are draft/partial | Arrange native review before pilot; English fallback is active |
+| Native translation review | Hausa/Yoruba/Igbo have complete draft coverage (754 keys); native review is pending | Arrange native review before pilot; English fallback is active |
 | Pilot/legal gates | DPIA, controller/processor, privacy notice, retention, NERDC rights | Identify approvers and timing before a real-school pilot |
 
 ## Preview / deployment evidence
@@ -292,7 +292,7 @@
 3. **Demo output path:** Phase 8 narrative mentions `demo/`; artifact table and `DEMO_VIDEO_PLAN.md` use `artifacts/demo/`. Use `artifacts/demo/`.
 4. **AI versions:** blueprint SDK/Compose versions are provisional; pinned versions actually used are recorded in this handoff and `docs/BUILD_LOG.md`.
 5. **Firebase skill IDs:** the live official catalog has renamed/removed some selected IDs; mapping is recorded above. No silent substitution.
-6. **StageShow:** required attempt failed due harness removal; not claimed complete.
+6. **StageShow (historical):** the first install attempt was interrupted by a harness restart; the later install succeeded and its instructions were applied. No limitation remains.
 7. **Historical ZIP claim:** the ZIP is not in this repository; current Markdown checks pass independently.
 
 ## Known limitations / risks
@@ -305,7 +305,7 @@
 6. In-app workspace/class creation and guardian linking/verification screens are implemented against local Room; the online path uses callables. Live online verification is blocked on Auth/Functions deployment constraints.
 7. Android cloud mode requires a Firebase app config; without it the app stays in local/mock preview mode and does not claim cloud sync.
 8. Native translation review and physical low-end device testing remain pending.
-6. App translations are partial draft resources; native review is pending.
+6. App and web translations have complete draft coverage; native review of Hausa, Yoruba and Igbo is pending.
 7. No physical device was connected during the checkpoint; general device validation is pending.
 8. StageShow skill was not usable after restart; no claim.
 9. Local Windows machine uses portable JDK/SDK; CI is the canonical build.

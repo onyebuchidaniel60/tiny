@@ -84,7 +84,7 @@ The shell covers initial/loading-ish seeding, populated, empty, offline/local, p
 | 26 Nov 2026 | REF-001 | Warm riso/ink/doodle personality | Original paper/ink/forest/tomato/butter system | Avoid copying limited-licence assets | `landing/styles.css`, Compose theme |
 | 26 Nov 2026 | REF-002 | Long-form product storytelling | Full landing page with 12 sections | Use structure, not copy | `landing/index.html` |
 | 26 Nov 2026 | Both | Product proof cards | Original phone mockups and feature cards | Synthetic data only; label preview | `artifacts/screenshots/` |
-| 26 Nov 2026 | — | StageShow unavailable | Direct design-system discipline | Harness removed skill ID after restart | Build log/handoff |
+| 26 Nov 2026 | — | StageShow install interrupted by harness restart | Direct design-system discipline for the initial pass | Superseded 27 Nov: skill installed, read and applied | Build log/handoff |
 | 26 Nov 2026 | — | First-launch seed race showed 0 classes/pending | Splash holds until encrypted seed completes; deterministic Home state | Avoid misleading demo data and stale Room observers | `TinyApplication.kt`, `MainActivity.kt` |
 | 26 Nov 2026 | - | Bottom-nav semantics are merged | Stable `testTag` values for `tab_home`, `tab_classes`, `tab_lessons`, `tab_messages` | Reliable instrumentation without weakening accessibility labels | `TinyComponents.kt`, `TinyNavigationTest.kt` |
 | 27 Nov 2026 | REF-001/REF-002 | Browser evaluation needs the same warmth without copying the landing page | Original responsive teacher workspace; sidebar on desktop, bottom navigation on mobile; explicit local/sync state | Preserve product identity; make offline/pending honest rather than decorative | `web/src/styles.css`, `artifacts/web/` |

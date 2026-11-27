@@ -245,5 +245,5 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: groups `internal-testers` and `judges` created; no tester emails or invitation sent yet. The public judge prerelease `v0.1.0-preview.1` is available separately.
 - App Check debug tokens are never committed; the raw CI logcat containing the first token was deleted and that token was revoked. A separate private-CI token is stored only in GitHub secrets and used by the non-uploaded AI APK. The smoke script redacts future occurrences.
-- Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.
+- Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; Hausa/Yoruba/Igbo have complete draft translations pending native review.
 

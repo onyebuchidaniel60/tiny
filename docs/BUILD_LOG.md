@@ -42,18 +42,18 @@
   - Backend emulator E2E: **10 passed, 0 failed** (workspace/class/pupil/guardian/verification, attendance absence job, progress approval, teacher reply, mixed sync batch + replay, signed inbound SMS + dedupe, weekly digest).
   - Android CI build: **successful**; final APK **31,094,724 bytes**; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
   - Emulator smoke: **successful** on API 35; captured language, welcome, home, classes, class detail, attendance, lessons, AI fallback, messages, conversation and settings screens.
-  - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog; no lint errors remain.
+  - Android lint: `lintDevDebug` **successful** after explicitly deferring the partial-translation `MissingTranslation` backlog at that checkpoint; **superseded 27 November 2026** by complete resources and lint passing without the suppression.
   - Functions: `npm run build` **successful**; Vitest **19 passed, 0 failed** across 6 domain suites; rules suite 9/9; backend E2E suite 10/10.
   - Landing page: local link check passed; responsive layout inspected at 1440 px and 390 px; mobile nav toggles correctly; no broken local links; no images without alt.
 - Manual verification: Desktop/mobile screenshots saved at `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png` and `landing-mobile-revealed.png`. References recorded in `REFERENCE_ASSETS.md`.
 - Commit hash: Phase 1 commits through `13b7e60`, `7171891`, `00318fc`, `2776ba1`.
 - Preview artifact/build URL: GitHub Actions run `45853884690`; artifact `tiny-dev-debug-apk`; APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`. No App Distribution upload.
-- Reference image/skill status: REF-001/REF-002 supplied and recorded. StageShow installation attempted; harness removed the `stageshow` skill ID after a server restart, so it was not used and completion is not claimed. Firebase skills installed and visible in the active tool catalog.
+- Reference image/skill status: REF-001/REF-002 supplied and recorded. StageShow installation was attempted; the harness removed the `stageshow` skill ID after a server restart, so that first checkpoint did not use it. **Superseded 27 November 2026: StageShow was reinstalled successfully, read and applied.** Firebase skills installed and visible in the active tool catalog.
 - Documentation updated: `REFERENCE_ASSETS.md`, `OPERATOR_INTAKE.md`, `AI_HANDOFF.md`, `README.md`, `PACKAGE_INDEX.md`, `docs/DESIGN_NOTES.md`, this build log and source docs.
 - Known limitations:
   - No physical Android device connected during this checkpoint; Note 10+ is Android 12 and general-testing only, not Gemini Nano-supported.
   - No Firebase project, App Distribution tester access or hosted Functions; Spark/NGN 0 keeps Functions emulator-only.
-  - Hausa/Yoruba/Igbo app strings are partial draft resources pending native review; English fallback is active.
+  - Hausa/Yoruba/Igbo app strings were partial draft resources at that checkpoint; **superseded 27 November 2026** by complete draft coverage, with native review still pending.
   - `syncCommands` now dispatches supported offline commands through the same validated callable handlers, writes accepted/rejected receipts, and replays accepted commands idempotently. The Android client still uses the mock sync engine because no Firebase project is configured.
   - GitHub Actions, Emulator Suite, instrumentation and demo evidence are recorded in later checkpoints.
   - StageShow skill unavailable; landing page used direct design-system discipline.
@@ -230,7 +230,7 @@
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport implemented | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Live callable sync blocked by Spark/emulator-only |
 | 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Auth-gated cloud flows and broader device QA pending |
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
-| 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
+| 6 - Reference-led final UI | PARTIAL at that commit | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | **Superseded 27 November 2026** by the final design/localization/tour pass; physical-device pass still pending |
 | 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
 | 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1`, demo refresh | `artifacts/demo/tiny-demo.mp4` | 146.6s 1080p H.264/AAC slideshow from real emulator screenshots incl. authenticated Firebase and judge-APK cloud AI scenes; captions/script/notes | No motion screen recording; physical-device capture absent |
 | 9 - Final regression/security/release | PARTIAL - release blocked | `2776ba1` | - | Unit/domain/rules/E2E/instrumentation green; rules tightened; secrets scan; zero-spend boundaries | Production authority not granted; Spark/NGN 0; no App Distribution or physical-device release validation |
@@ -241,7 +241,7 @@
 - Source: official `firebase/agent-skills`; commit `99954a30898bb5ddc8152ee10e124dc3b4106bf7`; lockfile preserved.
 - Live catalog mapping: `firebase-firestore-standard` → `firebase-firestore`; `firestore-security-rules-auditor` → `firebase-security-rules-auditor`; `firebase-local-env-setup` not present in live catalog (covered by `firebase-basics` + official emulator docs).
 - Discovery: Firebase skills are visible in the active OpenCode tool catalog. The `opencode` CLI is not on PATH, so a separate fresh-session CLI check was not possible; this limitation is recorded.
-- StageShow: install attempted; harness removed the skill ID after restart. Not used; not claimed complete.
+- StageShow: first install interrupted by a harness restart. **Superseded 27 November 2026: the skill installed successfully, was read, and its craft rules were applied to the final UI review.**
 - Firebase MCP: disabled until non-production project/access and operation scope are authorized.
 - Firebase resources created/modified on 26 November 2026: Android app, SHA certificates, Firestore default database in `africa-south1`, rules/indexes, free-tier API enablement, App Check debug token (revoked), AI Logic P4SA identities/role. No billing, Functions deployment or production resource.
 
