@@ -17,6 +17,7 @@ data class AiGeneration(
     val source: String,
 )
 
+@OptIn(PublicPreviewAPI::class)
 internal fun inferenceSourceLabel(source: InferenceSource?): String = when (source) {
     InferenceSource.ON_DEVICE -> "On-device Gemini Nano"
     InferenceSource.IN_CLOUD -> "Cloud Gemini"
