@@ -29,7 +29,7 @@ Early preview is a navigable native Android shell distributed as a protected APK
 
 Preview must not connect to production Firestore, live SMS, production AI budgets or real parent numbers.
 
-**Preferred restricted preview route:** Firebase App Distribution. Groups `internal-testers` and `judges` exist; add approved emails in the Firebase console and use the protected `distribution` GitHub environment for manual uploads. For the #BuildHybridAI submission, a dedicated public judge prerelease is also authorized: `v0.1.0-preview.1` with a revocable App Check debug token. It is a synthetic-data preview, not a production build. See `docs/JUDGE_ACCESS.md`.
+**Preferred restricted preview route:** Firebase App Distribution. Groups `internal-testers` and `judges` exist; add approved emails in the Firebase console and use the protected `distribution` GitHub environment for manual uploads. For the #BuildHybridAI submission, a dedicated public judge prerelease is also authorized: `v0.1.0-preview.2` with a revocable App Check debug token. It is a synthetic-data preview, not a production build. See `docs/JUDGE_ACCESS.md`.
 
 **Current status:** Public judge APK and App Distribution groups exist; App Distribution tester emails are pending. The browser companion is hosted on Firebase Hosting. No hosted backend or production deployment.
 

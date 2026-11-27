@@ -24,7 +24,7 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 | Browser companion preview | **IMPLEMENTED AND HOSTED** | <https://tiny-b9f29.web.app>; teacher-only synthetic data, local persistence and Firebase AI Logic |
 | Supported Firebase products | **YES** | Auth, Firestore, App Check, AI Logic |
 | App Check with debug token accepted | **YES** | Dedicated judge debug token; private CI token separate |
-| Installable, working test build | **PREPARED AND PUBLISHED** | Browser preview <https://tiny-b9f29.web.app> plus public prerelease `v0.1.0-preview.1`: `tiny-judge-preview.apk`; instructions in `docs/JUDGE_ACCESS.md` |
+| Installable, working test build | **PREPARED AND PUBLISHED** | Browser preview <https://tiny-b9f29.web.app> plus public prerelease `v0.1.0-preview.2`: `tiny-judge-preview.apk`; instructions in `docs/JUDGE_ACCESS.md` |
 | Test access free and unrestricted until judging ends | **YES, if release stays up** | Keep the release and judge token until 16 December 2026 |
 | Public code repository | **YES** | `https://github.com/onyebuchidaniel60/tiny` |
 | Open-source license visible at top | **YES** | Apache-2.0 `LICENSE`; GitHub About detects `Apache License 2.0` |
@@ -58,7 +58,7 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 - **Platform:** Android, with an operator-requested browser companion preview
 - **Repository:** `https://github.com/onyebuchidaniel60/tiny`
 - **Demo video:** YouTube URL (operator upload required)
-- **Testing links:** browser <https://tiny-b9f29.web.app>; Android `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.1`
+- **Testing links:** browser <https://tiny-b9f29.web.app>; Android `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.2`
 - **Test credentials:** browser `judge@tiny-demo.example` / `TinyDemo2026!`; Android phone `08000000001`, code `123456` (synthetic accounts)
 - **Built with:** Kotlin, Jetpack Compose, Vite, React, TypeScript, Firebase Auth, Firestore, App Check, Firebase AI Logic, Gemini Developer API, IndexedDB, PWA, Android SDK, Room/SQLCipher, WorkManager
 - **Description:** offline-first teacher tool for rural Nigerian primary schools; parents use SMS; pupils have no accounts; hybrid AI assists lesson planning without gating core work. The browser companion supports evaluation of the teacher workflows without an install.

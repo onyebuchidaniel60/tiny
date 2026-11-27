@@ -217,7 +217,7 @@ The `Compose instrumentation` job boots an API 35 Pixel 5 emulator and runs `./g
 
 ### Judge-accessible approach
 
-1. Use the public judge release `v0.1.0-preview.1` (`tiny-judge-preview.apk`) for zero-cost, unrestricted access through judging. It uses a dedicated revocable App Check debug token. See `docs/JUDGE_ACCESS.md`.
+1. Use the public judge release `v0.1.0-preview.2` (`tiny-judge-preview.apk`) for zero-cost, unrestricted access through judging. It uses a dedicated revocable App Check debug token. See `docs/JUDGE_ACCESS.md`.
 2. Alternatively, create/use the `judges` App Distribution group and add approved emails privately.
 3. Upload the same verified judge APK with release notes containing the build number and commit SHA.
 4. Use the protected `distribution` GitHub environment with manual approval for restricted App Distribution uploads.
@@ -243,7 +243,7 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 - APK artifact: `tiny-dev-debug-apk` from run 45950400565; 31,097,300 bytes; SHA-256 `17036AFE1792A2401EBAC359C3C2AD819A63056AAB9616785F35A8ADC2DB145A`.
 - Emulator evidence: Firebase-enabled run captured `tiny-03-auth-gate.png` and `tiny-04-authenticated.png` (Home with `Tiny Synthetic E2E`, 1 class / 1 pupil). Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
-- App Distribution: groups `internal-testers` and `judges` created; no tester emails or invitation sent yet. The public judge prerelease `v0.1.0-preview.1` is available separately.
+- App Distribution: groups `internal-testers` and `judges` created; no tester emails or invitation sent yet. The public judge prerelease `v0.1.0-preview.2` is available separately.
 - App Check debug tokens are never committed; the raw CI logcat containing the first token was deleted and that token was revoked. A separate private-CI token is stored only in GitHub secrets and used by the non-uploaded AI APK. The smoke script redacts future occurrences.
 - Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; Hausa/Yoruba/Igbo have complete draft translations pending native review.
 

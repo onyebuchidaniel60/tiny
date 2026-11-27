@@ -176,7 +176,7 @@ The browser companion is live at <https://tiny-b9f29.web.app>. It is a teacher-o
 ## Judge access
 
 - Browser preview (no install): <https://tiny-b9f29.web.app>; synthetic account `judge@tiny-demo.example` / `TinyDemo2026!`.
-- Public test build: [Tiny judge preview v0.1.0-preview.1](https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.1) (`tiny-judge-preview.apk`).
+- Public test build: [Tiny judge preview v0.1.0-preview.2](https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.2) (`tiny-judge-preview.apk`).
 - Test phone: `08000000001`; code: `123456`.
 - Installation, limitations and the App Distribution alternative: [`docs/JUDGE_ACCESS.md`](docs/JUDGE_ACCESS.md).
 - Hybrid AI verification and the on-device hardware gap: [`docs/AI_HYBRID_VERIFICATION.md`](docs/AI_HYBRID_VERIFICATION.md).

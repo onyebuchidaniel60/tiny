@@ -2,7 +2,7 @@
 
 **Last updated:** 27 November 2026 (browser companion, submission, sync E2E and judge access)
 
-**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.1`) is published. A browser companion is hosted at <https://tiny-b9f29.web.app> with a synthetic Firebase email/password account, read-only Firestore bootstrap, local-only outbox, PWA offline shell and Firebase AI Logic. Its live AI request also returned SDK-reported `Cloud Gemini`. App Check enforcement, Play Integrity and on-device Nano remain unverified.
+**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.2`) is published. A browser companion is hosted at <https://tiny-b9f29.web.app> with a synthetic Firebase email/password account, read-only Firestore bootstrap, local-only outbox, PWA offline shell and Firebase AI Logic. Its live AI request also returned SDK-reported `Cloud Gemini`. App Check enforcement, Play Integrity and on-device Nano remain unverified.
 
 **Current blocker:** no technical blocker for the tested Android, browser or Firebase paths. Submission gates: public YouTube upload, Devpost entry/eligibility confirmation, App Distribution tester emails and a supported Nano device. App Check enforcement/Play Integrity remain deliberate release-hardening items. The web and Android judge App Check debug tokens must remain valid through judging and then be revoked.
 
@@ -129,7 +129,7 @@
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | VERIFIED — free tier | App-level `AiLogicLiveTest` passed: on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; on-device still pending |
-| Protected preview distribution | PUBLIC JUDGE APK + App Distribution groups | `v0.1.0-preview.1` published; `internal-testers`/`judges` groups created; tester emails still needed for App Distribution |
+| Protected preview distribution | PUBLIC JUDGE APK + App Distribution groups | `v0.1.0-preview.2` published; `internal-testers`/`judges` groups created; tester emails still needed for App Distribution |
 | Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
 | On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
 | eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
@@ -239,7 +239,7 @@
 - Android sync E2E: manual run `45950447844`; `SyncEmulatorE2ETest` 1/1 passed against local Auth/Firestore/Functions emulators.
 - App-level AI smoke: manual run `45950443728`; `AiLogicLiveTest` 1/1 passed with cloud fallback and `Cloud Gemini` source. Ephemeral APK not uploaded; no token in reports.
 - Judge APK AI UI: manual run `45950452014`; real cloud result displayed `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png`.
-- Public judge preview: `v0.1.0-preview.1`; `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`). App Distribution groups `internal-testers` and `judges` created; tester emails pending.
+- Public judge preview: `v0.1.0-preview.2`; `tiny-judge-preview.apk` (31,536,119 bytes; SHA-256 `8bfdbb3d9479b3b5fc0ef9e8ac5502f3d6211b598e5b36b9c4b8a4790d6d922f`), built by [judge-release run 46013035986](https://github.com/onyebuchidaniel60/tiny/actions/runs/46013035986). App Distribution groups `internal-testers` and `judges` created; tester emails pending.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.
 - Production: not authorized.

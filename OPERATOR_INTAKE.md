@@ -76,7 +76,7 @@ Do not claim any missing reference exists. The UI implementation is direct from 
 | On-device AI test phone | Yes for proof of on-device path | SEPARATE BLOCKED GATE | Samsung Galaxy Note 10+, Android 12, is the only physical device and is **not** on the current ML Kit Gemini Nano supported-device list. Use for general testing only; do not claim on-device inference. Emulator does not prove physical Nano inference |
 | Representative low-cost pilot phones | Required before pilot | PENDING | No second device available and operator does not intend to purchase one. Use Note 10+ for general testing and emulators/CI for additional coverage; record the pilot-device gap |
 | Android build environment | Yes | CONFIRMED — GitHub Actions Ubuntu | Primary build/test path is GitHub Actions `ubuntu-24.04`. Local Windows verification used a portable JDK 17 + Android command-line SDK, not full Android Studio. See `docs/CI_ANDROID_BUILD.md` |
-| Firebase App Distribution | Preferred restricted preview route | GROUPS CREATED — tester emails pending | `internal-testers` and `judges` groups exist. Add approved emails privately. A public judge APK (`v0.1.0-preview.1`) is published for the hackathon with a revocable token; see `docs/JUDGE_ACCESS.md` |
+| Firebase App Distribution | Preferred restricted preview route | GROUPS CREATED — tester emails pending | `internal-testers` and `judges` groups exist. Add approved emails privately. A public judge APK (`v0.1.0-preview.2`) is published for the hackathon with a revocable token; see `docs/JUDGE_ACCESS.md` |
 | Firebase Emulator Suite | Strongly required for tests | CONFIRMED — rules + backend E2E pass | `firebase.json`, Functions, rules and indexes present; 9/9 Firestore rules tests and 10/10 callable/webhook/scheduler/sync E2E tests pass in CI. No production data |
 
 **Fixed region decision:** Firestore Standard and Functions Gen2 in `africa-south1` (Johannesburg). This is not Nigerian data residency. Cross-border processing must be assessed in DPIA/legal review. Gemini Developer API AI processing is global; only de-identified/minimized generic context may be sent.
@@ -132,7 +132,7 @@ Provider acceptance must never be labelled delivery. Mock/sandbox only unless th
 | Maximum monthly cloud spend | Yes | CONFIRMED — NGN 0 | No billing account or Blaze upgrade without explicit approval |
 | SMS spend ceiling | Yes before live messages | CONFIRMED — NGN 0 | No production sends; mock adapter only |
 | Paid AI / paid third-party integrations | Yes before enabling | CONFIRMED — NGN 0 | No paid model, API or service. Free tiers only; no auto-upgrade or top-up |
-| Preview deployment authority | Yes | CONFIRMED ROUTE - App Distribution + public judge APK | App Distribution groups exist (emails pending). A public synthetic judge APK `v0.1.0-preview.1` is authorized for the hackathon with a dedicated revocable App Check token; no production resources |
+| Preview deployment authority | Yes | CONFIRMED ROUTE - App Distribution + public judge APK | App Distribution groups exist (emails pending). A public synthetic judge APK `v0.1.0-preview.2` is authorized for the hackathon with a dedicated revocable App Check token; no production resources |
 | Production deployment authority | Yes | NOT AUTHORIZED | Requires separate explicit approval after security/DPIA gates |
 | Destructive DB migrations | Yes | NOT AUTHORIZED | Backups and explicit authorization required |
 | Real parent messaging | Yes | NOT AUTHORIZED | Mock adapter only |
