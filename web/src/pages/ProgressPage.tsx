@@ -51,7 +51,7 @@ export function ProgressPage() {
   return (
     <div className="page-stack">
       <PageHeader
-        eyebrow={`${classroom?.gradeLevel ?? t('class')} ${classroom?.sectionLabel ?? ''}`}
+        eyebrow={`${classroom?.gradeLevel ?? t('class_label')} ${classroom?.sectionLabel ?? ''}`}
         title={pupil.displayName}
         subtitle={`${pupil.localPupilCode || t('no_local_code')} · ${t('progress_subtitle')}`}
         actions={<Link to={`/classes/${pupil.classId}`}><Button variant="secondary">{t('roster')}</Button></Link>}

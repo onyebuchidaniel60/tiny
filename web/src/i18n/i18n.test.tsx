@@ -57,6 +57,7 @@ describe('I18nProvider', () => {
   });
 
   it('changes already-rendered plural and date output', async () => {
+    localStorage.clear();
     const user = userEvent.setup();
     render(<I18nProvider><Probe /></I18nProvider>);
     const englishDate = screen.getByTestId('date').textContent;

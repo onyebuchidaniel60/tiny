@@ -51,7 +51,7 @@ export function LessonsPage() {
         <Card className="form-card">
           <form className="form-grid" onSubmit={submit}>
             <Field label={t('lesson_title')}><TextInput value={title} onChange={(event) => setTitle(event.target.value)} placeholder={t('lesson_title_placeholder')} /></Field>
-            <Field label={t('class')}>
+            <Field label={t('class_label')}>
               <SelectInput value={classId} onChange={(event) => setClassId(event.target.value)}>
                 {state.classes.map((classroom) => <option key={classroom.id} value={classroom.id}>{classroom.gradeLevel} {classroom.sectionLabel}</option>)}
               </SelectInput>
@@ -74,7 +74,7 @@ export function LessonsPage() {
               <div className="class-card-top"><Pill tone="butter">{subjectLabel(t, lesson.subjectId)}</Pill><Pill tone={lesson.status === 'ready' ? 'forest' : 'muted'}>{lesson.status === 'ready' ? t('status_ready') : t('status_draft')}</Pill></div>
               <h3>{lesson.title}</h3>
               <p>{lesson.objective || t('no_objective')}</p>
-              <div className="lesson-meta"><span>{lesson.gradeLevel}</span><span>{classroom?.sectionLabel ?? t('class')}</span><span>5E</span></div>
+              <div className="lesson-meta"><span>{lesson.gradeLevel}</span><span>{classroom?.sectionLabel ?? t('class_label')}</span><span>5E</span></div>
               <Link to={`/lessons/${lesson.id}`}><Button variant="secondary">{t('open_lesson')} <Icon name="arrow" size={15} /></Button></Link>
             </Card>
           );

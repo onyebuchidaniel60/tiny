@@ -47,7 +47,7 @@
     <string name="details">Details</string>
     <string name="status">Status</string>
     <string name="subject">Subject</string>
-    <string name="class">Class</string>
+    <string name="class_label">Class</string>
     <string name="pupil">Pupil</string>
     <string name="pupils">Pupils</string>
     <string name="guardian">Guardian</string>

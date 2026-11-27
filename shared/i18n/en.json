@@ -45,7 +45,7 @@
   "details": "Details",
   "status": "Status",
   "subject": "Subject",
-  "class": "Class",
+  "class_label": "Class",
   "pupil": "Pupil",
   "pupils": "Pupils",
   "guardian": "Guardian",

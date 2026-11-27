@@ -61,7 +61,7 @@ export function LessonDetailPage() {
           <Card>
             <div className="eyebrow">{t('plan_details')}</div>
             <div className="detail-list">
-              <div><span>{t('class')}</span><strong>{classroom ? `${classroom.gradeLevel} ${classroom.sectionLabel}` : draft.classId}</strong></div>
+              <div><span>{t('class_label')}</span><strong>{classroom ? `${classroom.gradeLevel} ${classroom.sectionLabel}` : draft.classId}</strong></div>
               <div><span>{t('subject')}</span><strong>{subjectLabel(t, draft.subjectId)}</strong></div>
               <div><span>{t('status')}</span><Pill tone={draft.status === 'ready' ? 'forest' : 'muted'}>{draft.status === 'ready' ? t('status_ready') : t('status_draft')}</Pill></div>
             </div>
