@@ -1,0 +1,59 @@
+name: Firebase AI UI smoke (manual)
+
+# Installs the public judge APK (dedicated App Check debug token) and captures
+# the real cloud AI result and SDK-reported source. No private token is used.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ai-ui-smoke:
+    name: Judge APK AI UI
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Download public judge APK
+        run: |
+          mkdir -p artifacts
+          curl -fL -o artifacts/tiny-judge-preview.apk \
+            "https://github.com/onyebuchidaniel60/tiny/releases/download/v0.1.0-preview.1/tiny-judge-preview.apk"
+          sha256sum artifacts/tiny-judge-preview.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run AI UI smoke
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: |
+            bash tools/android-ai-ui-smoke.sh artifacts/tiny-judge-preview.apk
+
+      - name: Upload AI UI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-ai-ui-evidence
+          path: artifacts/emulator/tiny-ai-*.png
+          if-no-files-found: warn
+          retention-days: 14
