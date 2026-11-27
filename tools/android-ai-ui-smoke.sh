@@ -102,8 +102,10 @@ tap_text_retry "Teaching helper" 5 || true
 wait_for_text "Generate a strategy" 20 || true
 screenshot "tiny-ai-02-screen"
 tap_text_retry "Generate a strategy" 5 || true
+sleep 15
+adb shell input swipe 540 1900 540 700 300 || true
 
-if wait_for_text "Source:" 45 || wait_for_text "Cloud Gemini" 45; then
+if wait_for_text "Source:" 20 || wait_for_text "Cloud Gemini" 20; then
   screenshot "tiny-ai-cloud"
   echo "AI cloud UI result captured in artifacts/emulator/tiny-ai-cloud.png"
 else
