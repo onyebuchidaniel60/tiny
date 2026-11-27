@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -46,7 +47,6 @@ import ng.tiny.education.ui.theme.TinyTomato
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 @Composable
 fun AttendanceScreen(
@@ -56,8 +56,9 @@ fun AttendanceScreen(
 ) {
     val today = remember { LocalDate.now() }
     val date = today.toString()
-    val dateLabel = remember(today, Locale.getDefault()) {
-        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+    val locale = LocalConfiguration.current.locales[0]
+    val dateLabel = remember(today, locale) {
+        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale))
     }
     val session by viewModel.observeAttendance(classId, date).collectAsStateWithLifecycle(initialValue = null)
     val entries by remember(session?.id) {

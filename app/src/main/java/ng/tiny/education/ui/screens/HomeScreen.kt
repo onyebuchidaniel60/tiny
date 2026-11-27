@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,7 +50,6 @@ import ng.tiny.education.ui.theme.TinyTomato
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.Locale
 
 @Composable
 fun HomeScreen(
@@ -68,8 +68,9 @@ fun HomeScreen(
     val unread by viewModel.unreadMessageCount.collectAsStateWithLifecycle()
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val today = remember { LocalDate.now() }
-    val dateLabel = remember(today, Locale.getDefault()) {
-        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL))
+    val locale = LocalConfiguration.current.locales[0]
+    val dateLabel = remember(today, locale) {
+        today.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale))
     }
     val statsReady = workspace != null && (classes.isNotEmpty() || pupilCount > 0)
 
