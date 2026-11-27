@@ -20,9 +20,9 @@
 - **Rules behaviour:** live unauthenticated Firestore `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without App Check, as designed. A synthetic member user can read the workspace/class/pupil (200); a second non-member test user is denied (403).
 - **Auth:** Console setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone enabled with `+2348000000001`/`123456` and `+2348000000002`/`654321`; SMS region allowlist `NG`; no real SMS. REST test sign-in and the app-level test-phone sign-in both succeeded.
 - **App-level bootstrap:** CI run `45891064395` signed in and loaded `Tiny Synthetic E2E` (1 class / 1 pupil) from Firestore. Evidence: `artifacts/emulator/tiny-04-authenticated.png`.
-- **App-level AI:** manual run `45943523336`; `AiLogicLiveTest` 1/1 passed. Ephemeral APK and token were not uploaded; reports contain no token. On-device Nano was not available and not claimed.
-- **CI:** run `45891064395` succeeded (build, 35/35 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens. Final regression run `45898846102` is also green; the live AI test is skipped in the normal instrumentation job when Firebase config is absent.
-- **Android sync E2E:** manual run `45943527674`; `SyncEmulatorE2ETest` passed against Auth/Firestore/Functions emulators, covering accepted acknowledgement, idempotent replay, transport retry and conflict. No real project was contacted.
+- **App-level AI:** manual run `45950443728`; `AiLogicLiveTest` 1/1 passed. Ephemeral APK and token were not uploaded; reports contain no token. On-device Nano was not available and not claimed.
+- **CI:** run `45891064395` succeeded (build, 35/35 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens. Final regression run `45950400565` is also green; live AI/sync tests are skipped in the normal instrumentation job when their config is absent.
+- **Android sync E2E:** manual run `45950447844`; `SyncEmulatorE2ETest` passed against Auth/Firestore/Functions emulators, covering accepted acknowledgement, idempotent replay, transport retry and conflict. No real project was contacted.
 - **Not claimed:** App Check enforcement, Play Integrity, Phone Auth SMS, hosted Functions, App Distribution, on-device Gemini Nano.
 
 ## Firebase integration stage (26 November 2026)
@@ -196,9 +196,9 @@
 - GitHub Actions build/test and rules jobs: **success**.
 - Emulator smoke: **test-phone sign-in succeeded**; `artifacts/emulator/tiny-04-authenticated.png` shows Home with the synthetic Firestore workspace (1 class / 1 pupil). `artifacts/emulator/tiny-03-auth-gate.png` remains as the gate evidence. The prior pre-Firebase screenshots remain at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png` and in the demo.
 - Compose instrumentation: **success** in CI on API 35 Pixel 5 (no Firebase client config injected; local-mode journey).
-- Android sync E2E: manual run `45943527674`; `SyncEmulatorE2ETest` 1/1 passed against local Auth/Firestore/Functions emulators.
-- App-level AI smoke: manual run `45943523336`; `AiLogicLiveTest` 1/1 passed with cloud fallback and `Cloud Gemini` source. Ephemeral APK not uploaded; no token in reports.
-- Judge APK AI UI: manual run `45948484744`; real cloud result displayed `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png`.
+- Android sync E2E: manual run `45950447844`; `SyncEmulatorE2ETest` 1/1 passed against local Auth/Firestore/Functions emulators.
+- App-level AI smoke: manual run `45950443728`; `AiLogicLiveTest` 1/1 passed with cloud fallback and `Cloud Gemini` source. Ephemeral APK not uploaded; no token in reports.
+- Judge APK AI UI: manual run `45950452014`; real cloud result displayed `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png`.
 - Public judge preview: `v0.1.0-preview.1`; `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`). App Distribution groups `internal-testers` and `judges` created; tester emails pending.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.

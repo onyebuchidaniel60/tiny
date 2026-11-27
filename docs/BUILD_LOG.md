@@ -160,9 +160,9 @@
 
 - Added `.github/workflows/firebase-ai-smoke.yml` (manual private build) and `AiLogicLiveTest`.
 - The workflow materializes `google-services.json` and a registered App Check debug token from GitHub secrets, builds an **ephemeral** APK, runs the emulator instrumentation test, and does not upload the APK.
-- Run `45943523336`: **1 test passed, 0 failed** in the private AI smoke (on-device unavailable, cloud fallback, `Cloud Gemini`).
+- Run `45950443728`: **1 test passed, 0 failed** in the private AI smoke (on-device unavailable, cloud fallback, `Cloud Gemini`).
 - Test evidence: SDK tried the on-device provider (`FirebaseAIOnDeviceNotAvailableException`), fell back to cloud, returned text, and reported `Cloud Gemini`; the emulator was asserted not to report on-device `Available`.
-- Final regression run `45898846102` is green; the normal instrumentation job skips `AiLogicLiveTest` when `google-services.json` is absent and runs `TinyNavigationTest` normally.
+- Final regression run `45950400565` is green; the normal instrumentation job skips `AiLogicLiveTest` and `SyncEmulatorE2ETest` when their required config is absent and runs `TinyNavigationTest` normally.
 - Reports `tiny-firebase-ai-reports` contain no unredacted App Check debug token. The APK was not uploaded.
 - No on-device Gemini Nano claim; the Note 10+ remains unsupported.
 - Next: Functions-emulator client sync, App Check enforcement, Play Integrity/release fingerprint and App Distribution.
@@ -170,7 +170,7 @@
 ## Android sync E2E and judge-release checkpoint — 27 November 2026
 
 - Added `SyncEmulatorE2ETest` and `.github/workflows/firebase-sync-smoke.yml`.
-- Run `45943527674`: **1 test passed, 0 failed** against local Auth/Firestore/Functions emulators; test uses the real Firebase Functions Android SDK and `SyncProcessor`. It covers accepted acknowledgement, idempotent replay, transport retry/backoff and a server conflict. No real project was contacted.
+- Run `45950447844`: **1 test passed, 0 failed** against local Auth/Firestore/Functions emulators; test uses the real Firebase Functions Android SDK and `SyncProcessor`. It covers accepted acknowledgement, idempotent replay, transport retry/backoff and a server conflict. No real project was contacted.
 - Added `AiInferenceSourceTest` for honest source labels (`ON_DEVICE` / `IN_CLOUD` / unknown); unit suite is now **35/35**.
 - Added Apache-2.0 `LICENSE`; GitHub detects it in repository metadata.
 - Added `docs/JUDGE_ACCESS.md`, `docs/JUDGE_RELEASE_NOTES.md`, `docs/AI_HYBRID_VERIFICATION.md` and `docs/HACKATHON_SUBMISSION.md`.

@@ -179,9 +179,9 @@ Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Ac
 
 `.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, and handles launcher ANRs. A Firebase-enabled build captures the auth gate, signs in with the synthetic test phone number, waits for the Firestore bootstrap, and captures `tiny-04-authenticated.png`; it does not pretend the local journey ran. A non-Firebase build continues through home, classes, class detail, attendance, lessons, messages, conversation and settings. The job uploads `tiny-emulator-evidence` with redacted logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
 
-A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45943523336` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token. A companion `.github/workflows/firebase-ai-ui-smoke.yml` installs the public judge APK and captures the actual cloud result/source in `artifacts/emulator/tiny-ai-cloud.png` (run `45948484744`).
+A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45950443728` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token. A companion `.github/workflows/firebase-ai-ui-smoke.yml` installs the public judge APK and captures the actual cloud result/source in `artifacts/emulator/tiny-ai-cloud.png` (run `45950452014`).
 
-`.github/workflows/firebase-sync-smoke.yml` starts local Auth/Firestore/Functions emulators and runs `SyncEmulatorE2ETest` on an Android emulator. Run `45943527674` passed success, idempotency, retry and conflict cases. It uses a separate emulator-only FirebaseApp and never contacts the real project.
+`.github/workflows/firebase-sync-smoke.yml` starts local Auth/Firestore/Functions emulators and runs `SyncEmulatorE2ETest` on an Android emulator. Run `45950447844` passed success, idempotency, retry and conflict cases. It uses a separate emulator-only FirebaseApp and never contacts the real project.
 
 `.github/workflows/judge-release.yml` builds a public judge APK with a dedicated judge debug token and publishes a prerelease. The token is intentionally public in that test APK and must be revoked after judging; the private CI token is not used.
 
@@ -238,9 +238,9 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: latest integration regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45942661936` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). The sync and AI workflows have their own runs.
+- CI run: latest integration regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45950400565` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). The sync and AI workflows have their own runs.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk` from run 45942661936; 31,097,300 bytes; SHA-256 `17036AFE1792A2401EBAC359C3C2AD819A63056AAB9616785F35A8ADC2DB145A`.
+- APK artifact: `tiny-dev-debug-apk` from run 45950400565; 31,097,300 bytes; SHA-256 `17036AFE1792A2401EBAC359C3C2AD819A63056AAB9616785F35A8ADC2DB145A`.
 - Emulator evidence: Firebase-enabled run captured `tiny-03-auth-gate.png` and `tiny-04-authenticated.png` (Home with `Tiny Synthetic E2E`, 1 class / 1 pupil). Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
 - App Distribution: groups `internal-testers` and `judges` created; no tester emails or invitation sent yet. The public judge prerelease `v0.1.0-preview.1` is available separately.
