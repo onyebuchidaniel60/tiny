@@ -290,6 +290,15 @@ private fun IndicatorChoice(label: String, selected: Boolean, color: androidx.co
 }
 
 @Composable
+private fun relationshipLabel(value: String): String = when (value.trim().lowercase()) {
+    "mother", "mum", "mom" -> stringResource(R.string.mother)
+    "father", "dad" -> stringResource(R.string.father)
+    "parent" -> stringResource(R.string.parent_relationship)
+    "guardian" -> stringResource(R.string.guardian)
+    else -> value
+}
+
+@Composable
 private fun GuardianContactCard(
     link: PupilGuardianLinkEntity,
     viewModel: TinyViewModel,
@@ -307,7 +316,7 @@ private fun GuardianContactCard(
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        "${guardian?.phoneE164 ?: "—"} · ${link.relationshipLabel}",
+                        "${guardian?.phoneE164 ?: "—"} · ${relationshipLabel(link.relationshipLabel)}",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

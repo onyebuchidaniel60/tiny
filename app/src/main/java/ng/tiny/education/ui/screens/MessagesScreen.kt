@@ -122,8 +122,7 @@ private fun ConversationCard(
         }
         Spacer(Modifier.height(10.dp))
         Text(
-            stringResource(R.string.preferred_language) + ": " +
-                (guardian?.preferredLocale?.uppercase() ?: "EN"),
+            stringResource(R.string.preferred_language) + ": " + localeLabel(guardian?.preferredLocale),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -231,6 +230,14 @@ private fun MessageBubble(message: MessageEntity) {
             }
         }
     }
+}
+
+@Composable
+private fun localeLabel(code: String?): String = when (code?.lowercase()) {
+    "ha" -> stringResource(R.string.language_hausa)
+    "yo" -> stringResource(R.string.language_yoruba)
+    "ig" -> stringResource(R.string.language_igbo)
+    else -> stringResource(R.string.language_english)
 }
 
 @Composable
