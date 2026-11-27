@@ -105,7 +105,7 @@ Targets in `PROJECT_SPEC.md` are proposed engineering targets, not measured clai
 
 Store test reports, screenshots, device/API information, build hashes, emulator logs with PII redacted and sandbox provider event IDs in `artifacts/test-evidence/`. Link evidence from `AI_HANDOFF.md` and `docs/BUILD_LOG.md`.
 
-## 6. Phase 1 evidence (26 November 2026)
+## 6. Phase 1 evidence (27 November 2026)
 
 - Android unit tests: **35 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest, sync rules, JSON escaping and AI source labels.
 - Firestore rules tests: **9 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message reads.

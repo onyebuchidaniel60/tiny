@@ -4,6 +4,8 @@
 
 Tiny is an offline-first Android teacher-support and parent-engagement platform designed for rural primary schools in Nigeria. Teachers use the Android app on their existing phones. Parents use ordinary SMS; they do not install an app. Pupils have no accounts or student interface.
 
+Tiny is submitted to **#BuildHybridAI 2026** (Firebase AI Logic hybrid inference). See [`docs/HACKATHON_SUBMISSION.md`](docs/HACKATHON_SUBMISSION.md) for the official-requirements review and risks.
+
 This repository now contains an implementation preview as well as the product handoff. It is not authorization to begin production deployment, spend money, send messages to real parents, or process live pupil data. Current development is mock-only, synthetic-data-only and zero-budget.
 
 ## Source of truth

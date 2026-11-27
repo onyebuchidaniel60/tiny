@@ -1,6 +1,6 @@
 # Tiny — AI Implementation Handoff
 
-**Last updated:** 26 November 2026 (Auth, Firestore and app-level AI verification)
+**Last updated:** 27 November 2026 (submission, sync E2E and judge access)
 
 **Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.1`) is published. App Check enforcement, Play Integrity and on-device Nano remain unverified.
 

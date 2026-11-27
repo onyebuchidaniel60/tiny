@@ -1,6 +1,7 @@
 # Hackathon Submission Review — #BuildHybridAI 2026
 
 Official rules: <https://firebasehybridaihackathon.devpost.com/rules> (accessed 27 November 2026).
+**Submission status:** NOT SUBMITTED. Devpost entry and public YouTube upload are still operator actions.
 Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging ends 16 December 2026.
 
 ## 1. Eligibility and authority
