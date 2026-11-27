@@ -208,7 +208,7 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
             container.accountService.createWorkspace(name.trim(), type.name.lowercase())
                 .onSuccess { remote ->
                     repository.saveRemoteWorkspace(remote.workspaceId, name.trim(), type, remote.schoolCode)
-                    _message.value = UiMessage(R.string.workspace_created, remote.schoolCode)
+                    _message.value = UiMessage(R.string.workspace_created, listOf(remote.schoolCode))
                 }
                 .onFailure { _message.value = UiMessage(R.string.error_generic) }
         } else {
@@ -290,7 +290,7 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
             val code = (100000..999999).random().toString()
             localGuardianChallenges[guardianId] = code
             _guardianCode.value = code
-            _message.value = UiMessage(R.string.preview_verification_code, code)
+            _message.value = UiMessage(R.string.preview_verification_code, listOf(code))
         }
     }
 

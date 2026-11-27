@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.List
@@ -100,7 +99,7 @@ fun TinyTopBar(
         },
         actions = {
             IconButton(onClick = onHelp) {
-                Icon(Icons.Outlined.HelpOutline, contentDescription = stringResource(R.string.cd_help))
+                Icon(Icons.Outlined.Info, contentDescription = stringResource(R.string.cd_help))
             }
             IconButton(onClick = onSettings) {
                 Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.cd_settings))
