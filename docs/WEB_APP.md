@@ -345,7 +345,7 @@ No Cloud Functions were deployed. No billing, Blaze, live SMS, App Distribution 
 | Playwright mobile | 12 passed, 1 skipped |
 | Live Firebase/AI check | 1 passed with `TINY_LIVE_FIREBASE=1` |
 | Axe serious/critical violations | 0 |
-| Android/backend regression | passed in CI run [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913) |
+| Android/backend regression | passed in CI run [46011216901](https://github.com/onyebuchidaniel60/tiny/actions/runs/46011216901) |
 
 The Playwright suite covers:
 
@@ -378,8 +378,8 @@ The workflow does not require Firebase credentials because the default browser j
 
 Latest green runs:
 
-- Web CI: [45999218456](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218456).
-- Android/backend regression on the same commit: [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913).
+- Web CI: [46011216793](https://github.com/onyebuchidaniel60/tiny/actions/runs/46011216793).
+- Android/backend regression on the same commit: [46011216901](https://github.com/onyebuchidaniel60/tiny/actions/runs/46011216901).
 
 The first web run (`45973072502`) surfaced two timing issues: an immediate navigation could outrun the IndexedDB write, and headless mobile Chromium could not hit the fixed bottom-nav link reliably. The app now persists state at action time and prefers the synchronous localStorage recovery copy; functional tests open routes directly while the responsive test asserts the mobile nav and href. The rerun is green.
 
