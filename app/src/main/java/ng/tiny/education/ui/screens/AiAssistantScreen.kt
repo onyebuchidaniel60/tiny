@@ -68,7 +68,7 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
                         Text("On-device model: ${aiState.deviceStatus}", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                         Text(
                             if (aiState.deviceStatus == "Available") "Gemini Nano is available on this device."
-                            else "Cloud inference is used only when configured; the curated fallback remains available.",
+                            else "Cloud inference is used when the on-device model is unavailable; the curated fallback remains available.",
                             style = MaterialTheme.typography.bodySmall,
                         )
                     }
@@ -139,7 +139,7 @@ fun AiAssistantScreen(viewModel: TinyViewModel, onBack: () -> Unit) {
         }
         item {
             Text(
-                "The hybrid AI acceptance gate is separate: on-device Gemini Nano requires supported physical hardware, and cloud AI requires the non-production Firebase project. Neither is claimed in this preview.",
+                "Hybrid AI acceptance: on-device Gemini Nano requires supported physical hardware and is not claimed here. Cloud AI uses the non-production Firebase project, and the source label comes from the SDK response, never from configuration alone.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

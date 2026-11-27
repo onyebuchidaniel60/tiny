@@ -70,7 +70,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            npx --yes firebase-tools@15.14.0 emulators:exec --only auth,firestore,functions --project demo-tiny-e2e "./gradlew connectedDevDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=ng.tiny.education.SyncEmulatorE2ETest --stacktrace"
+            npx --yes firebase-tools@15.14.0 emulators:exec --only auth,firestore,functions --project demo-tiny-e2e "./gradlew connectedDevDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=ng.tiny.education.SyncEmulatorE2ETest -Pandroid.testInstrumentationRunnerArguments.tinySyncEmulator=true --stacktrace"
 
       - name: Upload sync test reports
         if: always()

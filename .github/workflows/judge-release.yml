@@ -1,0 +1,82 @@
+name: Judge preview release (manual)
+
+# Builds a public, debug-signed judge APK with a dedicated App Check debug
+# token from GitHub secrets, then publishes it as a prerelease. The token is
+# intentionally embedded in this public preview and revoked after judging.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish judge APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Install Android SDK packages
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          fi
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Normalize Gradle wrapper
+        run: |
+          chmod +x gradlew
+          sed -i 's/\r$//' gradlew
+
+      - name: Materialize Firebase config and judge token
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+          FIREBASE_JUDGE_DEBUG_TOKEN: ${{ secrets.FIREBASE_JUDGE_DEBUG_TOKEN }}
+        run: |
+          test -n "$GOOGLE_SERVICES_JSON_BASE64"
+          test -n "$FIREBASE_JUDGE_DEBUG_TOKEN"
+          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > app/google-services.json
+          mkdir -p app/src/debug/res/values
+          cat > app/src/debug/res/values/firebase_app_check_debug.xml <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="firebase_app_check_debug_token" translatable="false">${FIREBASE_JUDGE_DEBUG_TOKEN}</string>
+          </resources>
+          EOF
+
+      - name: Build judge APK
+        run: ./gradlew assembleDevDebug --stacktrace
+
+      - name: Prepare release files
+        run: |
+          cp app/build/outputs/apk/dev/debug/*.apk tiny-judge-preview.apk
+          sha256sum tiny-judge-preview.apk > tiny-judge-preview.apk.sha256
+          ls -lh tiny-judge-preview.apk
+
+      - name: Publish prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v0.1.0-preview.${GITHUB_RUN_NUMBER}"
+          gh release create "$TAG" \
+            tiny-judge-preview.apk \
+            tiny-judge-preview.apk.sha256 \
+            --title "Tiny judge preview (${GITHUB_RUN_NUMBER})" \
+            --notes-file docs/JUDGE_RELEASE_NOTES.md \
+            --prerelease
+          gh release view "$TAG" --json url --jq .url

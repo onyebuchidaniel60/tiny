@@ -3,6 +3,7 @@ package ng.tiny.education
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +22,7 @@ import ng.tiny.education.core.sync.SyncStore
 import ng.tiny.education.core.sync.SyncTransport
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -123,7 +125,12 @@ class SyncEmulatorE2ETest {
     }
 
     @Test
-    fun clientTransportCoversAcceptRetryIdempotencyAndConflict() = runBlocking {
+    fun clientTransportCoversAcceptRetryIdempotencyAndConflict() {
+        assumeTrue(
+            "Run only in the manual firebase-sync-smoke job with local emulators",
+            InstrumentationRegistry.getArguments().getString("tinySyncEmulator") == "true",
+        )
+        runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val options = FirebaseOptions.Builder()
             .setApplicationId("1:1234567890:android:tiny-emulator")
@@ -205,6 +212,7 @@ class SyncEmulatorE2ETest {
         val remoteClasses = firestore.collection("workspaces").document(workspaceId)
             .collection("classes").get().await()
         assertEquals(1, remoteClasses.size())
+        }
     }
 
     private suspend fun createWorkspace(functions: FirebaseFunctions): String {

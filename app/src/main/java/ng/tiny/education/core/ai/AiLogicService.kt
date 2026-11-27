@@ -17,6 +17,12 @@ data class AiGeneration(
     val source: String,
 )
 
+internal fun inferenceSourceLabel(source: InferenceSource?): String = when (source) {
+    InferenceSource.ON_DEVICE -> "On-device Gemini Nano"
+    InferenceSource.IN_CLOUD -> "Cloud Gemini"
+    else -> "Unknown inference source"
+}
+
 @OptIn(PublicPreviewAPI::class)
 class AiLogicService(context: Context) {
     val configured: Boolean = FirebaseRuntime.isConfigured(context)
@@ -54,11 +60,7 @@ class AiLogicService(context: Context) {
         check(text.isNotEmpty()) { "The model returned no text." }
         AiGeneration(
             text = text,
-            source = when (response.inferenceSource) {
-                InferenceSource.ON_DEVICE -> "On-device Gemini Nano"
-                InferenceSource.IN_CLOUD -> "Cloud Gemini"
-                else -> "Unknown inference source"
-            },
+            source = inferenceSourceLabel(response.inferenceSource),
         )
     }
 }

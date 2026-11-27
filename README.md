@@ -97,6 +97,9 @@ Phase 0 intake is complete and the Phase 1 preview is implemented and CI-verifie
 - Build evidence: `docs/BUILD_LOG.md`
 - Firebase integration runbook: `docs/FIREBASE_INTEGRATION.md`
 - Firebase sanitized audit/evidence: `docs/FIREBASE_EVIDENCE.md`
+- Judge APK/App Distribution: `docs/JUDGE_ACCESS.md`
+- Hybrid AI verification: `docs/AI_HYBRID_VERIFICATION.md`
+- Hackathon submission checklist: `docs/HACKATHON_SUBMISSION.md`
 - Demo production: `DEMO_VIDEO_PLAN.md`
 - Landing page: `landing/README.md`
 - Firebase Agent Skills and MCP developer tooling: `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md`
@@ -129,6 +132,18 @@ npx --yes serve landing
 **Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **34 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45898846102`. The emulator signs in with a synthetic test phone number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). App Distribution/judge access and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
 
 A reviewed 146.0-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording; the Firebase scene uses the authenticated test-phone/Firestore screenshot.
+
+## Judge access
+
+- Public test build: [GitHub Releases](https://github.com/onyebuchidaniel60/tiny/releases) (`tiny-judge-preview.apk`).
+- Test phone: `08000000001`; code: `123456`.
+- Installation, limitations and the App Distribution alternative: [`docs/JUDGE_ACCESS.md`](docs/JUDGE_ACCESS.md).
+- Hybrid AI verification and the on-device hardware gap: [`docs/AI_HYBRID_VERIFICATION.md`](docs/AI_HYBRID_VERIFICATION.md).
+- Submission readiness and official-rules risks: [`docs/HACKATHON_SUBMISSION.md`](docs/HACKATHON_SUBMISSION.md).
+
+## License
+
+Apache License 2.0. See [`LICENSE`](LICENSE).
 
 ## Firebase integration stage
 
