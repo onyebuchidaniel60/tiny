@@ -92,7 +92,7 @@ tap_text_retry "Continue" 5 || true
 wait_for_text "Teaching tools that fit" 20 || true
 screenshot "tiny-02-welcome"
 
-tap_text_retry "Explore the preview" 5 || true
+tap_text_retry "Open my workspace" 5 || true
 wait_for_text "Sign in with your phone" 30 || true
 dump_ui
 if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verification code' "$XML" 2>/dev/null; then
@@ -109,10 +109,11 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
       adb shell input text "123456" || true
       sleep 1
       tap_text_retry "Confirm and sign in" 5 || tap_coord 540 1130
-      if wait_for_text "Quick actions" 30; then
-        # Give the Firestore bootstrap a moment to load the synthetic remote
-        # workspace; if it is not configured, keep the local sample screen.
-        wait_for_text "Tiny Synthetic E2E" 20 || true
+      if wait_for_text "Skip tour" 15 || wait_for_text "Quick actions" 30; then
+        tap_text_retry "Skip tour" 3 || true
+        # Give the Firestore bootstrap a moment to load the remote workspace;
+        # if it is not configured, keep the local sample screen.
+        wait_for_text "Quick actions" 20 || true
         screenshot "tiny-04-authenticated"
         echo "Test-phone auth succeeded; captured tiny-04-authenticated.png."
       else
@@ -130,6 +131,8 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
   echo "Firebase auth gate detected; captured tiny-03-auth-gate.png and skipped local journey."
   exit 0
 fi
+tap_text_retry "Skip tour" 3 || true
+wait_for_text "Good morning" 20 || true
 screenshot "tiny-03-home"
 
 # Bottom navigation is 1080 px wide on the Pixel 5 emulator profile.
@@ -190,6 +193,53 @@ tap_coord 1005 210 || true
 sleep 2
 dismiss_anr
 screenshot "tiny-10-settings"
+
+# Capture representative screens for every supported teacher language.
+# The settings screen exposes the language chips; changing language recreates
+# the activity, so we re-open Settings before each choice.
+open_settings() {
+  tap_coord 1005 210 || true
+  sleep 2
+  dismiss_anr
+}
+
+capture_language_home() {
+  local suffix="$1"
+  local expected="$2"
+  screenshot "tiny-i18n-${suffix}-settings"
+  tap_coord 130 2200 || true
+  sleep 3
+  dismiss_anr
+  wait_for_text "$expected" 15 || true
+  screenshot "tiny-i18n-${suffix}-home"
+  open_settings
+}
+
+# English settings is already open at this point.
+screenshot "tiny-i18n-en-settings"
+open_settings
+tap_text_retry "Hausa" 3 || true
+sleep 3
+open_settings
+capture_language_home "ha" "Ina kwana"
+
+open_settings
+tap_text_retry "Yarbanci" 3 || true
+sleep 3
+open_settings
+capture_language_home "yo" "Ẹ káàárọ̀"
+
+open_settings
+tap_text_retry "Igbo" 3 || true
+sleep 3
+open_settings
+capture_language_home "ig" "Ụtụtụ ọma"
+
+open_settings
+tap_text_retry "Bekee" 3 || true
+sleep 3
+open_settings
+capture_language_home "en" "Good morning"
 
 dump_ui
 adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true

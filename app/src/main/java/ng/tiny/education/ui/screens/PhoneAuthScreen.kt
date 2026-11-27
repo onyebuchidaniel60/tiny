@@ -48,6 +48,10 @@ fun PhoneAuthScreen(
     val context = LocalContext.current
     val activity = context as? Activity
     val scope = rememberCoroutineScope()
+    val genericError = stringResource(R.string.auth_error)
+    val invalidPhoneError = stringResource(R.string.auth_phone_invalid)
+    val activityError = stringResource(R.string.auth_activity_required)
+    val verificationError = stringResource(R.string.auth_verification_failed)
     var phone by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
     var verificationId by remember { mutableStateOf<String?>(null) }
@@ -57,17 +61,17 @@ fun PhoneAuthScreen(
     fun finishSignIn(result: Result<*>) {
         busy = false
         result.onSuccess { onSignedIn() }
-            .onFailure { error = context.getString(R.string.auth_error) }
+            .onFailure { error = genericError }
     }
 
     fun requestCode() {
         val normalized = PhoneNormalizer.normalize(phone)
         if (normalized == null) {
-            error = context.getString(R.string.auth_phone_invalid)
+            error = invalidPhoneError
             return
         }
         if (activity == null) {
-            error = context.getString(R.string.auth_activity_required)
+            error = activityError
             return
         }
         error = null
@@ -84,7 +88,7 @@ fun PhoneAuthScreen(
             },
             onVerificationFailed = {
                 busy = false
-                error = context.getString(R.string.auth_verification_failed)
+                error = verificationError
             },
         )
     }
