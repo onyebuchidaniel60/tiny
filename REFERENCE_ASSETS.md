@@ -78,14 +78,14 @@ The landing page must distinguish planned MVP functionality from implemented/pre
 - Initial structure extraction: hero → problem → approach → teacher/parent features → how it works → constraints → walkthrough → impact → build status → FAQ → final CTA → substantial footer.
 - Landing page implemented in `landing/` with original copy, SVG/CSS motifs and original product mockups.
 - Screenshot evidence: `artifacts/screenshots/landing-desktop-full.png`, `landing-mobile-top.png`, `landing-mobile-revealed.png`.
-- StageShow skill: installation was attempted on 26 November 2026. The skill files appeared but the harness removed the `stageshow` skill ID after a server restart; the incomplete directory was removed and the skill was not used. The landing page was implemented with direct design-system discipline instead; do not claim StageShow completion.
-- Final typography scale and font choices:
-- Final colour tokens and contrast checks:
-- Illustration/asset inventory and ownership:
-- Responsive breakpoints tested:
-- Accessibility checks (keyboard, focus, reduced motion, contrast):
-- Intentional deviations from REF-001/REF-002 and reasons:
-- Performance notes (asset sizes, no blocking media):
+- **StageShow (27 November 2026):** installed successfully with `npx skills add benjitaylor/skills --skill stageshow`. The complete skill is present under `.agents/skills/stageshow/`; `SKILL.md`, `references/craft.md` and `references/review.md` were read. Its restraint, focal-object, typography, icon-family, spacing and viewport-review rules were applied to the real Android and web interfaces. No faux-UI asset was shipped as the app. The earlier failed attempt was a harness restart issue, not a licence or installation refusal.
+- **Final typography:** system serif display (`Iowan Old Style`/`Palatino`/`Georgia`; `FontFamily.Serif` on Android) and system sans body (`Segoe UI Variable Text`/`system-ui`; `FontFamily.SansSerif` on Android). No remote fonts; full system font-scaling support.
+- **Final colour tokens:** paper `#F7F1E5`, surface `#FFFDF8`, ink `#1C2A24`, ink-soft `#56635B`, forest `#1D5B47`, tomato `#CF5A3C`, cobalt `#2B5AA0`, butter `#EFC35A`, line `#D8CAB2`; semantic success/error/waiting tokens and a deep-green-charcoal dark scheme. Contrast checked for text/actions and status text; status is never colour-only.
+- **Illustration/asset inventory and ownership:** no third-party illustrations or photography. The mark is Lucide `sprout` (ISC, v0.544.0), recorded in `docs/BRAND_AND_ASSETS.md`. The wordmark is typographic. Synthetic screenshots are Tiny-owned renders.
+- **Responsive breakpoints tested:** web desktop 1440 × 1000, tablet 820 × 1180, mobile Pixel 5 393 × 851; sidebar→bottom navigation at 820 px; two-column→one-column at 1120 px; class rows wrap at 560 px. No horizontal overflow in any language.
+- **Accessibility checks:** skip link, focus-visible rings, dialog focus trap/Escape/arrow keys, 44–48 px targets, semantic labels, `aria-live` results, `role=alert/status`, large-text and reduced-motion controls, axe Home scan (0 serious/critical), Android Material semantics and 48 dp targets. TalkBack/physical-device pass remains pending.
+- **Intentional deviations from REF-001/REF-002:** Tiny does not reproduce Atelio's limited-licence illustrations, cobalt/tomato/butter exact palette, or PASS's trading-specific content/layout; it uses the structural storytelling rhythm and a warm education identity with original components. The Android app uses Material navigation conventions rather than copying a web template. StageShow's “one big number” rule was relaxed for the teacher summary strip because four equal, scannable facts are more useful in a dashboard; hierarchy remains on the primary action.
+- **Performance notes:** no remote fonts, stock media or video; web production JS ~1.17 MB raw / ~351 kB gzip including Firebase, CSS ~36 kB / 7.4 kB gzip; PWA precache ~1.19 MB. Android APK remains debug-preview sized; no new image assets beyond the small vector mark. Emulator/profile captures are from a Pixel 5 API 35 profile.
 
 ## 7. Generated-reference authorization
 

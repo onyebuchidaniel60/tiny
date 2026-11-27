@@ -8,6 +8,22 @@
 
 **Next task:** finish the official submission (YouTube demo upload, Devpost entry, eligibility confirmation), keep the browser preview and judge APK live through 16 December 2026, then run the on-device Nano acceptance procedure if a supported device is available. After judging, revoke the web and APK debug tokens and take down the synthetic previews. App Check enforcement/Play Integrity and hosted Functions are documented follow-ups. See `docs/HACKATHON_SUBMISSION.md`, `docs/WEB_APP.md` and `docs/FIREBASE_EVIDENCE.md`.
 
+## Product polish, localization and tours checkpoint - 27 November 2026
+
+- **Scope:** final product-quality pass across native Android and the hosted web teacher companion. Architecture and zero-spend boundaries preserved.
+- **StageShow:** installed successfully with `npx skills add benjitaylor/skills --skill stageshow`; complete skill at `.agents/skills/stageshow/`. Read `SKILL.md`, `references/craft.md` and `references/review.md`; applied restraint, focal-object, icon-family, spacing and viewport-review rules to the real interfaces. No faux-UI deliverable shipped.
+- **Design references:** Atelio Studio (warm serif-led, crafted, human) and PASS (product-story structure) re-inspected; findings and deviations in `REFERENCE_ASSETS.md`, `docs/DESIGN_NOTES.md`, `docs/DESIGN_SYSTEM.md`.
+- **Localization root cause:** Android had only ~14 translated keys per locale plus many hardcoded Compose literals and English ViewModel snackbars; web had no i18n layer at all. Fixed at architecture level with one shared catalogue (`shared/i18n/*.json`, 754 keys), generator validation, generated Android resources and web dictionary.
+- **Languages:** English source/reviewed; Hausa, Yoruba and Igbo complete drafts (all 754 keys, placeholders and plurals) with **native review pending**. The UI says so; they are not claimed as verified.
+- **Runtime:** Android applies `AppCompatDelegate` locales immediately, mirrors the language for cold start and exposes `android:localeConfig`; web `I18nProvider` updates and persists instantly. Snackbars use resource IDs (`UiMessage`). Dates are numeric fallback for ha/yo/ig on web because Chromium ICU month names are inconsistent.
+- **Tours/Help:** teacher tour (10 steps), guardian SMS guide (4 steps), skippable, persisted, replayable from Help/Settings; bilingual Help centre with search, 13 guides, limitations and contact.
+- **Brand:** Lucide `sprout` (ISC, `lucide-static` 0.544.0), used on Android/web with typographic wordmark and adaptive icon; source/licence in `docs/BRAND_AND_ASSETS.md`. Not claimed as an original Tiny logo.
+- **Web UI:** all pages migrated to `t()`; task-focused dashboard; new tokens/typography/surfaces; responsive desktop/tablet/mobile; dark scheme; accessible tours; language selector; polished evaluation sign-in. 60 i18n screenshots in `artifacts/web/i18n/`.
+- **Android UI:** all Compose screens localized and restyled; Help screen; tour host; top-bar Help; localized snackbars/AI source/status; language persistence; Lucide mark; evaluation labels removed from core surfaces.
+- **Verification:** web typecheck, 23 Vitest tests, 36 Playwright journeys (3 viewports, 4 languages; 3 live tests skipped), 0 serious/critical axe violations. Android compile reached lint; lint/unit/APK status is tracked below as CI evidence after the final fixes.
+- **Preserved authentication:** Firebase Phone Auth synthetic test numbers remain `+2348000000001`/`123456` and `+2348000000002`/`654321`; web evaluation account remains `judge@tiny-demo.example` / `TinyDemo2026!`. No auth configuration was changed.
+- **Not claimed:** live SMS, hosted Functions, cross-device sync, App Check enforcement, Play Integrity, physical-device testing, native translation review or on-device Nano.
+
 ## Browser companion delivery checkpoint - 27 November 2026
 
 - **Scope:** operator-requested browser companion for evaluation. Teacher-only; no parent login, pupil account or student app. Native Android remains the primary product. The web preview does not replace SQLCipher/Room or phone-first Android auth.

@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -116,8 +115,8 @@ fun TinyApp(container: AppContainer) {
 private fun MainShell(viewModel: TinyViewModel) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     val message by viewModel.message.collectAsStateWithLifecycle()
+    val messageText = message?.let { stringResource(it.resId, *it.args.toTypedArray()) }
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val route = backStackEntry?.destination?.route
@@ -125,8 +124,8 @@ private fun MainShell(viewModel: TinyViewModel) {
     var activeTour by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(message) {
-        message?.let {
-            snackbarHostState.showSnackbar(context.getString(it.resId, *it.args.toTypedArray()))
+        messageText?.let {
+            snackbarHostState.showSnackbar(it)
             viewModel.clearMessage()
         }
     }

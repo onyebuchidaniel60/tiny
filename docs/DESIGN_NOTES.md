@@ -1,6 +1,6 @@
 # Tiny — Design Notes
 
-**Status:** Phase 1 visual foundation implemented; browser companion visual system implemented and browser accessibility scan passing; final native-device refinement and TalkBack audit pending.
+**Status:** 27 November 2026. Final product-polish pass implemented on native Android and web: shared design system, complete localization architecture, teacher/guardian tours, Help centre, open-source brand mark, responsive/dark/accessibility review and multi-language screenshots. Native-language review and physical-device/TalkBack verification remain operator/device gates.
 
 ## 1. References
 
@@ -89,12 +89,51 @@ The shell covers initial/loading-ish seeding, populated, empty, offline/local, p
 | 26 Nov 2026 | - | Bottom-nav semantics are merged | Stable `testTag` values for `tab_home`, `tab_classes`, `tab_lessons`, `tab_messages` | Reliable instrumentation without weakening accessibility labels | `TinyComponents.kt`, `TinyNavigationTest.kt` |
 | 27 Nov 2026 | REF-001/REF-002 | Browser evaluation needs the same warmth without copying the landing page | Original responsive teacher workspace; sidebar on desktop, bottom navigation on mobile; explicit local/sync state | Preserve product identity; make offline/pending honest rather than decorative | `web/src/styles.css`, `artifacts/web/` |
 
-## 8. Known design/UX gaps
+## 8. Final polish pass — 27 November 2026
 
-- Full Hausa/Yoruba/Igbo UI translation coverage and native review.
-- Final app screenshot-by-screenshot reference refinement.
-- Real-device validation on Note 10+ (Android 12) and larger-font TalkBack pass.
-- Sync conflict/needs-attention UI not yet exercised end to end in a hosted backend.
-- Landing page GitHub Pages publication not yet verified.
-- Browser companion: on-device AI presentation is ready but unverified; PWA stale-cache handling needs a user-facing update prompt in a future production surface; browser storage is synthetic-only and unencrypted.
-- Browser TalkBack-equivalent screen-reader testing and physical low-cost Android browser testing remain pending.
+### StageShow
+
+- Installed successfully with `npx skills add benjitaylor/skills --skill stageshow` (the skill ID appeared after the earlier server restart; the complete skill is present under `.agents/skills/stageshow/`).
+- Read `SKILL.md`, `references/craft.md` and `references/review.md`.
+- Applied its craft rules to the real product: count real strings, one focal action per screen, no skeleton bars where the eye lands, consistent icon family, no generic AI sparkle, no invented logo, measured insets and a frame reviewed at final viewport size.
+- StageShow is a faux-UI/illustration skill; no faux product screen was shipped as the application. The screenshots are real renders.
+- The AI cue changed from a sparkle to a lightbulb/idea path on web and an information icon on Android.
+
+### Design references re-checked
+
+- **Atelio Studio:** warm paper field, strong serif display type, human tone, restrained craft details, balanced colour. Tiny keeps its own palette, layouts and components; no Atelio asset, illustration, copy or source was copied.
+- **PASS:** direct hero promise, problem → solution → features → how-it-works → CTA → substantial footer. Applied to the sign-in/product story and the existing landing structure, not copied.
+- Findings and deviations are recorded in `REFERENCE_ASSETS.md` and `docs/DESIGN_SYSTEM.md`.
+
+### Android
+
+- Navigation: Home, Classes, Lessons, Messages plus detail routes; top bar now exposes Help and Settings.
+- All screens use shared string resources: onboarding, auth, dashboard, classes, class detail, pupil registration, attendance, lessons/5E, progress/approvals, guardians/verification, messages/conversation, sync, settings, AI and Help.
+- First-use teacher tour (10 steps) and guardian SMS guide (4 steps), skippable, persisted in DataStore, replayable.
+- Help centre with searchable/expandable guides and tour replay.
+- Language switching applies immediately, persists across restart and is exposed to Android 13+ per-app language settings.
+- Dark theme follows the system; all components use Material colour roles where practical.
+- App icon and wordmark use the Lucide sprout symbol; no letter-in-a-square invented mark.
+- Removed the old “Demo/Preview/FIREBASE” labels from the main product surfaces; the evaluation disclosure remains where it is necessary.
+
+### Web
+
+- Every screen, dialog, validation message, toast, empty state, status, tour and Help article now uses `I18nProvider`; no page-level English literals remain.
+- Language selector in the top bar and Settings; immediate re-render and reload persistence.
+- Teacher tour, guardian guide, Help centre, search, language-aware dates and plurals.
+- Dashboard rewritten as a task-focused teacher workspace: summary strip, today’s classes, family messages, quick actions, absence-only note.
+- Responsive shell verified at 1440, 820 and 393 px; no horizontal overflow in any language.
+- System dark-mode palette, focus-visible rings, skip link, dialog focus trap, reduced-motion and large-text controls.
+- PWA assets remain small and dependency-light; no remote fonts or stock imagery.
+- Hosted companion still reports local-only writes truthfully; no cross-device or live-SMS claim.
+
+## 9. Known design/UX gaps
+
+- Native-language review of Hausa, Yoruba and Igbo is still required; the translations are complete drafts, not verified by a native speaker.
+- Real-device validation on the Note 10+ (Android 12), TalkBack and physical low-cost browser testing remain operator/device gates.
+- Sync conflict/needs-attention UI is implemented and tested locally, but a hosted backend acknowledgement cannot be exercised under Spark/NGN 0.
+- The static `landing/` page was not newly published; the hosted teacher app is the public web surface. No GitHub Pages URL is claimed.
+- Browser companion AI is cloud-only in the tested environments; on-device Gemini Nano is not proven on the Note 10+ or emulator.
+- Browser storage is synthetic-only and unencrypted; the Android app uses Room + SQLCipher.
+- PWA stale-cache update prompting remains a future production concern.
+- Android screenshots in `artifacts/emulator/` are regenerated by the manual emulator job; physical-device screenshots are not claimed.
