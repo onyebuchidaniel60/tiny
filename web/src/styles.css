@@ -464,9 +464,8 @@ button { cursor: pointer; }
   .connectivity { display: none; }
   .language-select.compact select { max-width: 98px; }
   .topbar-actions { gap: 6px; }
-  .sync-pill { padding: 7px 9px; }
-  .sync-pill span { display: none; }
-  .sync-pill { min-width: 36px; justify-content: center; }
+  .sync-pill { padding: 7px 9px; font-size: .64rem; }
+  .sync-pill span { display: inline; }
   .mode-banner { padding: 8px 14px; font-size: .71rem; }
   .content { padding: 18px 14px 104px; }
   .bottom-nav { display: flex; }

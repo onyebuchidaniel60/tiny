@@ -8,6 +8,9 @@ OUT="artifacts/emulator"
 XML="/tmp/tiny-ui.xml"
 
 mkdir -p "$OUT"
+# The repository keeps earlier evidence. Remove stale PNGs before a new run so
+# the uploaded artifact can only contain screenshots from this build.
+rm -f "$OUT"/*.png
 
 dump_ui() {
   adb shell uiautomator dump /sdcard/tiny-window.xml >/dev/null 2>&1 || true
@@ -96,8 +99,8 @@ tap_text_retry "Open my workspace" 5 || true
 wait_for_text "Sign in with your phone" 30 || true
 dump_ui
 if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verification code' "$XML" 2>/dev/null; then
-  # A Firebase-configured build correctly stops at the phone-auth gate. Do
-  # not pretend the local journey ran; capture the gate and stop.
+  # A Firebase-configured build stops at the phone-auth gate. Capture it, then
+  # sign in with the synthetic test number and continue the app journey.
   screenshot "tiny-03-auth-gate"
   if [ "${TINY_SMOKE_TEST_AUTH:-false}" = "true" ]; then
     tap_text_retry "Phone number, for example 0803 123 4567" 5 || tap_coord 540 800
@@ -124,12 +127,17 @@ if grep -q 'Sign in with your phone' "$XML" 2>/dev/null || grep -q 'Send verific
       screenshot "tiny-04-auth-failed"
       echo "Verification code field did not appear; captured tiny-04-auth-failed.png."
     fi
+    if [ -f "$OUT/tiny-04-auth-failed.png" ]; then
+      adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
+      echo "Test-phone auth did not reach Home; stopping without a false journey claim."
+      exit 0
+    fi
+    echo "Test-phone auth succeeded; continuing the authenticated journey."
+  else
     adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
+    echo "Firebase auth gate detected; captured tiny-03-auth-gate.png and skipped local journey."
     exit 0
   fi
-  adb logcat -d | sed -E 's/(Firebase App Check debug token: )[0-9a-fA-F-]{36}/\1<redacted>/g' > "$OUT/logcat.txt" || true
-  echo "Firebase auth gate detected; captured tiny-03-auth-gate.png and skipped local journey."
-  exit 0
 fi
 tap_text_retry "Skip tour" 3 || true
 wait_for_text "Good morning" 20 || true

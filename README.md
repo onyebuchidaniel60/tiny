@@ -101,6 +101,12 @@ Phase 0 intake is complete. The Android preview, Firebase client integration, pu
 - SMS operations and costs: `docs/MESSAGING.md`
 - Troubleshooting: `docs/TROUBLESHOOTING.md`
 - Design evidence: `docs/DESIGN_NOTES.md`
+- Design system: `docs/DESIGN_SYSTEM.md`
+- Localization: `docs/LOCALIZATION.md`
+- Help centre and tours: `docs/HELP_CENTRE.md`
+- Teacher/guardian guide: `docs/USER_GUIDE.md`
+- Brand and icon licence: `docs/BRAND_AND_ASSETS.md`
+- Visual evidence index: `docs/SCREENSHOTS.md`
 - Build evidence: `docs/BUILD_LOG.md`
 - Firebase integration runbook: `docs/FIREBASE_INTEGRATION.md`
 - Firebase sanitized audit/evidence: `docs/FIREBASE_EVIDENCE.md`
@@ -155,13 +161,17 @@ npx --yes serve landing
 
 ## Current build status
 
-**Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **35 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **1 Android-to-Functions-emulator sync E2E**, **1 app-level AI cloud test**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45950400565`. The emulator signs in with a synthetic test phone number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). App Distribution tester emails and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
+**Final product-polish pass implemented and CI-verified.** Native Android and the hosted web teacher companion now share a complete localization system, design system, teacher/guardian tours, Help centre and open-source brand mark. Android verification: **37 Android JVM tests** (including localization parity), **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **Compose instrumentation journey** and **1 Android-to-Functions-emulator sync E2E**. CI run [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913) passed build/lint/unit/APK, rules, backend E2E and Compose instrumentation. The emulator signs in with a synthetic test phone number and loads a synthetic Firestore workspace. App Distribution tester emails, physical-device testing and native translation review remain pending. Production release is not authorized.
+
+**Localization:** English is the source; Hausa, Yoruba and Igbo are complete drafts (754 keys each) with **native review pending**. The UI labels them as drafts and falls back to English. The old partial-translation implementation is replaced by a generated catalogue; see [`docs/LOCALIZATION.md`](docs/LOCALIZATION.md).
+
+**Web verification:** typecheck/build passed; **23 Vitest tests**; **36 Playwright journeys passed, 3 live checks skipped** at desktop, tablet and mobile widths; **0 serious/critical axe** violations; **60 localized screenshots** in `artifacts/web/i18n/`. Latest web CI run [45999218456](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218456) passed. The manual Android emulator run is [46000347482](https://github.com/onyebuchidaniel60/tiny/actions/runs/46000347482); screenshots are uploaded as `tiny-emulator-evidence`.
 
 A reviewed 146.6-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording; the Firebase scene uses the authenticated test-phone/Firestore screenshot and the AI scene shows the judge APK's `Source: Cloud Gemini` result. YouTube upload copy is in `artifacts/demo/youtube-description.md`; the public YouTube URL is still an operator action.
 
 ### Browser companion status
 
-The browser companion is live at <https://tiny-b9f29.web.app>. It is a teacher-only, synthetic-data preview with a synthetic Firebase email/password account (`judge@tiny-demo.example` / `TinyDemo2026!`) and an offline demo mode. Verified flows include Firebase sign-in, read-only Firestore bootstrap, multiple classes and pupils, attendance with drafts and submission, lessons, progress approval, guardians, two-way synthetic messaging, IndexedDB refresh recovery, outbox states, PWA offline shell and responsive desktop/mobile layouts. Browser tests: **14 unit/component tests**, **10 Playwright journeys** across desktop and mobile (the two live checks skip by default), **1 live Firebase/AI check** and **0 serious/critical axe violations**. Web CI run [45975389944](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389944) and Android regression run [45975389893](https://github.com/onyebuchidaniel60/tiny/actions/runs/45975389893) passed on commit `86c9717`. The hosted AI result was SDK-reported `Cloud Gemini`; on-device Gemini Nano is not claimed. Browser writes remain local because Cloud Functions are emulator-only. See [`docs/WEB_APP.md`](docs/WEB_APP.md).
+The browser companion is live at <https://tiny-b9f29.web.app>. It is a teacher-only, synthetic-data evaluation workspace with a synthetic Firebase email/password account (`judge@tiny-demo.example` / `TinyDemo2026!`) and an offline workspace mode. Verified flows include Firebase sign-in, read-only Firestore bootstrap, multiple classes and pupils, attendance with drafts and submission, lessons, progress approval, guardians, two-way synthetic messaging, IndexedDB refresh recovery, outbox states, PWA offline shell, teacher/guardian tours, Help centre, language switching with reload persistence and responsive desktop/tablet/mobile layouts. Browser tests: **23 unit/component tests**, **36 Playwright journeys** across desktop, tablet and mobile (the three live checks skip by default), **1 live Firebase/AI check** and **0 serious/critical axe violations**. The hosted AI result was SDK-reported `Cloud Gemini`; on-device Gemini Nano is not claimed. Browser writes remain local because Cloud Functions are emulator-only. See [`docs/WEB_APP.md`](docs/WEB_APP.md) and [`docs/LOCALIZATION.md`](docs/LOCALIZATION.md).
 
 ## Judge access
 

@@ -616,7 +616,7 @@
     <string name="help_title">Help centre</string>
     <string name="help_subtitle">Practical guidance for the classroom, written in plain language.</string>
     <string name="help_search">Search help</string>
-    <string name="help_search_placeholder">Search a topic, for example attendance</string>
+    <string name="help_search_placeholder">Search a topic</string>
     <string name="help_no_results">No help topic matches that search.</string>
     <string name="help_quick_start">Getting started</string>
     <string name="help_articles">Guides</string>

@@ -269,6 +269,22 @@
 - Final hosted assets: `assets/index-CyhjhdBZ.js`, `assets/index-Cl8rntFh.css`; index HTML fetched from Hosting matches the local build.
 - Next: keep hosted preview and tokens live through judging; complete Devpost/YouTube/eligibility gates; revoke web and APK debug tokens after 16 December 2026.
 
+## 2026-11-27 — Final product polish, localization, tours and brand
+
+- Objective: complete the final UI/localization/accessibility pass on Android and web without changing the fixed architecture, authentication or zero-spend boundaries.
+- StageShow: `npx skills add benjitaylor/skills --skill stageshow` succeeded; complete skill under `.agents/skills/stageshow/`. Read `SKILL.md`, `references/craft.md`, `references/review.md`; applied restraint, focal-object, icon-family, spacing and viewport-review rules. No faux-UI asset shipped.
+- References: Atelio Studio and PASS re-inspected; findings and deviations in `REFERENCE_ASSETS.md`, `docs/DESIGN_NOTES.md`, `docs/DESIGN_SYSTEM.md`.
+- Localization architecture: single `shared/i18n/*.json` catalogue, 754 keys × 4 languages; generator validates key/placeholder/plural parity and Android resource names; generates Android resources and web dictionary; CI check for stale/missing translations; hardcoded-string guard. Root cause and coverage in `docs/LOCALIZATION.md`.
+- Android: all screens localized; `UiMessage` resource-based snackbars; language mirror + `AppCompatDelegate` + `localeConfig`; teacher tour (10), guardian guide (4), Help centre; Lucide sprout mark/adaptive icon; localized AI modes/status/source; removed development labels from core surfaces; date locale read through Compose configuration.
+- Web: `I18nProvider`, complete page/component migration, topbar/Settings language selector, immediate persistence; task-focused dashboard; new design tokens and responsive/dark CSS; teacher/guardian tours, Help centre, search; locale-aware plurals/dates; 60 localized screenshots; axe clean.
+- Android fixes found by CI: `class` is a reserved Java resource name (renamed `class_label`; generator now blocks Java keywords); `HelpOutline` is not in core icons (replaced with Info); `UiMessage` argument list; Compose non-observable locale; `LocalContext.getString` in composition (resolved via `stringResource` and composition-time values).
+- Android CI: run [45999218913](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218913) passed build/lint/unit/APK, rules, backend emulator E2E and Compose instrumentation. Unit tests: **37 passed, 0 failed**. APK artifact `tiny-dev-debug-apk`.
+- Web CI: run [45999218456](https://github.com/onyebuchidaniel60/tiny/actions/runs/45999218456) passed typecheck, **23 Vitest**, build, **36 Playwright journeys** (3 viewports; 3 live checks skipped), axe and screenshot upload.
+- Manual Android emulator run: [46000347482](https://github.com/onyebuchidaniel60/tiny/actions/runs/46000347482); script updated for the new onboarding CTA, teacher-tour skip and per-language Home/Settings captures.
+- Brand: Lucide `sprout`, `lucide-static` 0.544.0, ISC; source/licence in `docs/BRAND_AND_ASSETS.md`. Not claimed as an original logo.
+- Auth preserved: no Phone Auth/Firestore/Functions/auth configuration changed; synthetic test numbers remain intact. No real SMS, production data, Functions deployment, App Check enforcement or billing change.
+- Known limitations: native translation review, physical Note 10+ testing/TalkBack, hosted Functions/cross-device sync, on-device Nano, hosted landing page. See `docs/LOCALIZATION.md`, `docs/SCREENSHOTS.md`, README and AI_HANDOFF.
+
 ## Checkpoint entry template
 
 ### YYYY-MM-DD — Phase N

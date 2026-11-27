@@ -60,6 +60,12 @@
 | `docs/OPERATOR_GUIDE.md` | Operator responsibilities, workspace support, messaging operations and incident handling |
 | `docs/TROUBLESHOOTING.md` | Common local, Firebase, sync, AI and messaging failures |
 | `docs/DESIGN_NOTES.md` | Reference-derived visual system, screen map, accessibility and design decisions |
+| `docs/DESIGN_SYSTEM.md` | Shared web/Android tokens, typography, layout, components, states and accessibility |
+| `docs/LOCALIZATION.md` | Single-source translation architecture, language status, tests and limitations |
+| `docs/HELP_CENTRE.md` | Help topics, teacher tour, guardian guide and localization |
+| `docs/USER_GUIDE.md` | Teacher and guardian operating guide for the evaluation build |
+| `docs/BRAND_AND_ASSETS.md` | Lucide sprout source, ISC licence, icon variants and ownership |
+| `docs/SCREENSHOTS.md` | Visual evidence index for web and Android |
 | `docs/BUILD_LOG.md` | Implementation phase and verification evidence log |
 | `landing/README.md` | Static landing-page structure, local preview/deployment and content rules |
 | `docs/FIREBASE_AGENT_SKILLS_AND_MCP.md` | Official Firebase Agent Skills selection, OpenCode installation, Firebase MCP configuration, permissions and usage guardrails |

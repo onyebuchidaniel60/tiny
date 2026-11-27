@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { Icon } from './components/Icon';
 import { LanguageSelect } from './components/LanguageSelect';
 import { TinyMark } from './components/TinyMark';
@@ -66,7 +66,6 @@ function TeacherLayout() {
   const { signOut, user } = useAuth();
   const { t, formatDate } = useI18n();
   const location = useLocation();
-  const navigate = useNavigate();
   const online = useOnline();
   const navItems: NavItem[] = [
     { to: '/', label: t('nav_home'), icon: 'home', end: true, mobile: true },
@@ -80,7 +79,6 @@ function TeacherLayout() {
   ];
   const mobileItems = navItems.filter((item) => item.mobile);
   const isMain = mobileItems.some((item) => (item.end ? location.pathname === '/' : location.pathname.startsWith(item.to)));
-  const pending = state.outbox.filter((item) => item.state === 'pending' || item.state === 'retryable').length;
 
   useEffect(() => {
     document.documentElement.classList.toggle('large-text', state.settings.largeText);
@@ -171,11 +169,6 @@ function TeacherLayout() {
           <span>{message}</span>
           <button onClick={clearMessage} aria-label={t('dismiss')}><Icon name="close" size={16} /></button>
         </div>
-      )}
-      {pending > 0 && location.pathname !== '/sync' && (
-        <button className="pending-fab" onClick={() => navigate('/sync')}>
-          <Icon name="sync" size={16} /> {pending} {t('queued')}
-        </button>
       )}
       <footer className="app-footer">
         <span className="footer-brand"><TinyMark size={18} /> Tiny · {formatDate(new Date())} · {t('evaluation_workspace')}</span>
