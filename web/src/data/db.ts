@@ -32,32 +32,42 @@ function db() {
 }
 
 export async function loadState(): Promise<AppState | null> {
-  try {
-    const fromDb = await (await db()).get('state', STATE_KEY);
-    if (fromDb) return fromDb;
-  } catch {
-    // IndexedDB may be unavailable in private mode; fall through to localStorage.
-  }
+  // localStorage is written synchronously before IndexedDB. Reading it first
+  // avoids restoring a stale IndexedDB record when a page navigates or reloads
+  // immediately after an edit. IndexedDB remains the durable primary store.
   try {
     const raw = localStorage.getItem(LOCAL_BACKUP);
-    return raw ? (JSON.parse(raw) as AppState) : null;
+    if (raw) return JSON.parse(raw) as AppState;
   } catch {
+    // Fall through to IndexedDB if localStorage is unavailable or corrupt.
+  }
+  try {
+    return await (await db()).get('state', STATE_KEY) ?? null;
+  } catch {
+    // IndexedDB may be unavailable in private mode.
     return null;
   }
 }
 
+let writeChain: Promise<void> = Promise.resolve();
+
 export async function saveState(state: AppState): Promise<void> {
-  // The synchronous backup protects the last edit before a refresh or crash.
+  // The synchronous backup protects the last edit before a refresh, navigation
+  // or crash. IndexedDB writes are serialized so an older write cannot finish
+  // after a newer one.
   try {
     localStorage.setItem(LOCAL_BACKUP, JSON.stringify(state));
   } catch {
     // Ignore quota/private-mode errors; IndexedDB remains the primary store.
   }
-  try {
-    await (await db()).put('state', state, STATE_KEY);
-  } catch {
-    // The localStorage backup is still available.
-  }
+  writeChain = writeChain
+    .then(async () => {
+      await (await db()).put('state', state, STATE_KEY);
+    })
+    .catch(() => {
+      // The localStorage backup is still available.
+    });
+  await writeChain;
 }
 
 export async function saveDraft(key: string, value: unknown): Promise<void> {

@@ -7,6 +7,22 @@ async function open(page: Page, path: string) {
   await page.goto(path, { waitUntil: 'domcontentloaded' });
 }
 
+async function openClasses(page: Page) {
+  const mobile = (page.viewportSize()?.width ?? 1280) <= 760;
+  const nav = page.getByRole('navigation', { name: mobile ? 'Mobile navigation' : 'Main navigation' });
+  await nav.getByRole('link', { name: 'Classes', exact: true }).click();
+}
+
+async function waitForPersistedText(page: Page, text: string) {
+  await expect.poll(
+    async () => page.evaluate((value) => {
+      const raw = localStorage.getItem('tiny-web-state-v1');
+      return raw ? raw.includes(value) : false;
+    }, text),
+    { timeout: 5_000 },
+  ).toBe(true);
+}
+
 async function waitForOfflineReady(page: Page) {
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
@@ -30,11 +46,12 @@ test('teacher can create a class, submit attendance and record progress', async 
   await open(page, '/');
   await expect(page.getByRole('heading', { name: /good morning/i })).toBeVisible();
 
-  await page.getByRole('link', { name: 'Classes', exact: true }).first().click();
+  await openClasses(page);
   await page.getByRole('button', { name: /new class/i }).click();
   await page.getByPlaceholder('Blue').fill('Amber');
   await page.getByRole('button', { name: /save class locally/i }).click();
   await expect(page.getByRole('heading', { name: 'P4 Amber', exact: true })).toBeVisible();
+  await waitForPersistedText(page, 'Amber');
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('heading', { name: 'P4 Amber', exact: true })).toBeVisible();
@@ -57,11 +74,13 @@ test('teacher and guardian simulator can exchange messages', async ({ page }) =>
   await page.getByPlaceholder(/write a short, factual reply/i).fill('Synthetic teacher web reply.');
   await page.getByRole('button', { name: /queue reply/i }).click();
   await expect(page.getByText('Synthetic teacher web reply.')).toBeVisible();
+  await waitForPersistedText(page, 'Synthetic teacher web reply.');
 
   await open(page, '/guardian/conversation_amina');
   await page.getByLabel('Guardian message').fill('Synthetic guardian web reply.');
   await page.getByRole('button', { name: 'Send', exact: true }).click();
   await expect(page.getByText('Synthetic guardian web reply.')).toBeVisible();
+  await waitForPersistedText(page, 'Synthetic guardian web reply.');
 
   await open(page, '/messages/conversation_amina');
   await expect(page.getByText('Synthetic guardian web reply.')).toBeVisible();

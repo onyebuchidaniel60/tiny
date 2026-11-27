@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   collection,
   doc,
@@ -290,6 +290,7 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
 export function StoreProvider({ children }: { children: ReactNode }) {
   const { user, mode: authMode } = useAuth();
   const [state, setState] = useState<AppState>(seedState);
+  const stateRef = useRef(state);
   const [ready, setReady] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
@@ -305,12 +306,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!ready) return;
-    void saveState(state);
-  }, [state, ready]);
+    stateRef.current = state;
+  }, [state]);
 
   const update = (producer: (current: AppState) => AppState) => {
-    setState((current) => producer(structuredClone(current)));
+    // Compute and persist the next state at action time. This protects an edit
+    // that is immediately followed by navigation, refresh or a dropped network.
+    const next = producer(structuredClone(stateRef.current));
+    stateRef.current = next;
+    setState(next);
+    void saveState(next);
   };
 
   const refreshRemote = async () => {
@@ -731,7 +736,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const resetDemo = async () => {
     await clearLocalData();
-    setState(seedState());
+    const seed = seedState();
+    stateRef.current = seed;
+    setState(seed);
+    void saveState(seed);
     setMessage('Local demo data reset. This does not delete any Firebase data.');
   };
 
