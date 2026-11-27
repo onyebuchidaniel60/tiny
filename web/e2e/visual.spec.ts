@@ -14,9 +14,13 @@ test('captures representative responsive screens', async ({ page }, testInfo) =>
   await page.screenshot({ path: `../artifacts/web/${testInfo.project.name}-class.png`, fullPage: true });
 
   if (testInfo.project.name.startsWith('mobile')) {
-    await expect(page.locator('.bottom-nav')).toBeVisible();
+    const mobileNav = page.getByRole('navigation', { name: 'Mobile navigation' });
+    await expect(mobileNav).toBeVisible();
+    await expect(mobileNav.getByRole('link', { name: 'Classes', exact: true })).toBeVisible();
+    await expect(mobileNav.getByRole('link', { name: 'Classes', exact: true })).toHaveAttribute('href', '/classes');
     await expect(page.locator('.topbar-icon')).toBeVisible();
   } else {
+    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
     await expect(page.locator('.sidebar')).toBeVisible();
   }
 });

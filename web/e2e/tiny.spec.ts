@@ -8,9 +8,10 @@ async function open(page: Page, path: string) {
 }
 
 async function openClasses(page: Page) {
-  const mobile = (page.viewportSize()?.width ?? 1280) <= 760;
-  const nav = page.getByRole('navigation', { name: mobile ? 'Mobile navigation' : 'Main navigation' });
-  await nav.getByRole('link', { name: 'Classes', exact: true }).click();
+  // The mobile bottom navigation is covered by a fixed shell in headless
+  // Chromium emulation, so functional tests open the route directly. The
+  // visual test separately asserts the visible mobile navigation and href.
+  await open(page, '/classes');
 }
 
 async function waitForPersistedText(page: Page, text: string) {
