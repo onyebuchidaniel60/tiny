@@ -4,8 +4,8 @@
 
 ## 1. Rules
 
-- No secret is stored in source control, Android resources, Gradle BuildConfig, Room, DataStore, Firestore or logs.
-- Android Firebase app configuration is public client configuration; it is not a server credential. Never include a service-account private key in the APK.
+- No secret is stored in source control, Android resources, Gradle BuildConfig, Room, DataStore, Firestore, browser source or logs.
+- Android Firebase app configuration and Firebase Web configuration are public client configuration; they are not server credentials. Never include a service-account private key in the APK or browser bundle.
 - Cloud credentials are held in Secret Manager / Firebase Functions secrets.
 - Use distinct Firebase projects for development/staging and production when available.
 - Never reuse production provider secrets in local or CI tests.
@@ -19,6 +19,34 @@
 | Android application ID | Package identity | Proposed safe default `ng.tiny.education`; verify ownership/conflict before pinning |
 | App Check debug token | Local attestation | Local ignored file/CI secret; never production |
 | Play Integrity | Production App Check | Firebase Console configuration, not app secret |
+
+## 2a. Browser companion configuration
+
+The browser preview uses `web/.env.example` as its safe template and an ignored `web/.env.local` for local builds. The Firebase Web API key, app ID, project ID, Auth domain, sender ID and storage bucket are public client configuration, not server credentials.
+
+| Variable | Required | Secret? | Purpose |
+|---|---:|---:|---|
+| `VITE_FIREBASE_API_KEY` | Yes | No | Firebase Web API key |
+| `VITE_FIREBASE_AUTH_DOMAIN` | Yes | No | `tiny-b9f29.firebaseapp.com` |
+| `VITE_FIREBASE_PROJECT_ID` | Yes | No | `tiny-b9f29` |
+| `VITE_FIREBASE_STORAGE_BUCKET` | Yes | No | Firebase storage bucket |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Yes | No | Firebase sender ID |
+| `VITE_FIREBASE_APP_ID` | Yes | No | Registered web app ID |
+| `VITE_FIREBASE_APPCHECK_DEBUG_TOKEN` | Preview only | Revocable | Dedicated web App Check debug token |
+| `VITE_RECAPTCHA_SITE_KEY` | No | No | Optional real reCAPTCHA Enterprise site key |
+| `VITE_DEMO_EMAIL` | No | Synthetic | Prefilled preview email |
+| `VITE_DEMO_PASSWORD` | No | Synthetic | Prefilled preview password |
+| `VITE_FUNCTIONS_EMULATOR` | No | No | `true` only for local Functions-emulator sync |
+
+Handling rules:
+
+- Never commit `web/.env.local`; it is ignored by `.gitignore`.
+- The web App Check debug token is registered for the synthetic preview and embedded in the hosted client so judges can use AI Logic. It is revocable, not a server secret and must be revoked after judging.
+- CI uses the GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN`; the token is never printed in logs or committed.
+- The synthetic demo email/password is public preview information only. Do not reuse the password for a real account.
+- The hosted build uses `VITE_FUNCTIONS_EMULATOR=false`; it must never claim hosted callable sync.
+- Do not add service-account JSON, private keys or production credentials to the web build.
+- The hosting domains (`tiny-b9f29.web.app` and `tiny-b9f29.firebaseapp.com`) must remain in Firebase Auth authorized domains; do not disable them to make local testing pass.
 
 ## 3. Cloud Functions configuration
 

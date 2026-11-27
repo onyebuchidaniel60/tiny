@@ -169,7 +169,7 @@ Never invoke eSMS directly from the Android client.
 
 ## 12. Architecture constraints and rejected approaches
 
-- No web frontend in MVP. Native Android is the product frontend. Early “preview deployment” means protected APK distribution with a precise release/build URL and commit, not inventing a website.
+- Native Android is the product frontend. The operator explicitly authorized a browser companion preview on 27 November 2026 for evaluation of teacher workflows; it is teacher-only, synthetic-data-only, does not introduce a parent or pupil account, and does not replace the native app. Early "preview deployment" still means protected APK distribution with a precise release/build URL and commit, not inventing a marketing website. The companion is documented in `docs/WEB_APP.md`.
 - No Firestore-only offline implementation due last-write-wins.
 - No client-side direct database writes to authoritative records.
 - No separate managed relational SQL database (such as Cloud SQL/PostgreSQL), microservices, Cloud Run service, message broker, Redis or search engine in MVP. Room/SQLite is still used locally on Android.

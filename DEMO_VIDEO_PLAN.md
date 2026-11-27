@@ -32,7 +32,7 @@ Adjust timings to the actual product; never narrate a feature that is not visibl
 
 1. Use deterministic synthetic data only (e.g. sample school `Kofar Demo Primary`, fictional teacher and pupils, invalid/test phone numbers).
 2. Reset the demo database to a documented snapshot before recording.
-3. Use a physical Android device for native app capture; use `adb screenrecord`, UIAutomator, Maestro or equivalent. Playwright may be used for a browser-based operator console only if one exists; MVP has no web app.
+3. Use a physical Android device for native app capture; use `adb screenrecord`, UIAutomator, Maestro or equivalent. Playwright may also capture the operator-authorized browser companion at <https://tiny-b9f29.web.app>; the native Android app remains the primary product and there is no parent or pupil web app.
 4. Record real UI behavior. Include airplane-mode transition and a real app restart before sync if the product flow permits reliable capture.
 5. Use the deterministic mock SMS adapter for current development; eSMS sandbox only if separately authorized later. Label simulated/mock messages honestly. Never use real parent numbers.
 6. Capture on-device inference on a supported physical Android handset and record SDK inference source evidence; capture cloud inference separately. Do not fabricate a source label.

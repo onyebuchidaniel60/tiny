@@ -4,7 +4,7 @@
 **Budget:** Spark / NGN 0. Billing is disabled. Do not upgrade to Blaze.
 **Cloud Functions:** Gen2 deployment requires Blaze, so callables, webhooks and scheduled jobs remain emulator-only. Firestore, Auth, App Check and Firebase AI Logic are used on Spark within free quotas.
 
-## 1. Current status (26 November 2026)
+## 1. Current status (27 November 2026)
 
 | Area | Status | Evidence / note |
 |---|---|---|
@@ -21,9 +21,15 @@
 | Firebase Auth | **INITIALIZED** | Console free-tier setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone provider enabled with two synthetic test numbers |
 | Functions | **EMULATOR ONLY** | Backend E2E 10/10; no deployment |
 | App-level Auth/Firestore | **VERIFIED** | Test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace (1 class / 1 pupil) |
-| App-level AI | **VERIFIED — CLOUD FALLBACK** | `AiLogicLiveTest` passed in the private `firebase-ai-smoke` workflow; on-device unavailable, cloud response, SDK source `Cloud Gemini`; no on-device claim |
+| App-level AI | **VERIFIED - CLOUD FALLBACK** | `AiLogicLiveTest` passed in the private `firebase-ai-smoke` workflow; on-device unavailable, cloud response, SDK source `Cloud Gemini`; no on-device claim |
+| Web app | **REGISTERED** | `Tiny web`, app ID `1:1072757481941:web:10a300a3c9756e1520dd5c` |
+| Web Auth | **SYNTHETIC PREVIEW** | Email/Password enabled for `judge@tiny-demo.example`; Android Phone Auth unchanged; no real user data |
+| Web Firestore | **READ-ONLY BOOTSTRAP** | Synthetic member UID `wT35e4yAe1PTRZ0BT6UheSsmEdg2` reads `ws_webdemo0001`; existing rules unchanged; web writes remain local |
+| Web App Check | **PARTIAL - DEBUG TOKEN** | Dedicated revocable web token registered; embedded in hosted preview for AI Logic; enforcement off; GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN` |
+| Web AI | **VERIFIED - CLOUD FALLBACK** | Hosted `/ai` returned SDK-reported `Cloud Gemini`; evidence `artifacts/web/tiny-web-ai-cloud.png`; no on-device claim |
+| Web Hosting | **DEPLOYED** | <https://tiny-b9f29.web.app>; `web/dist`; Spark; no Functions deployment |
 
-**Next verification work:** App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. No immediate operator approval is required for the remaining emulator/protocol work; production remains unauthorized.
+**Next verification work:** App Check enforcement, Play Integrity/release fingerprint, hosted Functions when authorized, and supported-device on-device AI. No immediate operator approval is required for the remaining emulator/protocol work; production remains unauthorized.
 
 ## 2. Authentication initialization (completed 26 November 2026)
 

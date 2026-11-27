@@ -2,6 +2,8 @@
 
 **Implementation status (27 November 2026):** Callable/webhook contracts and type schemas are implemented and emulator-tested for the main workspace/class/pupil/guardian/attendance/progress/message flows. `syncCommands` applies `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve` and `message.reply` through the same validated callable handlers, with per-command receipts and idempotent replay. The Android client has a real Firebase Functions transport and durable WorkManager processor; an Android-to-emulator sync E2E covers accepted, retry, idempotent and conflict outcomes. Live callable sync remains unavailable because Functions are emulator-only on Spark. Firebase Auth is initialized; a synthetic test-phone sign-in and Firestore bootstrap were verified in the emulator. The local preview still uses the mock adapter for callable sync. Firestore `(default)`, rules and indexes are deployed in `africa-south1`. Bootstrap/pull-change endpoints and production-hardening remain incomplete. Do not treat this as production-ready API completion.
 
+**Browser companion:** the hosted browser preview reads the same workspace collections and records the same command shapes in a local outbox. It does not call a hosted backend under Spark/NGN 0, and it does not write authoritative Firestore collections. Only the local Functions emulator can return an acknowledgement to the web client. See `docs/WEB_APP.md`.
+
 **Version:** 1.0  
 **Backend:** Firebase Cloud Functions 2nd gen, TypeScript, Node.js 22, region `africa-south1`.  
 **Canonical design:** Callable commands are the only client mutation interface for shared records. Firestore direct client writes to authoritative collections are denied.

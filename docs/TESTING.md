@@ -1,6 +1,6 @@
 # Tiny — Test Strategy and Acceptance
 
-**Current development mode:** SMS tests use the deterministic mock adapter while `SMS_MODE=mock`. eSMS sandbox tests are deferred and require separate authorization. Firebase Functions are emulator-only under Spark/NGN 0; hosted Functions tests are not available.
+**Current development mode:** SMS tests use the deterministic mock adapter while `SMS_MODE=mock`. eSMS sandbox tests are deferred and require separate authorization. Firebase Functions are emulator-only under Spark/NGN 0; hosted Functions tests are not available. Browser tests run against the synthetic offline demo by default; the live Firebase/AI check is optional and manual.
 
 ## 1. Test pyramid
 
@@ -10,7 +10,8 @@
 4. UI tests: Compose UI on small-screen and font-scale configurations.
 5. End-to-end tests: teacher/parent mock/sandbox journeys (mock first; eSMS sandbox only when authorized).
 6. Physical-device tests: low/mid-range Android performance, real offline behavior and genuine on-device AI.
-7. Security tests: tenant isolation, authorization, webhook signature/replay, secret/PII leakage and abuse limits.
+7. Browser tests: unit/component tests, Playwright teacher and guardian journeys, IndexedDB refresh recovery, PWA offline reload, responsive screenshots and axe accessibility checks.
+8. Security tests: tenant isolation, authorization, webhook signature/replay, secret/PII leakage and abuse limits.
 
 ## 2. Required test matrix
 
@@ -57,6 +58,12 @@
 | AI | Non-English/offline | Static reviewed content or unavailable notice |
 | AI | Prompt injection/fabricated output | Rejected or treated as draft; no tool/database action |
 | AI privacy | Inspect payload | No pupil/guardian PII in prompt or telemetry |
+| Web persistence | Create class/pupil, attendance draft, lesson edit, refresh | State survives refresh; drafts are not lost |
+| Web offline | Service worker active, go offline, reload | App shell loads, offline banner appears, local draft remains |
+| Web sync honesty | Hosted build, queued edits | Shows pending/local-only; never claims acknowledged sync |
+| Web messaging | Teacher reply and guardian simulator message | Both appear in the same local conversation; mock only |
+| Web AI | Generate with SDK source | UI labels only the actual `inferenceSource`; fallback is labelled curated |
+| Web accessibility | Home axe scan at desktop/mobile | No serious/critical WCAG 2 A/AA violations |
 | Localization | All launch locales | No missing resource keys; placeholders preserved |
 | SMS | Unicode segment estimate | Correct segment count and cost guard |
 | Local privacy | Inspect storage/logs | SQLCipher DB; no plaintext secrets or PII logs |
@@ -119,4 +126,22 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 - App-level AI smoke: manual private run `45950443728`; `AiLogicLiveTest` **1 passed, 0 failed**; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded. Public judge APK UI run `45950452014` shows the cloud response and `Source: Cloud Gemini` in `artifacts/emulator/tiny-ai-cloud.png`. In the normal instrumentation job the same test skips when Firebase config is absent.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
 - Not yet run: physical-device install, App Distribution invitations (tester emails pending), App Check enforcement, supported-device Gemini Nano.
+
+## 7. Browser companion evidence (27 November 2026)
+
+- Typecheck: `npm run typecheck` passed with no TypeScript errors.
+- Unit/component tests: **14 passed, 0 failed** across 5 Vitest files (domain validation, phone normalization, synthetic seed integrity, IndexedDB/localStorage persistence, AI source labels and the AI page source display).
+- Production build: passed; PWA generated `dist/sw.js` with precache, `skipWaiting`, `clientsClaim` and an SPA navigation fallback.
+- Playwright: **10 passed, 2 skipped** across desktop Chromium and mobile Chromium. The skipped tests are the live Firebase/AI checks, which require `TINY_LIVE_FIREBASE=1`.
+- Live Firebase/AI: **1 passed, 0 failed** manually. The browser signed in with the synthetic Firebase account, bootstrapped `Tiny Web Demo Primary`, generated a strategy and displayed SDK-reported `Cloud Gemini`.
+- Journeys covered: class creation and refresh recovery; full attendance submission; progress approval; teacher/guardian message exchange; offline banner and service-worker-backed reload with a preserved draft; desktop/mobile screenshots; home axe scan.
+- Accessibility: **0 serious or critical** axe WCAG 2 A/AA violations on the home page at desktop and mobile widths.
+- Responsive evidence: `artifacts/web/desktop-chromium-home.png`, `desktop-chromium-class.png`, `mobile-chromium-home.png`, `mobile-chromium-class.png`.
+- Hosted AI evidence: `artifacts/web/tiny-web-ai-cloud.png` shows the result plus `Cloud Gemini` and `The SDK reported cloud inference.`
+- Offline-startup regression: the offline demo now initializes without waiting for Firebase Auth, so a slow or unavailable Auth iframe cannot block the local workspace. The Playwright suite waits for service-worker control before simulating disconnection.
+- Test-environment note: Firebase Auth creates a hidden iframe. On a slow network the browser `load` event can lag after the app is already usable, so browser tests wait for DOM readiness and assert visible UI rather than relying on `load`.
+- CI: `.github/workflows/web-ci.yml` runs install, typecheck, unit tests, build, Playwright Chromium and accessibility checks, and uploads screenshots/report.
+- Not claimed: on-device Gemini Nano, hosted callable sync, live SMS, App Check enforcement, production deployment or cross-device synchronization.
+
+See `docs/WEB_APP.md` for the full browser architecture and manual test guide.
 

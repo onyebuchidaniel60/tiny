@@ -1,6 +1,6 @@
 # Tiny — Deployment and Release Procedure
 
-**Current status:** Public judge APK published; App Distribution groups created but no tester invitation sent. GitHub Actions workflow exists; no GitHub Pages publication or hosted backend deployment is verified. Firebase Functions remain emulator-only.
+**Current status:** Public judge APK published; App Distribution groups created but no tester invitation sent. The browser companion is deployed on Firebase Hosting at <https://tiny-b9f29.web.app>. GitHub Actions workflows exist for Android and web; no GitHub Pages publication or hosted backend deployment is verified. Firebase Functions remain emulator-only.
 
 ## 1. Environments
 
@@ -9,13 +9,16 @@
 | Local | Development/unit tests | Synthetic | Emulator/mock | Local developer |
 | CI | Repeatable builds/tests | Synthetic | Mock/emulator | CI identity |
 | Staging | Integration/E2E/protected preview | Synthetic only | Mock SMS/Emulator Suite | Operator grants preview access |
+| Browser preview | Public evaluation of teacher workflows | Synthetic only | Firebase Auth/Firestore reads; local outbox; mock SMS | Hosted on Spark; no production data |
 | Production | Real schools/guardians | Live, minimized | Production only after approval | Not authorized by default |
 
 Never use production pupil or guardian data in staging/demo.
 
 ## 2. Early native preview
 
-There is no web frontend in MVP. Early preview is a navigable native Android shell distributed as a protected APK:
+The native Android app remains the product. An operator-requested browser companion preview is deployed separately in section 2a; it does not replace the APK, add a parent account or change the teacher-first scope.
+
+Early preview is a navigable native Android shell distributed as a protected APK:
 
 1. Build debug/staging APK from route-complete shell.
 2. Install and verify on test handset.
@@ -28,7 +31,31 @@ Preview must not connect to production Firestore, live SMS, production AI budget
 
 **Preferred restricted preview route:** Firebase App Distribution. Groups `internal-testers` and `judges` exist; add approved emails in the Firebase console and use the protected `distribution` GitHub environment for manual uploads. For the #BuildHybridAI submission, a dedicated public judge prerelease is also authorized: `v0.1.0-preview.1` with a revocable App Check debug token. It is a synthetic-data preview, not a production build. See `docs/JUDGE_ACCESS.md`.
 
-**Current status:** Public judge APK and App Distribution groups exist; App Distribution tester emails are pending. No hosted backend or production deployment.
+**Current status:** Public judge APK and App Distribution groups exist; App Distribution tester emails are pending. The browser companion is hosted on Firebase Hosting. No hosted backend or production deployment.
+
+### 2a. Browser companion preview (Firebase Hosting)
+
+- URL: <https://tiny-b9f29.web.app>
+- Hosting project: `tiny-b9f29` (Spark, billing disabled).
+- Public directory: `web/dist`; SPA rewrite to `/index.html`.
+- Synthetic account: `judge@tiny-demo.example` / `TinyDemo2026!`.
+- Full architecture, security and manual test guide: `docs/WEB_APP.md`.
+
+Build and deploy from the repository root:
+
+```powershell
+cd web
+npm ci
+npm run build
+cd ..
+firebase deploy --only hosting --project tiny-b9f29
+```
+
+`web/.env.local` supplies the public Firebase web configuration, the synthetic demo credentials and the dedicated web App Check debug token. It is ignored by Git. In CI, supply the token through the `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN` secret. The token is intentionally embedded in the hosted client for judging because AI Logic requires App Check; it is not a server secret and must be revoked after judging.
+
+Cache behavior in `firebase.json`: `index.html` and `sw.js` are `no-cache`; hashed assets under `/assets/**` are immutable for one year. A browser with an older PWA worker may briefly serve the previous shell while the worker updates. Verify deployment by fetching `/index.html` directly before concluding that a deploy failed.
+
+Do not deploy Functions, enable Blaze or add a paid host. The browser's writes remain local because the callable sync path is emulator-only. Rollback by redeploying the previous `web/dist` or reverting the Hosting release; do not delete Firestore data.
 
 ## 3. Firebase staging deployment
 
@@ -53,9 +80,10 @@ On pull request/commit:
 3. Android format/lint/unit tests.
 4. Functions lint/typecheck/unit tests/build.
 5. Firestore rules tests in emulator.
-6. Dependency/license/security scans.
-7. Build staging APK artifact.
-8. Upload only to approved protected distribution from authorized branch/workflow.
+6. Web typecheck, unit/component tests, production build and Playwright/axe journeys.
+7. Dependency/license/security scans.
+8. Build staging APK artifact.
+9. Upload only to approved protected distribution from authorized branch/workflow.
 
 CI never prints secrets. Production deploy workflow remains disabled/protected until explicit production authority is granted.
 
@@ -99,4 +127,4 @@ If production authority is not supplied, stop at verified staging and provide ex
 
 ## 8. Demo vs production
 
-Hackathon demo is staging/mock, not production. Use synthetic records. Clearly label mock/simulated SMS and do not imply real parent delivery or universal on-device AI support.
+Hackathon demo is staging/mock, not production. Use synthetic records. Clearly label mock/simulated SMS and do not imply real parent delivery or universal on-device AI support. The browser companion is an evaluation surface, not a production web product; it has no parent login, no live SMS and no hosted callable sync.

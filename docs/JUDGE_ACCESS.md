@@ -1,8 +1,37 @@
 # Judge Access and Installation
 
-**Status (27 November 2026):** Public judge APK release prepared; App Distribution groups created but waiting for judge/tester emails.
+**Status (27 November 2026):** Browser preview live; public judge APK published; App Distribution groups created but waiting for judge/tester emails.
 
-## 1. Recommended: public GitHub Release APK (zero cost)
+## 1. Fastest: browser preview (no install)
+
+Open <https://tiny-b9f29.web.app> in a current browser. No account creation, download or Google account is required.
+
+- Synthetic email: `judge@tiny-demo.example`
+- Synthetic password: `TinyDemo2026!`
+- Or choose **Continue in offline demo** to use the bundled synthetic workspace without Firebase.
+
+What judges can test:
+
+- Teacher home, two classes, eight synthetic pupils and class rosters.
+- Attendance drafts, full-roster submission, history and local pending state.
+- Lessons, progress observations, approval and guardian links.
+- Two-way synthetic messaging through the guardian SMS simulator.
+- IndexedDB persistence across refresh, offline banner and PWA app-shell reload.
+- Firebase sign-in, Firestore workspace bootstrap and Firebase AI Logic cloud fallback with the SDK-reported source.
+- Responsive desktop/mobile layout, large-text toggle and reduced motion.
+
+Limitations:
+
+- Browser writes stay local; Cloud Functions are emulator-only under Spark/NGN 0. Cross-device sync is not claimed.
+- The guardian view is a simulator, not a parent account or real SMS.
+- On-device Gemini Nano was not verified; the verified hosted source is `Cloud Gemini`.
+- App Check enforcement is off.
+- Synthetic data only; do not enter real pupil or guardian information.
+- The preview is hosted on Firebase Hosting, not Vercel.
+
+Full architecture, security notes and manual test steps: [`WEB_APP.md`](WEB_APP.md).
+
+## 2. Recommended Android install: public GitHub Release APK (zero cost)
 
 The official hackathon rules require a test build that is free and available through the judging period. A public GitHub Release is the simplest zero-cost route and does not require a Google account.
 
@@ -42,7 +71,7 @@ No real pupil/guardian data is used. Do not enter real child, parent or guardian
 - App Check enforcement and Play Integrity are not production-configured.
 - The APK is not a Play Store release.
 
-## 2. Alternative: Firebase App Distribution (zero cost, access-controlled)
+## 3. Alternative: Firebase App Distribution (zero cost, access-controlled)
 
 App Distribution is free on Spark and preferable when judge emails can be supplied privately.
 
@@ -68,16 +97,19 @@ Judges install the Firebase App Tester app, accept the invitation, and download 
 
 The CI `distribute` job remains a placeholder until Google Cloud/App Distribution credentials and tester emails are configured. Do not put tester emails in the repository.
 
-## 3. Why not an unrestricted APK without a token?
+## 4. Why not an unrestricted APK without a token?
 
 The app's AI route uses Firebase AI Logic, which requires App Check. A public APK without a registered debug token can sign in and read Firestore only while App Check enforcement is off, but **AI Logic fails**. A release build with Play Integrity would need a Play Console app, release signing and registered fingerprints. The dedicated judge debug token is the only zero-cost route that lets judges test hybrid cloud fallback now, and the rules explicitly accept debug tokens.
 
-## 4. Revocation
+## 5. Revocation
 
 After the judging period (ends 16 December 2026):
 
 1. Revoke the judge debug token in App Check → Apps → Manage debug tokens.
 2. Delete the public release APK or mark it superseded.
 3. Archive the App Distribution release.
+4. Revoke the dedicated **web** debug token used by the browser preview.
+5. Rebuild/redeploy the hosting site without the web token if it remains online.
+6. Disable or delete the synthetic web demo account if it is no longer needed.
 
-Do not revoke the token before judging ends; judges need the build to remain functional.
+Do not revoke either token before judging ends; judges need the previews to remain functional. The browser token is embedded in the hosted client and is revocable but not confidential; never reuse it for production.

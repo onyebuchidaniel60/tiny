@@ -2,7 +2,7 @@
 
 **Security posture:** privacy-first, least privilege, offline-aware, and closed by default for paid or production integrations.  
 
-**Current preview status (27 November 2026):** Synthetic data only; mock SMS; local SQLCipher database. The non-production Firebase project `tiny-b9f29` is configured with Firestore rules/indexes and Auth; Functions are not deployed. Firestore rules are class-scoped for pupils, guardians, links, conversations and messages and pass 9/9 emulator tests; live unauthenticated and non-member reads are denied while a synthetic member can read its workspace/class/pupil. Phone Auth uses two synthetic test numbers; no real SMS. App Check enforcement is off. The protocol-test token was revoked; a private CI token is stored in GitHub secrets, and a dedicated judge debug token is intentionally embedded in the public synthetic preview APK for the hackathon and must be revoked after judging. A full review is still required before a pilot. No production security certification is claimed.
+**Current preview status (27 November 2026):** Synthetic data only; mock SMS; local SQLCipher database. The non-production Firebase project `tiny-b9f29` is configured with Firestore rules/indexes and Auth; Functions are not deployed. Firestore rules are class-scoped for pupils, guardians, links, conversations and messages and pass 9/9 emulator tests; live unauthenticated and non-member reads are denied while a synthetic member can read its workspace/class/pupil. Phone Auth uses two synthetic test numbers; no real SMS. App Check enforcement is off. The protocol-test token was revoked; a private CI token is stored in GitHub secrets, and a dedicated judge debug token is intentionally embedded in the public synthetic preview APK for the hackathon and must be revoked after judging. A browser companion at <https://tiny-b9f29.web.app> uses a synthetic email/password preview account, read-only Firestore bootstrap, local-only writes, unencrypted IndexedDB/localStorage and a separate revocable web App Check debug token; it introduces no parent login or pupil account. A full review is still required before a pilot. No production security certification is claimed.
 **Scope:** this is an engineering control specification, not a substitute for Nigerian legal advice, a DPIA, controller/processor agreements or a school safeguarding policy.
 
 ## 1. Information classification
@@ -29,8 +29,8 @@
 | Replay/duplicate action | SMS webhook or attendance sync repeats | Durable receipt/idempotency keys, payload hash, unique constraints, transaction |
 | OTP enumeration/brute force | Determine valid accounts or send OTP floods | Generic responses, Firebase quotas, rate limits, abuse alerts, test-number isolation |
 | Injection | Untrusted message/resource data enters queries | Schema validation, parameterized SDK operations, output encoding; no dynamic query construction from user strings |
-| XSS/HTML injection | Message rendered as HTML in a future view | Render as text; Compose safe text; sanitize rich text only if later introduced |
-| CSRF | Web admin endpoint abused | MVP callable APIs with Auth/App Check; if browser endpoints are introduced later, CSRF defenses required |
+| XSS/HTML injection | Message rendered as HTML in the browser companion | Render message/teacher text as text in React; no `dangerouslySetInnerHTML`; sanitize rich text only if later introduced |
+| CSRF | Browser session abused for state changes | Browser companion has no authoritative write endpoint; callable APIs remain Auth/App Check protected; add CSRF defenses before any browser write endpoint |
 | SSRF | User-supplied source URL fetched by backend | No arbitrary URL fetch in MVP; if curriculum import tooling added, strict allowlist, DNS/IP validation and egress controls |
 | Secret leakage | API key in APK/log/commit | Server-only Secret Manager; CI secret scanning; gitignore; redact logs; rotate on exposure |
 | PII leakage to AI | Pupil report sent to model | Prompt minimization; no child/guardian identifiers or raw report; automated PII tests; AI task input contract |
@@ -65,6 +65,19 @@
 - Provide logout/workspace removal that deletes local encrypted cache and key after a clear confirmation, while preserving server records.
 - If app lock/biometric is used, it protects local access only; it is not server authorization.
 - Device compromise/root status may be used as risk signal, but do not block low-cost phones solely based on a blanket root heuristic without a defined policy.
+
+## 4a. Browser companion controls
+
+- The browser companion is synthetic-data-only. It must never be used with real pupil, guardian or school records.
+- Firestore rules remain authoritative. The browser performs member-scoped reads and does not write authoritative collections or use a service account.
+- The web preview uses a dedicated, registered App Check debug token. It is embedded in the hosted client because AI Logic requires App Check, is revocable, and must be revoked after judging. It is not a server secret and must never be reused for production.
+- The Firebase Web API key and app configuration are public client identifiers, not authorization.
+- Browser preview authentication uses a synthetic Email/Password account. It does not introduce a parent or pupil account. The Android product remains phone-first.
+- IndexedDB and localStorage are unencrypted browser storage. They are acceptable only for synthetic preview data; clear site data or use Settings -> Reset local data to remove it. Signing out ends the Firebase session but does not by itself erase the local synthetic workspace.
+- Message and teacher text is rendered as text by React. Do not add raw HTML rendering without sanitization and a security review.
+- The guardian simulator and `BroadcastChannel` message sync are local conveniences, not authentication or delivery boundaries.
+- The service worker caches the app shell and synthetic workspace assets. Do not cache real child data in a future production web surface without an approved encryption and retention design.
+- App Check enforcement, Play Integrity and production bot/abuse controls remain off or unconfigured in the preview.
 
 ## 5. Webhook security
 

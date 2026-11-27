@@ -37,6 +37,9 @@
 | `APP_CHECK_DEBUG_TOKEN` | Local debug App Check attestation | App Check debug-provider log or a generated UUID; register via Console/REST | Ignored local `.env` or `app/src/debug/res/values/firebase_app_check_debug.xml`; never commit | Secret | Before local Firebase/AI integration | No active local token; generate/register per session, revoke after use |
 | `FIREBASE_APP_CHECK_DEBUG_TOKEN` | Registered debug token for the private `firebase-ai-smoke` workflow | Generated UUID; registered in App Check | GitHub Actions secret only; never commit | Secret | Manual AI smoke build | Set; ephemeral APK is not uploaded |
 | `FIREBASE_JUDGE_DEBUG_TOKEN` | Registered debug token embedded in the public judge APK | Generated UUID; registered in App Check | GitHub Actions secret; intentionally public in the test APK | Secret | Judge preview build | Set; revoke after judging |
+| `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN` | Dedicated web preview App Check debug token | Generated UUID; registered in App Check for the web app | Ignored `web/.env.local` and GitHub Actions secret; embedded at build time | Revocable preview secret | Browser preview build | Set; revoke after judging |
+| Firebase Web config (`apiKey`, `appId`, `projectId`, `authDomain`, etc.) | Browser Firebase client identifiers | Firebase Console Web app config | `web/.env.local`; hosted build | Public client config | Browser preview | Not a server credential; never add service-account keys |
+| `VITE_DEMO_EMAIL` / `VITE_DEMO_PASSWORD` | Synthetic browser preview login | Created for the synthetic demo | `web/.env.local` / documented in judge access | Public synthetic | Browser preview | Never reuse for a real account |
 | `PLAY_INTEGRITY_SHA256` | App signing certificate fingerprint for App Check | Play Console/keystore inspection | Firebase Console → App Check | Public fingerprint | Before production/connected release | Debug SHA-256 recorded; release SHA-256 still pending |
 | `AI_PROVIDER` | AI route selection | Fixed architecture | Android/config | Public | Before AI integration | `firebase-ai-logic` |
 | `CLOUD_MODEL_NAME` | Exact Gemini cloud model | Current Firebase AI Logic model docs | Android/config | Public | Before cloud AI integration | `gemini-3.5-flash-lite` (free-tier featured model; verify at runtime) |
@@ -120,6 +123,9 @@
 | `skills-lock.json` | Firebase Agent Skills lockfile | Skills CLI | Repository root | Public | Phase 1 | Commit if generated |
 | `google-services.json` | Android Firebase client config | Firebase Console | `app/` locally or CI injection | Public client config | Before Firebase-enabled build | Ignored by Git |
 | `GOOGLE_SERVICES_JSON_PATH` | Local path to the client config file | Firebase Console download | `.env`/local ignored file | Public path/config | Before Firebase-enabled local build | Not required in CI |
+| `web/.env.example` | Safe browser environment template | This repository | `web/` | Public | Now | Placeholders only |
+| `web/.env.local` | Browser Firebase config and revocable App Check debug token | Firebase Console + App Check registration | `web/`, ignored | Restricted | Browser preview | Never commit |
+| `web/dist/` | Browser build output | `npm run build` | `web/` | Public static assets | Deploy | Ignored by Git; served by Firebase Hosting |
 
 ## 7. Not used or not authorized now
 

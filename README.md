@@ -4,6 +4,8 @@
 
 Tiny is an offline-first Android teacher-support and parent-engagement platform designed for rural primary schools in Nigeria. Teachers use the Android app on their existing phones. Parents use ordinary SMS; they do not install an app. Pupils have no accounts or student interface.
 
+An operator-requested **browser companion preview** is deployed at <https://tiny-b9f29.web.app>. It mirrors the teacher workflows for evaluation, including local persistence and Firebase AI Logic. It is not a parent portal, pupil interface or replacement for the native Android app. See [`docs/WEB_APP.md`](docs/WEB_APP.md).
+
 Tiny is submitted to **#BuildHybridAI 2026** (Firebase AI Logic hybrid inference). See [`docs/HACKATHON_SUBMISSION.md`](docs/HACKATHON_SUBMISSION.md) for the official-requirements review and risks.
 
 This repository now contains an implementation preview as well as the product handoff. It is not authorization to begin production deployment, spend money, send messages to real parents, or process live pupil data. Current development is mock-only, synthetic-data-only and zero-budget.
@@ -27,7 +29,8 @@ When documents conflict, `PROJECT_SPEC.md` controls product behavior, `ARCHITECT
 
 ## Product boundaries
 
-- Native Android app for teachers, built with Kotlin and Jetpack Compose.
+- Native Android app for teachers, built with Kotlin and Jetpack Compose; this remains the primary product.
+- Browser companion preview for evaluation, with synthetic data and no parent or pupil account.
 - Parents communicate through SMS; no parent app or parent login.
 - No student view, login or app.
 - Primary 1–6, using verified NERDC Revised Basic Education Curriculum material.
@@ -62,7 +65,8 @@ The absence of any critical input must be recorded as a blocker in the consolida
 | Layer | Choice |
 |---|---|
 | Android | Kotlin, Jetpack Compose, Material 3 |
-| Local data | Room + SQLCipher; key protected by Android Keystore |
+| Browser preview | Vite, React 19, TypeScript, Firebase Web SDK, IndexedDB, PWA |
+| Local data | Room + SQLCipher; key protected by Android Keystore (Android); IndexedDB with a localStorage backup (browser preview) |
 | Sync | WorkManager + durable outbox + server idempotency |
 | Cloud data | Cloud Firestore Standard, `africa-south1` |
 | Backend | Firebase Cloud Functions 2nd gen, TypeScript, Node.js 22 |
@@ -70,19 +74,20 @@ The absence of any critical input must be recorded as a blocker in the consolida
 | App integrity | Firebase App Check + Play Integrity |
 | AI | Firebase AI Logic, Gemini Developer API cloud route + optional on-device SDK |
 | Messaging | eSMS Africa Two-Way SMS; sandbox first |
-| Testing | JUnit, Firebase Emulator Suite, Vitest; Compose instrumentation passes in CI; physical-device testing remains limited |
-| CI | GitHub Actions Ubuntu 24.04 |
-| Preview | Firebase App Distribution or protected APK delivery; separate static landing page |
+| Testing | JUnit, Firebase Emulator Suite, Vitest, Playwright and axe; Compose instrumentation passes in CI; physical-device testing remains limited |
+| CI | GitHub Actions Ubuntu 24.04 (`android-ci.yml`, `web-ci.yml`) |
+| Preview | Firebase Hosting browser companion, public judge APK, Firebase App Distribution or protected APK delivery; separate static landing page |
 
 The precise architecture and rationale are in `ARCHITECTURE.md`. Exact versions are pinned during readiness/build after compatibility verification; never use dynamic dependency versions.
 
 ## Start here
 
-Phase 0 intake is complete and the Phase 1 preview is implemented and CI-verified. Firebase project-side setup is complete except for the one-time Console initialization of Authentication. Read `AI_HANDOFF.md` for exact state, `docs/BUILD_LOG.md` for evidence, `docs/FIREBASE_EVIDENCE.md` for the sanitized Firebase audit and `OPERATOR_INTAKE.md` for the remaining Auth/App Distribution/on-device gates. Do not claim production, live SMS or Gemini Nano completion.
+Phase 0 intake is complete. The Android preview, Firebase client integration, public judge APK and browser companion preview are implemented and verified. Firebase Authentication is initialized with synthetic test numbers, Firestore is deployed in `africa-south1`, and the browser preview is hosted on Firebase Hosting. Read `AI_HANDOFF.md` for exact state, `docs/BUILD_LOG.md` for evidence, `docs/FIREBASE_EVIDENCE.md` for the sanitized Firebase audit and `OPERATOR_INTAKE.md` for the remaining App Distribution and on-device gates. Do not claim production, live SMS, hosted Functions or Gemini Nano completion.
 
 ## Documentation map
 
 - Setup: `docs/SETUP.md`
+- Browser companion preview: `docs/WEB_APP.md`
 - Environment and secrets: `docs/CONFIGURATION.md`
 - Credential/configuration register: `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md`
 - GitHub Actions Android build and App Distribution: `docs/CI_ANDROID_BUILD.md`
@@ -123,6 +128,25 @@ npm run build
 npm test
 ```
 
+Browser companion:
+
+```powershell
+cd web
+npm ci
+Copy-Item .env.example .env.local   # fill placeholders locally; never commit
+npm run dev
+npm run typecheck
+npm test
+npm run build
+```
+
+Live Firebase/AI browser check (manual, uses the synthetic account and a small free-tier request):
+
+```powershell
+cd web
+$env:TINY_LIVE_FIREBASE='1'; npx playwright test e2e/firebase-live.spec.ts --project=desktop-chromium
+```
+
 Landing page:
 
 ```powershell
@@ -135,8 +159,13 @@ npx --yes serve landing
 
 A reviewed 146.6-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording; the Firebase scene uses the authenticated test-phone/Firestore screenshot and the AI scene shows the judge APK's `Source: Cloud Gemini` result. YouTube upload copy is in `artifacts/demo/youtube-description.md`; the public YouTube URL is still an operator action.
 
+### Browser companion status
+
+The browser companion is live at <https://tiny-b9f29.web.app>. It is a teacher-only, synthetic-data preview with a synthetic Firebase email/password account (`judge@tiny-demo.example` / `TinyDemo2026!`) and an offline demo mode. Verified flows include Firebase sign-in, read-only Firestore bootstrap, multiple classes and pupils, attendance with drafts and submission, lessons, progress approval, guardians, two-way synthetic messaging, IndexedDB refresh recovery, outbox states, PWA offline shell and responsive desktop/mobile layouts. Browser tests: **14 unit/component tests**, **10 Playwright journeys** across desktop and mobile (the two live checks skip by default), **1 live Firebase/AI check** and **0 serious/critical axe violations**. The hosted AI result was SDK-reported `Cloud Gemini`; on-device Gemini Nano is not claimed. Browser writes remain local because Cloud Functions are emulator-only. See [`docs/WEB_APP.md`](docs/WEB_APP.md).
+
 ## Judge access
 
+- Browser preview (no install): <https://tiny-b9f29.web.app>; synthetic account `judge@tiny-demo.example` / `TinyDemo2026!`.
 - Public test build: [Tiny judge preview v0.1.0-preview.1](https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.1) (`tiny-judge-preview.apk`).
 - Test phone: `08000000001`; code: `123456`.
 - Installation, limitations and the App Distribution alternative: [`docs/JUDGE_ACCESS.md`](docs/JUDGE_ACCESS.md).
@@ -149,7 +178,7 @@ Apache License 2.0. See [`LICENSE`](LICENSE).
 
 ## Firebase integration stage
 
-Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; Auth is initialized; Phone Auth uses two synthetic test numbers; the Android emulator signs in and loads a synthetic Firestore workspace; and a private app-level AI test passed with on-device fallback and SDK-reported source `Cloud Gemini`. Remaining hardening: App Check enforcement, Play Integrity/release fingerprint, and Functions-emulator client sync. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`.
+Firebase project `tiny-b9f29` is configured in `.firebaserc` and the configuration docs. The CLI is authenticated; the dev-debug app and SHA fingerprints are registered; Firestore `(default)` is deployed in `africa-south1` with rules and seven indexes; Auth is initialized; Phone Auth uses two synthetic test numbers; the Android emulator signs in and loads a synthetic Firestore workspace; and a private app-level AI test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A registered Firebase Web app and a synthetic Email/Password preview account support the browser companion; its hosted AI request also returned SDK-reported `Cloud Gemini`. Remaining hardening: App Check enforcement, Play Integrity/release fingerprint, hosted callable sync and revocation of the preview debug tokens after judging. Cloud Functions remain emulator-only under Spark/NGN 0. See `docs/FIREBASE_INTEGRATION.md`, `docs/FIREBASE_EVIDENCE.md` and `docs/WEB_APP.md`.
 
 
 ## Firebase development-agent tooling

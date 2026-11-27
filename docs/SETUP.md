@@ -1,6 +1,6 @@
 # Tiny — Developer Setup
 
-**Status:** Phase 1 preview implemented and Firebase-integrated. Android shell, Room/SQLCipher foundation, Functions/rules backend, Auth/Firestore/AI verification, CI, public judge APK and landing page exist.
+**Status:** Phase 1 preview implemented and Firebase-integrated. Android shell, Room/SQLCipher foundation, Functions/rules backend, Auth/Firestore/AI verification, CI, public judge APK, landing page and browser companion preview exist.
 
 ## 0. Pinned Phase 1 stack
 
@@ -17,6 +17,8 @@
 | SQLCipher for Android | 4.20.0 |
 | Firebase Android BoM | 35.2.0 (dependencies present; client initialization deferred until project config) |
 | Functions runtime | Node.js 22 / firebase-functions 6.5.0 / firebase-admin 13.4.0 |
+| Browser preview | Vite 7.3.8, React 19.3.1, TypeScript 5.9.3, Firebase Web SDK 13.4.0, idb 8.0.4, vite-plugin-pwa 2.0.0 |
+| Browser tests | Vitest 3.2.7, Testing Library, Playwright 1.65.1, axe-core/playwright 4.11.0 |
 | CI runner | GitHub Actions `ubuntu-24.04` |
 
 ## 1. Prerequisites
@@ -46,6 +48,7 @@
 10. Firebase AI Logic with the Gemini Developer API free tier is enabled; verify quota and App Check proxy behavior before app-level claims.
 11. Keep `SMS_MODE=mock`; configure eSMS sandbox secrets only after account access and sandbox authorization are confirmed.
 12. At the start of Phase 6, attempt `npx skills add benjitaylor/skills --skill stageshow`; inspect and use relevant instructions.
+13. For the browser companion, copy `web/.env.example` to the ignored `web/.env.local`, fill the public Firebase web config and the dedicated App Check debug token, then run the commands in section 4a. Never commit the local environment file.
 
 ## 3. Android build
 
@@ -82,11 +85,50 @@ npm run build
 
 Use Firebase Emulator Suite for callables, rules and webhook adapter tests. Never point emulator tests at production data or send real SMS.
 
+## 4a. Browser companion
+
+Requirements: Node.js 22, npm and a current Chromium-based browser for Playwright.
+
+```powershell
+cd web
+npm ci
+Copy-Item .env.example .env.local
+# Fill the Firebase Web values and the dedicated App Check debug token.
+npm run dev
+```
+
+Quality checks:
+
+```powershell
+npm run typecheck
+npm test
+npm run build
+npx playwright install chromium
+npx playwright test
+```
+
+The default Playwright journeys use the synthetic offline demo and do not require Firebase credentials. The optional live check uses the synthetic preview account and a small free-tier AI request:
+
+```powershell
+$env:TINY_LIVE_FIREBASE='1'; npx playwright test e2e/firebase-live.spec.ts --project=desktop-chromium
+```
+
+Deploy the zero-cost preview to the existing Firebase project:
+
+```powershell
+npm run build
+cd ..
+firebase deploy --only hosting --project tiny-b9f29
+```
+
+The app uses the existing Firebase Web app and Firestore workspace; do not create a new project. `web/.env.local` is ignored. The App Check debug token is a revocable preview credential and must not be committed. Full architecture, test evidence and limitations are in `docs/WEB_APP.md`.
+
 ## 5. Local secrets
 
 - Do not add secrets to tracked files, source, `google-services.json`, build config or logs.
 - Use ignored local `.env` files or Functions secret emulators for local tests; never commit `.env`.
 - `.env.example` contains names and safe placeholders only; see `CREDENTIALS_AND_CONFIGURATION_REGISTER.md` for ownership and secure delivery.
+- The browser uses `web/.env.example` and an ignored `web/.env.local`. The Firebase Web API key is public client configuration; the dedicated web App Check debug token is revocable and must be supplied through the local env or CI secret, never committed.
 - Production secrets live in Google Secret Manager/Firebase Functions secrets; CI secrets live in GitHub Actions secrets.
 - Rotate any credential accidentally exposed in logs, chat, Git or an artifact.
 

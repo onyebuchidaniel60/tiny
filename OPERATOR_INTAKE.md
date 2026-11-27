@@ -138,7 +138,7 @@ Provider acceptance must never be labelled delivery. Mock/sandbox only unless th
 | Real parent messaging | Yes | NOT AUTHORIZED | Mock adapter only |
 | Real child/pupil data in demo | No | PROHIBITED | Use deterministic synthetic data only |
 | Public repository | Optional | CONFIRMED PUBLIC — do not change | Operator instructed not to change visibility. Never commit secrets, real pupil/guardian data or private URLs |
-| Domains/website | No MVP web app | NOT_APPLICABLE | Native app only; no website/landing page unless separately approved |
+| Domains/website | Browser companion authorized 27 Nov 2026 | AUTHORIZED - EVALUATION | Teacher-only synthetic preview at <https://tiny-b9f29.web.app>; native app remains primary; no parent/pupil web account, live SMS or production use |
 
 ## 8. Demo and delivery
 

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1e5b48" />
+    <meta name="description" content="Tiny teacher workspace — offline-first classroom tools for rural primary schools." />
+    <link rel="icon" type="image/svg+xml" href="/tiny-mark.svg" />
+    <script>
+      // The web preview uses a dedicated, revocable App Check debug token for
+      // Firebase AI Logic. It must be set before the App Check SDK loads.
+      const tinyAppCheckDebugToken = '%VITE_FIREBASE_APPCHECK_DEBUG_TOKEN%';
+      if (tinyAppCheckDebugToken && !tinyAppCheckDebugToken.includes('%')) {
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = tinyAppCheckDebugToken;
+      }
+    </script>
+    <title>Tiny — teacher workspace</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

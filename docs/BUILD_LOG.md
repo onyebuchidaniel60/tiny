@@ -245,6 +245,29 @@
 - Firebase MCP: disabled until non-production project/access and operation scope are authorized.
 - Firebase resources created/modified on 26 November 2026: Android app, SHA certificates, Firestore default database in `africa-south1`, rules/indexes, free-tier API enablement, App Check debug token (revoked), AI Logic P4SA identities/role. No billing, Functions deployment or production resource.
 
+## Browser companion checkpoint - 27 November 2026
+
+- Objective: implement the operator-requested browser companion without changing the native Android product, Firebase rules or zero-spend boundaries.
+- Implementation completed: Vite/React/TypeScript application with Home, Classes, class roster, Attendance, Lessons, 5E lesson editor, Progress, Messages, synthetic guardian SMS simulator, Guardians, Sync, Settings and AI routes; Firebase Web Auth/Firestore/AI; IndexedDB and localStorage persistence; service-worker app-shell caching; desktop/mobile navigation; large-text and reduced-motion settings.
+- Persistence: IndexedDB `tiny-web` stores `state` and `drafts`; localStorage provides the synchronous backup. Attendance and message drafts are written while typing. The outbox exposes pending/retryable/synced/failed/conflict and never reports a local write as server-acknowledged.
+- Firebase: registered Web app `1:1072757481941:web:10a300a3c9756e1520dd5c`; Email/Password enabled for synthetic `judge@tiny-demo.example`; seeded `ws_webdemo0001` with 2 classes, 8 pupils, 4 guardians, links, lessons, progress, attendance and conversations; existing Firestore rules unchanged; read-only bootstrap; no Functions deployment.
+- Offline start fix: Firebase Auth is now created lazily. Offline demo mode no longer blocks on Auth or its hidden iframe, and the app opens from local state. Playwright waits for service-worker control before simulating disconnection.
+- AI: `InferenceMode.PREFER_ON_DEVICE`, cloud fallback `gemini-3.5-flash-lite`, de-identified P4 prompt, source read only from `response.response.inferenceSource`. Hosted result: **Cloud Gemini**, detail `The SDK reported cloud inference.` Chrome exposed a built-in AI object but the SDK did not report on-device. No Nano claim.
+- Tests:
+  - `npm run typecheck`: passed.
+  - `npm test`: **14 passed, 0 failed** across 5 Vitest files.
+  - `npm run build`: passed; PWA precache 7 entries; approximate JS 981 kB (299 kB gzip), CSS 27 kB (5.8 kB gzip).
+  - `npx playwright test`: **10 passed, 2 skipped** (desktop 5+1 skip, mobile 5+1 skip). Journeys: class creation/refresh, attendance submission, progress approval, teacher/guardian messages, offline draft/reload, visual screenshots, axe home scan.
+  - `TINY_LIVE_FIREBASE=1 npx playwright test e2e/firebase-live.spec.ts --project=desktop-chromium`: **1 passed, 0 failed**.
+  - Axe: **0 serious or critical** WCAG 2 A/AA violations.
+- Hosted verification: sign-in and Firestore bootstrap on `https://tiny-b9f29.web.app`; latest hosted asset verified; AI result and source captured in `artifacts/web/tiny-web-ai-cloud.png`; responsive screenshots in `artifacts/web/`.
+- Deployment: Firebase Hosting, `web/dist`, SPA rewrite, no-cache `index.html`/`sw.js`, immutable hashed assets. Vercel CLI was unauthenticated; no Vercel claim.
+- Security/limitations: synthetic data only; unencrypted browser storage; dedicated revocable web App Check debug token embedded in the hosted client and stored in GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN`; App Check enforcement off; no live SMS; no hosted callable sync or cross-device sync; no on-device AI proof.
+- Documentation: `docs/WEB_APP.md`, README, configuration, security, testing, deployment, setup, troubleshooting, judge access, hackathon submission, package index and this log.
+- Commit: `PENDING`.
+- CI: `PENDING`.
+- Next: keep hosted preview and tokens live through judging; complete Devpost/YouTube/eligibility gates; revoke web and APK debug tokens after 16 December 2026.
+
 ## Checkpoint entry template
 
 ### YYYY-MM-DD — Phase N

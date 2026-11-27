@@ -4,6 +4,8 @@
 **Offline/local source of truth:** encrypted Room database for the active user/device cache and all unsynced changes.  
 **Authority:** Cloud Functions validate and commit all shared mutations.
 
+**Browser companion:** the hosted preview reads this same model through member-scoped Firestore rules. It does not write authoritative collections or use a service account. Browser edits use the same command shapes in a local IndexedDB outbox; only the local Functions emulator can acknowledge them. The preview is synthetic-only; see `docs/WEB_APP.md`.
+
 ## 1. Modeling rules
 
 - Tenant boundary is `workspaceId`; every workspace-owned record carries it even when nested under a workspace collection.

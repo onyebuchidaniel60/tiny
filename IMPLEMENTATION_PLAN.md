@@ -158,7 +158,7 @@ Implement in this order:
 - Real routes and working controls; no dead buttons/links.
 - App icon, display name, version, privacy notice, support destination and metadata.
 - README plus setup/configuration/testing/deployment/troubleshooting/operator guide.
-- Documentation links in any companion landing/help surface only if such a surface is authorized and real; no web landing page is in MVP.
+- Documentation links in any companion landing/help surface only if such a surface is authorized and real. The original MVP had no web surface; the operator authorized a teacher-only browser companion preview on 27 November 2026 (`docs/WEB_APP.md`). It does not add a parent or pupil account and does not replace the native app.
 
 **Exit:** no inert controls, broken navigation or missing required states; docs are actionable.  
 **Commit:** `docs: complete implementation and operator documentation`.

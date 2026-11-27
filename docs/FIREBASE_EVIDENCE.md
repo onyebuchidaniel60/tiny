@@ -166,7 +166,13 @@ No billing was enabled to initialize or test Auth.
 | Android sync E2E | Manual run `45950447844`: `SyncEmulatorE2ETest` passed; real Android Firebase Functions SDK/`SyncProcessor` against Auth/Firestore/Functions emulators; accepted, idempotent replay, retry and conflict |
 | Judge build | Public prerelease `v0.1.0-preview.1`: `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`); dedicated App Check debug token; no private CI token |
 | Final regression | Run `45950400565`: all jobs green; normal instrumentation shows the live AI and sync tests skipped when Firebase/emulator config is absent, and the navigation test passed |
-| Log redaction | The logcat and AI test artifacts contain no unredacted App Check debug token |
+| Browser app | Registered `Tiny web`, app ID `1:1072757481941:web:10a300a3c9756e1520dd5c`; public Web config only |
+| Browser Auth/Firestore | Synthetic Email/Password account signed in; read-only bootstrap of `ws_webdemo0001` (2 classes / 8 pupils / 4 guardians); existing rules unchanged |
+| Browser AI | Hosted `/ai` returned a candidate and SDK source `Cloud Gemini`; no on-device claim; screenshot `artifacts/web/tiny-web-ai-cloud.png` |
+| Browser App Check | Dedicated web debug token registered; value stored only in ignored `web/.env.local` and GitHub secret; enforcement off; revoke after judging |
+| Browser hosting | Firebase Hosting <https://tiny-b9f29.web.app>; Spark; no Functions deployment |
+| Browser tests | Typecheck; 14/14 Vitest; 10 passed/2 skipped Playwright across desktop/mobile; 1/1 live Firebase/AI; 0 serious/critical axe |
+| Log redaction | The logcat, browser evidence and AI test artifacts contain no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 
 ## 8. Not verified / not claimed
@@ -175,3 +181,5 @@ No billing was enabled to initialize or test Auth.
 - On-device Gemini Nano inference; the Note 10+ is unsupported.
 - Hosted Cloud Functions, live SMS, App Distribution, production deployment.
 - Real parent/guardian communication or real pupil data.
+- Browser cross-device sync or authoritative browser writes.
+- Browser App Check enforcement or on-device browser inference.

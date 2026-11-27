@@ -80,6 +80,8 @@ The MVP has no global platform admin dashboard. Restricted Firebase/Google Cloud
 - Control SMS mode, budgets and allowed test recipients.
 - Review audit events for documented support/security incidents.
 - Disable outbound provider sends if abuse, compromise or unexpected cost is detected.
+- Keep the synthetic browser preview and judge App Check tokens available through the judging period; revoke them after judging.
+- Treat browser-local data as synthetic only. It is not covered by the Android SQLCipher backup/recovery model.
 - Respond to incidents under the approved response plan.
 
 Every privileged operation must be attributable and logged. Routine operator browsing of pupil records is not permitted.

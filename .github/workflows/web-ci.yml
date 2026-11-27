@@ -1,0 +1,69 @@
+name: web-ci
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'firebase.json'
+      - '.github/workflows/web-ci.yml'
+  pull_request:
+    paths:
+      - 'web/**'
+      - 'firebase.json'
+      - '.github/workflows/web-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: Typecheck, unit, build and browser E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install web dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: web
+        run: npm run typecheck
+
+      - name: Unit and component tests
+        working-directory: web
+        run: npm test
+
+      - name: Build production bundle
+        working-directory: web
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser E2E and accessibility checks
+        working-directory: web
+        run: npx playwright test
+
+      - name: Upload web screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-web-evidence
+          path: |
+            artifacts/web/**
+            web/playwright-report/**
+          if-no-files-found: warn
+          retention-days: 14

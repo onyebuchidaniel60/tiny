@@ -1,6 +1,6 @@
 # Tiny — Design Notes
 
-**Status:** Phase 1 visual foundation implemented; final app refinement and accessibility audit pending.
+**Status:** Phase 1 visual foundation implemented; browser companion visual system implemented and browser accessibility scan passing; final native-device refinement and TalkBack audit pending.
 
 ## 1. References
 
@@ -28,6 +28,17 @@
 - **Motifs:** original CSS/Compose doodles, dots, underline squiggles and a text-first Tiny mark. No third-party illustration or logo copied.
 - **Android:** Compose Material 3 palette/typography/shapes; 48dp+ targets; labelled placeholders; mock/preview banners.
 - **Landing page:** same palette/type; responsive desktop/tablet/phone; semantic sections; skip link; focus states; reduced-motion handling; no analytics/cookies.
+
+### 3a. Browser companion
+
+- Reuses the same paper/ink/forest/tomato/butter palette, serif display headings and original Tiny mark.
+- Desktop uses a persistent sidebar, topbar connectivity/sync state and two-column work areas.
+- Mobile uses a bottom navigation bar plus a topbar Settings shortcut; cards and forms stack to one column.
+- Attendance uses large, labelled present/absent/late controls with text and color; status is never color-only.
+- The guardian simulator is a phone-shaped, clearly labelled synthetic SMS surface with a persistent DEMO notice.
+- Large-text and reduced-motion toggles are implemented and persist with the local workspace.
+- Playwright axe scan on Home reports **0 serious or critical** WCAG 2 A/AA violations at desktop and mobile widths.
+- Evidence: `artifacts/web/desktop-chromium-home.png`, `desktop-chromium-class.png`, `mobile-chromium-home.png`, `mobile-chromium-class.png`.
 
 ## 4. Screen map
 
@@ -75,12 +86,15 @@ The shell covers initial/loading-ish seeding, populated, empty, offline/local, p
 | 26 Nov 2026 | Both | Product proof cards | Original phone mockups and feature cards | Synthetic data only; label preview | `artifacts/screenshots/` |
 | 26 Nov 2026 | — | StageShow unavailable | Direct design-system discipline | Harness removed skill ID after restart | Build log/handoff |
 | 26 Nov 2026 | — | First-launch seed race showed 0 classes/pending | Splash holds until encrypted seed completes; deterministic Home state | Avoid misleading demo data and stale Room observers | `TinyApplication.kt`, `MainActivity.kt` |
-| 26 Nov 2026 | — | Bottom-nav semantics are merged | Stable `testTag` values for `tab_home`, `tab_classes`, `tab_lessons`, `tab_messages` | Reliable instrumentation without weakening accessibility labels | `TinyComponents.kt`, `TinyNavigationTest.kt` |
+| 26 Nov 2026 | - | Bottom-nav semantics are merged | Stable `testTag` values for `tab_home`, `tab_classes`, `tab_lessons`, `tab_messages` | Reliable instrumentation without weakening accessibility labels | `TinyComponents.kt`, `TinyNavigationTest.kt` |
+| 27 Nov 2026 | REF-001/REF-002 | Browser evaluation needs the same warmth without copying the landing page | Original responsive teacher workspace; sidebar on desktop, bottom navigation on mobile; explicit local/sync state | Preserve product identity; make offline/pending honest rather than decorative | `web/src/styles.css`, `artifacts/web/` |
 
 ## 8. Known design/UX gaps
 
 - Full Hausa/Yoruba/Igbo UI translation coverage and native review.
 - Final app screenshot-by-screenshot reference refinement.
 - Real-device validation on Note 10+ (Android 12) and larger-font TalkBack pass.
-- Sync conflict/needs-attention UI not yet exercised end to end.
+- Sync conflict/needs-attention UI not yet exercised end to end in a hosted backend.
 - Landing page GitHub Pages publication not yet verified.
+- Browser companion: on-device AI presentation is ready but unverified; PWA stale-cache handling needs a user-facing update prompt in a future production surface; browser storage is synthetic-only and unencrypted.
+- Browser TalkBack-equivalent screen-reader testing and physical low-cost Android browser testing remain pending.

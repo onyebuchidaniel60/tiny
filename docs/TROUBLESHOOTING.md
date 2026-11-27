@@ -61,10 +61,26 @@ This guide is updated with verified issues during implementation. Do not expose 
 | AI output invalid | Schema mismatch, hallucination or unsupported locale | Reject, optionally bounded retry, then fallback; never save/send automatically |
 | Cloud quota exceeded | Rate/cost limit | Show unavailable message; serve local resource; alert operator; do not silently switch to paid provider |
 
-## 7. Escalation record
+## 7. Browser companion
+
+| Symptom | Likely cause | Safe action |
+|---|---|---|
+| Hosted page looks stale after deploy | An older PWA service worker is serving a cached shell | Reload, hard reload, or clear site data for `tiny-b9f29.web.app`; verify `/index.html` directly from the server; do not assume the deploy failed |
+| `auth/unauthorized-domain` | Hosting domain missing from Firebase Auth authorized domains | Use `tiny-b9f29.web.app` or add the approved domain in Firebase Console; do not disable Auth protections |
+| Sign-in fails with the documented account | Email provider disabled, wrong password or synthetic account missing | Confirm Email/Password is enabled and the synthetic account exists in `tiny-b9f29`; reset only the synthetic password |
+| Firestore `permission-denied` | Web UID is not an active workspace member, or rules changed | Check `workspaces/ws_webdemo0001/members/{uid}` and the rules; never loosen rules to make the preview work |
+| AI always shows `Cloud Gemini` | This browser/hardware did not provide a usable on-device model | Record cloud inference; use a supported Chrome desktop environment and follow section 8 of `WEB_APP.md`; do not relabel the source |
+| AI shows curated fallback | App Check token invalid, AI quota/network failure or SDK unavailable | Check the registered web debug token, App Check enforcement state and browser console; the curated strategy is a safe fallback, not a model result |
+| Queued edits never become synced | Hosted build has `VITE_FUNCTIONS_EMULATOR=false`; Functions are emulator-only | Keep the honest pending state; do not claim hosted sync; test the emulator path only locally |
+| Local data disappears | Site data/cache was cleared or the browser is in a private session | Expected for browser storage; use Settings -> Reset only when intentional; no server copy exists |
+| Offline reload fails | Service worker was not yet active or its cache was cleared | Load once online, wait for worker control, then test offline; use a normal (not private) window |
+| Mobile navigation missing | Viewport meta missing or CSS loaded from an old worker | Confirm the viewport meta tag and clear the stale worker; check the bottom navigation and topbar Settings shortcut |
+| Playwright `load` timeout | Firebase Auth's hidden iframe can delay the browser load event on a slow network | The suite waits for DOM readiness and visible UI; do not treat the delay as a rendered-app failure |
+
+## 8. Escalation record
 
 When a defect blocks a flow, capture:
-- Build/version and Git commit.
+- Build/version and Git commit (include whether the surface is Android or the browser companion).
 - Device model, Android version and connectivity state.
 - Workspace type and role (synthetic account only).
 - Screen and exact action sequence.

@@ -1,12 +1,30 @@
 # Tiny — AI Implementation Handoff
 
-**Last updated:** 27 November 2026 (submission, sync E2E and judge access)
+**Last updated:** 27 November 2026 (browser companion, submission, sync E2E and judge access)
 
-**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.1`) is published. App Check enforcement, Play Integrity and on-device Nano remain unverified.
+**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.1`) is published. A browser companion is hosted at <https://tiny-b9f29.web.app> with a synthetic Firebase email/password account, read-only Firestore bootstrap, local-only outbox, PWA offline shell and Firebase AI Logic. Its live AI request also returned SDK-reported `Cloud Gemini`. App Check enforcement, Play Integrity and on-device Nano remain unverified.
 
-**Current blocker:** no technical blocker for the tested Android/Firebase path. Submission gates: public YouTube upload, Devpost entry/eligibility confirmation, App Distribution tester emails and a supported Nano device. App Check enforcement/Play Integrity remain deliberate release-hardening items.
+**Current blocker:** no technical blocker for the tested Android, browser or Firebase paths. Submission gates: public YouTube upload, Devpost entry/eligibility confirmation, App Distribution tester emails and a supported Nano device. App Check enforcement/Play Integrity remain deliberate release-hardening items. The web and Android judge App Check debug tokens must remain valid through judging and then be revoked.
 
-**Next task:** finish the official submission (YouTube demo upload, Devpost entry, eligibility confirmation), then run the on-device Nano acceptance procedure if a supported device is available. App Check enforcement/Play Integrity and Functions-emulator client sync are documented follow-ups. See `docs/HACKATHON_SUBMISSION.md` and `docs/FIREBASE_EVIDENCE.md`.
+**Next task:** finish the official submission (YouTube demo upload, Devpost entry, eligibility confirmation), keep the browser preview and judge APK live through 16 December 2026, then run the on-device Nano acceptance procedure if a supported device is available. After judging, revoke the web and APK debug tokens and take down the synthetic previews. App Check enforcement/Play Integrity and hosted Functions are documented follow-ups. See `docs/HACKATHON_SUBMISSION.md`, `docs/WEB_APP.md` and `docs/FIREBASE_EVIDENCE.md`.
+
+## Browser companion delivery checkpoint - 27 November 2026
+
+- **Scope:** operator-requested browser companion for evaluation. Teacher-only; no parent login, pupil account or student app. Native Android remains the primary product. The web preview does not replace SQLCipher/Room or phone-first Android auth.
+- **URL:** <https://tiny-b9f29.web.app>.
+- **Synthetic account:** `judge@tiny-demo.example` / `TinyDemo2026!`; workspace `ws_webdemo0001`; web UID `wT35e4yAe1PTRZ0BT6UheSsmEdg2`.
+- **Stack:** Vite 7.3.8, React 19.3.1, TypeScript 5.9.3, Firebase Web SDK 13.4.0, `idb` 8.0.4, `vite-plugin-pwa` 2.0.0, Vitest 3.2.7, Playwright 1.65.1.
+- **Implemented:** Home, Classes, class detail/roster, attendance with drafts and completion validation, lessons and 5E editor, progress drafts/approval, messages, synthetic guardian SMS simulator, guardians/links/consent display, settings, sync centre, AI helper, responsive desktop/mobile navigation, large-text and reduced-motion controls.
+- **Persistence:** IndexedDB `tiny-web` (`state`, `drafts`) plus synchronous localStorage backup. Attendance/message drafts survive refresh. Outbox records pending/retryable/synced/failed/conflict with idempotency keys. Browser writes stay local; the hosted build reports server sync unavailable.
+- **Firebase:** Existing project only. Registered Web app `1:1072757481941:web:10a300a3c9756e1520dd5c`; Email/Password enabled for the synthetic account; synthetic workspace seeded; Firestore rules unchanged; read-only bootstrap; no Functions deployment.
+- **Offline demo startup:** lazy Firebase Auth creation means the offline demo no longer waits for Auth or its hidden iframe. The app shell is cached by Workbox after the first visit and has an SPA navigation fallback.
+- **AI:** `web/src/ai/service.ts` uses `InferenceMode.PREFER_ON_DEVICE`, cloud model `gemini-3.5-flash-lite`, de-identified English P4 prompt, source read only from `response.response.inferenceSource`. Hosted evidence: **Cloud Gemini**, detail `The SDK reported cloud inference.`; screenshot `artifacts/web/tiny-web-ai-cloud.png`. Chrome exposed a built-in AI object, but the SDK did not report on-device inference. No Nano claim.
+- **Tests:** typecheck passed; **14/14 Vitest** unit/component; **10 passed / 2 skipped Playwright** across desktop and mobile; **1/1 live Firebase/AI** manual run; **0 serious/critical axe** violations. Desktop/mobile screenshots regenerated in `artifacts/web/`.
+- **Deployment:** Firebase Hosting `tiny-b9f29`, `web/dist`, SPA rewrite, no-cache `index.html`/`sw.js`, immutable hashed assets. Vercel CLI was unauthenticated; no Vercel claim.
+- **Security/limits:** synthetic data only; browser storage unencrypted; dedicated revocable web App Check debug token embedded in the hosted client (GitHub secret `FIREBASE_WEB_APP_CHECK_DEBUG_TOKEN`, never committed); App Check enforcement off; no real SMS; no hosted callable sync; no cross-device sync; no on-device AI proof.
+- **Evidence/docs:** `docs/WEB_APP.md`, `docs/JUDGE_ACCESS.md`, `docs/TESTING.md`, `.github/workflows/web-ci.yml`, `web/e2e/`, `artifacts/web/`.
+- **Commit:** `PENDING`.
+- **CI:** `PENDING`.
 
 ## Live Firebase setup checkpoint (26 November 2026)
 
@@ -60,8 +78,8 @@
 - Integrity: Firebase App Check + Play Integrity.
 - AI: Firebase AI Logic/Gemini Developer API globally processed cloud route; optional experimental on-device SDK on supported devices.
 - SMS: eSMS Africa Two-Way SMS target; mock adapter during current development; no live sends until authorized.
-- Preview: protected Firebase App Distribution or approved secure APK artifact, not a website; landing page is a separate static marketing surface.
-- No payment system, voice calling, web product frontend, parent app or student app.
+- Preview: protected Firebase App Distribution or approved secure APK artifact, plus an operator-requested browser companion at <https://tiny-b9f29.web.app>; landing page is a separate static marketing surface.
+- No payment system, voice calling, parent app or student app. The native teacher app is primary; the browser companion is a teacher-only evaluation surface and introduces no parent or pupil account.
 
 ## Current readiness
 
@@ -101,7 +119,13 @@
 | eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
 | Production SMS authority/budget | NOT AUTHORIZED | NGN 0; mock only |
 | Production deploy authority | NOT AUTHORIZED | No production resources |
-| Landing page | IMPLEMENTED — local preview | Responsive static page + legal/security/contact; GitHub Pages manual workflow not enabled/published |
+| Browser companion | IMPLEMENTED - HOSTED | <https://tiny-b9f29.web.app>; synthetic account; teacher-only; local-only writes |
+| Browser persistence | VERIFIED | IndexedDB state/drafts, localStorage backup, outbox states, refresh/offline recovery |
+| Browser tests | PASS - 14 unit, 10 E2E, live 1 | Typecheck/build; desktop+mobile Playwright; axe 0 serious/critical |
+| Browser AI | VERIFIED - CLOUD ONLY | SDK-reported `Cloud Gemini`; curated fallback; no on-device claim |
+| Browser App Check | PARTIAL - DEBUG TOKEN | Dedicated registered web token; enforcement off; revoke after judging |
+| Browser sync | LOCAL ONLY | Hosted Functions unavailable under Spark; no cross-device sync claim |
+| Landing page | IMPLEMENTED - local preview | Responsive static page + legal/security/contact; GitHub Pages manual workflow not enabled/published |
 | Demo audience/output | CONFIRMED | Firebase hackathon judges/product evaluators; `artifacts/demo/` |
 | Demo voice/TTS | CONFIRMED - local SAPI | Microsoft Zira offline TTS; no Google AI TTS credentials or charges |
 
