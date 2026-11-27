@@ -1,8 +1,8 @@
 # Tiny — Reference Assets Register
 
-**Status:** Operator-supplied references received 26 November 2026. Both are **reference-only**; Tiny will create an original identity and assets. No generated or substitute reference has been authorized.
+**Status:** Operator-supplied references received 26 November 2026. Both are **reference-only**. Tiny uses an original composition and a licensed open-source symbol (Lucide `sprout`, ISC) rather than copying reference assets; see `docs/BRAND_AND_ASSETS.md`. No generated or substitute reference has been authorized.
 
-**Rule:** Never claim a missing reference exists. Record exact URLs, retrieval date, ownership/licence notes and intended use. Do not copy source code, proprietary illustrations, logos, text, assets or distinctive protected layouts.
+**Rule:** Never claim a missing reference exists. Record exact URLs, retrieval date, ownership/licence notes and intended use. Do not copy source code, proprietary illustrations, logos, text, assets or distinctive protected layouts. The Tiny mark is the Lucide `sprout` symbol under ISC, not a copy of either reference.
 
 ## 1. Supplied references
 
