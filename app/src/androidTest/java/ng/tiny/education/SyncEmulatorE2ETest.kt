@@ -127,7 +127,7 @@ class SyncEmulatorE2ETest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val options = FirebaseOptions.Builder()
             .setApplicationId("1:1234567890:android:tiny-emulator")
-            .setApiKey("fake-api-key-for-emulator")
+            .setApiKey("AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY")
             .setProjectId(projectId)
             .build()
         val app = FirebaseApp.getApps(context).firstOrNull { it.name == appName }
