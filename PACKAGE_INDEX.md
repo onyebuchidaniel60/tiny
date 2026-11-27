@@ -1,7 +1,7 @@
 # Tiny — Project Handoff Package Index
 
 **Package status:** Complete planning/handoff documentation; no application code included.  
-**Document count:** 29 Markdown files (including the Firebase Agent Skills/MCP guide, credential register and CI guide).
+**Document count:** 38 Markdown files (including the Firebase integration, judge-access and hackathon submission guides).
 
 **Blueprint date:** 25 November 2026  
 **Product:** Tiny — Big impact. Small requirements. Accessible everywhere.
@@ -49,6 +49,10 @@
 | `docs/CREDENTIALS_AND_CONFIGURATION_REGISTER.md` | Exact credential/config names, ownership, secure delivery locations, secret/public classification and timing |
 | `docs/CI_ANDROID_BUILD.md` | GitHub Actions Ubuntu build/test permissions, workflow configuration, App Distribution and judge access |
 | `docs/FIREBASE_INTEGRATION.md` | Exact Firebase authentication, app registration, Auth/Firestore/App Check/AI Logic setup and emulator runbook for `tiny-b9f29` |
+| `docs/FIREBASE_EVIDENCE.md` | Sanitized live Firebase audit, Auth/Firestore/AI/App Check evidence and test data IDs |
+| `docs/AI_HYBRID_VERIFICATION.md` | Hybrid AI implementation review, cloud evidence and supported-device acceptance procedure |
+| `docs/JUDGE_ACCESS.md` | Public judge APK, installation, test credentials and App Distribution alternative |
+| `docs/HACKATHON_SUBMISSION.md` | Official #BuildHybridAI requirements checklist and disqualification risks |
 | `docs/TESTING.md` | Unit, integration, emulator, E2E, security and acceptance test strategy |
 | `docs/DEPLOYMENT.md` | Protected native APK preview, staging, CI, release gates and rollback |
 | `docs/OPERATOR_GUIDE.md` | Operator responsibilities, workspace support, messaging operations and incident handling |
@@ -77,7 +81,7 @@
 
 ## Readiness blockers
 
-Phase 0 intake is complete. Firebase project `tiny-b9f29` is configured and tested within Spark/NGN 0: the CLI is authenticated, the dev app and SHA fingerprints are registered, Firestore `(default)` is deployed in `africa-south1` with rules/indexes, Auth is initialized, Phone Auth uses two synthetic test numbers, the Android emulator signs in and loads a synthetic Firestore workspace, and app-level AI Logic passed with cloud fallback and SDK source `Cloud Gemini`. App Check enforcement and Play Integrity remain pending. See `docs/FIREBASE_INTEGRATION.md` and `docs/FIREBASE_EVIDENCE.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
+Phase 0 intake is complete. Firebase project `tiny-b9f29` is configured and tested within Spark/NGN 0: the CLI is authenticated, the dev app and SHA fingerprints are registered, Firestore `(default)` is deployed in `africa-south1` with rules/indexes, Auth is initialized, Phone Auth uses two synthetic test numbers, the Android emulator signs in and loads a synthetic Firestore workspace, app-level AI Logic passed with cloud fallback and SDK source `Cloud Gemini`, and `SyncEmulatorE2ETest` covers accepted, retry, idempotent and conflict sync against local emulators. A public Apache-2.0 judge APK is published. App Check enforcement and Play Integrity remain pending. See `docs/FIREBASE_INTEGRATION.md`, `docs/FIREBASE_EVIDENCE.md` and `docs/JUDGE_ACCESS.md`. Android builds use GitHub Actions Ubuntu runners. Cloud Functions remain emulator-only under Spark/NGN 0. The Samsung Galaxy Note 10+ (Android 12) is general-testing only, not Gemini Nano-supported.
 
 ## Integrity of supplied methodology
 

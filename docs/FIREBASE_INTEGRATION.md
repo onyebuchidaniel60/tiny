@@ -235,9 +235,11 @@ Backend E2E is green (10/10). The live `syncCommands` callable is not deployed a
 
 The build job optionally materializes `app/google-services.json` from the GitHub secret `GOOGLE_SERVICES_JSON_BASE64`. The secret is set. Do not print, commit or attach the decoded file.
 
-Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` — **success**. The emulator smoke captured the auth gate, signed in with the synthetic test phone number, reached Home, and loaded the synthetic Firestore workspace. Evidence: `artifacts/emulator/tiny-03-auth-gate.png` and `artifacts/emulator/tiny-04-authenticated.png`. The smoke script handles launcher ANRs and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
+Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45942661936` — **success**. The emulator smoke captured the auth gate, signed in with the synthetic test phone number, reached Home, and loaded the synthetic Firestore workspace. Evidence: `artifacts/emulator/tiny-03-auth-gate.png` and `artifacts/emulator/tiny-04-authenticated.png`. The smoke script handles launcher ANRs and redacts the App Check debug token from logcat; the latest artifact contains no unredacted token.
 
-The manual `firebase-ai-smoke` workflow (`https://github.com/onyebuchidaniel60/tiny/actions/runs/45894574508`) builds an ephemeral APK with the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`, runs `AiLogicLiveTest`, and does not upload the APK. It passed with on-device fallback and SDK source `Cloud Gemini`.
+The manual `firebase-ai-smoke` workflow (`https://github.com/onyebuchidaniel60/tiny/actions/runs/45943523336`) builds an ephemeral APK with the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN`, runs `AiLogicLiveTest`, and does not upload the APK. It passed with on-device fallback and SDK source `Cloud Gemini`.
+
+The manual `judge-release` workflow publishes a public prerelease with a **dedicated** judge App Check token (`FIREBASE_JUDGE_DEBUG_TOKEN`). The token is intentionally embedded in the public test APK and must be revoked after judging. See `docs/JUDGE_ACCESS.md`.
 
 ## 8. Verification checklist
 

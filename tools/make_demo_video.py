@@ -100,9 +100,9 @@ SCENES = [
         "id": "08-ai",
         "kicker": "Optional AI",
         "title": "Help that never\nblocks the lesson.",
-        "body": "On-device Nano is unavailable on this emulator. A separate test confirms the SDK falls back to cloud AI and reports its source; curated strategies still work offline.",
-        "shot": "tiny-07a-ai-fallback.png",
-        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable. A separate test confirmed the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.",
+        "body": "On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports Source: Cloud Gemini. Curated strategies remain offline.",
+        "shot": "tiny-ai-cloud.png",
+        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable. The SDK falls back to cloud AI and reports its source; here it says Cloud Gemini. Curated strategies still work offline, and the core lesson never depends on a model.",
     },
     {
         "id": "08-messages",
@@ -319,7 +319,7 @@ def build() -> None:
 - Platform: Windows ffmpeg + Pillow + Windows SAPI (Microsoft Zira Desktop).
 - TTS: local, free, offline fallback. No Google AI TTS credentials/paid service were used.
 - Capture limitation: this is a reviewed screenshot slideshow with narration, not motion screen recording. It does not claim real parent SMS delivery or on-device Gemini Nano inference.
-- Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed.
+- Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The judge APK AI screenshot shows the SDK source `Cloud Gemini`. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed.
 - Synthetic data only; no real pupil/guardian data.
 - Rendered duration: {total:.1f}s.
 - Output: `artifacts/demo/tiny-demo.mp4`.

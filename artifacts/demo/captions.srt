@@ -27,21 +27,21 @@ Only absent pupils create an immediate notification job after server acceptance.
 A saved 5E lesson opens offline. It is a teacher-authored scaffold, not a claim of full NERDC coverage.
 
 8
-00:01:13,886 --> 00:01:33,412
-On-device Nano is unavailable on this emulator. A separate test confirms the SDK falls back to cloud AI and reports its source; curated strategies still work offline.
+00:01:13,886 --> 00:01:34,022
+On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports Source: Cloud Gemini. Curated strategies remain offline.
 
 9
-00:01:33,412 --> 00:01:42,661
+00:01:34,022 --> 00:01:43,271
 In this preview the SMS adapter is mocked, so nothing leaves the device.
 
 10
-00:01:42,661 --> 00:01:52,084
+00:01:43,271 --> 00:01:52,694
 A teacher replies from Tiny. Provider acceptance is not the same as delivery.
 
 11
-00:01:52,084 --> 00:02:06,096
+00:01:52,694 --> 00:02:06,706
 Link a guardian endpoint, verify it in person and record opt-in. A shared endpoint is reused for siblings.
 
 12
-00:02:06,096 --> 00:02:26,032
+00:02:06,706 --> 00:02:26,642
 Remaining gates: App Distribution, App Check enforcement/Play Integrity, native translation review and a supported on-device AI device.

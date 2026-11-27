@@ -1,6 +1,6 @@
 # Tiny — Developer Setup
 
-**Status:** Phase 1 preview implemented. Android shell, Room/SQLCipher foundation, Functions scaffold, CI and landing page exist.
+**Status:** Phase 1 preview implemented and Firebase-integrated. Android shell, Room/SQLCipher foundation, Functions/rules backend, Auth/Firestore/AI verification, CI, public judge APK and landing page exist.
 
 ## 0. Pinned Phase 1 stack
 
@@ -28,7 +28,7 @@
 - Android physical device (API 26+) or emulator for routine app tests.
 - Separate physically supported Android handset for genuine Firebase on-device AI proof; generic emulator-only evidence is insufficient.
 - Node.js 22 and npm for Firebase Functions.
-- Firebase CLI authenticated to the non-production project `tiny-b9f29`; Firebase Authentication initialization is the remaining one-time Console step. Emulator Suite setup can use a demo project.
+- Firebase CLI authenticated to the non-production project `tiny-b9f29`; Auth, Phone test numbers, Firestore and App Check debug flows are configured. A supported physical device is still needed for on-device Nano proof.
 - Firebase Emulator Suite for Auth, Firestore and Functions integration tests.
 - GitHub Actions or the approved CI environment.
 
@@ -42,7 +42,7 @@
 6. Set up Firebase Emulator Suite with a demo project for local/CI tests. Use the non-production `tiny-b9f29` project for client integration; do not use production credentials.
 7. Firebase Authentication is initialized in the Console; Phone Auth is enabled with synthetic test numbers. Real verification SMS is Blaze-only and not authorized.
 8. Firestore `(default)` is created in `africa-south1` with delete protection; deploy rules/indexes after changes. Do not change region without an architecture decision.
-9. Configure the App Check debug provider for local debug builds; enforcement remains off until Auth is verified.
+9. Configure the App Check debug provider for local debug builds; enforcement remains off until the release fingerprint/Play Integrity path is ready.
 10. Firebase AI Logic with the Gemini Developer API free tier is enabled; verify quota and App Check proxy behavior before app-level claims.
 11. Keep `SMS_MODE=mock`; configure eSMS sandbox secrets only after account access and sandbox authorization are confirmed.
 12. At the start of Phase 6, attempt `npx skills add benjitaylor/skills --skill stageshow`; inspect and use relevant instructions.

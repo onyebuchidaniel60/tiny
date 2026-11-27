@@ -1,6 +1,6 @@
 # Tiny demo narration script
 
-Target: 90–150s; rendered: 146.0s
+Target: 90–150s; rendered: 146.6s
 
 ## Scenes
 
@@ -34,7 +34,7 @@ A saved 5E lesson opens offline. It is a teacher-authored scaffold, not full NER
 
 ### 08. Optional AI
 
-AI is optional. On this emulator, Gemini Nano is unavailable. A separate test confirmed the SDK falls back to cloud AI and reports its source. Curated strategies still work offline, and the core lesson never depends on a model.
+AI is optional. On this emulator, Gemini Nano is unavailable. The SDK falls back to cloud AI and reports its source; here it says Cloud Gemini. Curated strategies still work offline, and the core lesson never depends on a model.
 
 ### 09. Parent SMS
 

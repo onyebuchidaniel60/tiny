@@ -1,6 +1,6 @@
 # Tiny — Deployment and Release Procedure
 
-**Current status:** Phase 1 local debug APK built and tested. GitHub Actions workflow exists; no App Distribution upload, GitHub Pages publication or hosted backend deployment is verified yet.
+**Current status:** Public judge APK published; App Distribution groups created but no tester invitation sent. GitHub Actions workflow exists; no GitHub Pages publication or hosted backend deployment is verified. Firebase Functions remain emulator-only.
 
 ## 1. Environments
 
@@ -26,7 +26,9 @@ There is no web frontend in MVP. Early preview is a navigable native Android she
 
 Preview must not connect to production Firestore, live SMS, production AI budgets or real parent numbers.
 
-**Preferred preview route:** Firebase App Distribution. Create `internal-testers` and `judges` groups, add approved emails in the Firebase console, and use the protected `distribution` GitHub environment for manual judge-facing uploads. Never publish a public APK link. Exact setup and permissions are in `CI_ANDROID_BUILD.md`.
+**Preferred restricted preview route:** Firebase App Distribution. Groups `internal-testers` and `judges` exist; add approved emails in the Firebase console and use the protected `distribution` GitHub environment for manual uploads. For the #BuildHybridAI submission, a dedicated public judge prerelease is also authorized: `v0.1.0-preview.1` with a revocable App Check debug token. It is a synthetic-data preview, not a production build. See `docs/JUDGE_ACCESS.md`.
+
+**Current status:** Public judge APK and App Distribution groups exist; App Distribution tester emails are pending. No hosted backend or production deployment.
 
 ## 3. Firebase staging deployment
 

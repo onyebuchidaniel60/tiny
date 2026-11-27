@@ -77,7 +77,7 @@ No client writes were attempted or allowed. The documents contain synthetic name
 | API | `firebaseappcheck.googleapis.com` enabled |
 | Debug token registration | Created through the App Check v1beta REST API using project number and app ID |
 | Debug token exchange | `exchangeDebugToken` returned a signed App Check token with TTL `3600s` |
-| Cleanup | The first debug token was revoked and its log artifact deleted. A separate token for the private `firebase-ai-smoke` workflow is stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN` and used by an ephemeral, non-uploaded APK |
+| Cleanup | The first debug token was revoked and its log artifact deleted. A separate token for the private `firebase-ai-smoke` workflow is stored only in the GitHub secret `FIREBASE_APP_CHECK_DEBUG_TOKEN` and used by an ephemeral, non-uploaded APK. A dedicated `FIREBASE_JUDGE_DEBUG_TOKEN` is intentionally embedded in the public judge APK and must be revoked after judging |
 | Log handling | The CI smoke logcat is redacted; the AI test reports contain no token |
 | Enforcement | Not enabled |
 | Play Integrity | Not configured yet; requires Play Console link and release fingerprint |
@@ -126,7 +126,8 @@ The manual `firebase-ai-smoke` workflow (`45894574508`) built an ephemeral debug
 - The SDK first tried the on-device provider and logged `FirebaseAIOnDeviceNotAvailableException`.
 - It fell back to the cloud provider and returned text.
 - `AiLogicLiveTest` asserted the SDK-reported source was `Cloud Gemini`; the test report is `tiny-firebase-ai-reports` for run `45894574508`.
-- The test also asserted the emulator did not report `Available` for on-device Nano.
+- The test also asserted the emulator did not report on-device Nano `Available`.
+- The public judge APK UI smoke (`45948484744`) showed the cloud result and `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png`.
 - The logcat/report artifacts contain no unredacted App Check debug token.
 
 This verifies the app-level cloud AI path and honest source reporting. It does **not** prove on-device Gemini Nano.
@@ -157,12 +158,14 @@ No billing was enabled to initialize or test Auth.
 | Build/test | Success |
 | Backend emulator E2E | 10/10 |
 | Firestore rules | 9/9 |
-| Android unit tests | 34/34 |
+| Android unit tests | 35/35 |
 | Compose instrumentation | Success |
 | Firebase-enabled APK | Built with `google-services.json`; Firebase initialized |
 | Emulator smoke | Auth gate captured, then test-phone sign-in reached Home; Firestore bootstrap loaded the synthetic workspace; `tiny-04-authenticated.png` |
 | App-level AI smoke | Manual run `45894574508`: `AiLogicLiveTest` passed; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded |
-| Final regression | Run `45898846102`: all jobs green; normal instrumentation shows the live AI test skipped when Firebase config is absent, and the navigation test passed |
+| Android sync E2E | Manual run `45943527674`: `SyncEmulatorE2ETest` passed; real Android Firebase Functions SDK/`SyncProcessor` against Auth/Firestore/Functions emulators; accepted, idempotent replay, retry and conflict |
+| Judge build | Public prerelease `v0.1.0-preview.1`: `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`); dedicated App Check debug token; no private CI token |
+| Final regression | Run `45942661936`: all jobs green; normal instrumentation shows the live AI and sync tests skipped when Firebase/emulator config is absent, and the navigation test passed |
 | Log redaction | The logcat and AI test artifacts contain no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 

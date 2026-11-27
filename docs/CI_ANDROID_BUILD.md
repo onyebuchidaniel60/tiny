@@ -179,7 +179,11 @@ Legacy `FIREBASE_TOKEN` should be avoided; if used, store it only as a GitHub Ac
 
 `.github/workflows/android-ci.yml` includes a manual `emulator-smoke` job. It downloads the CI APK, boots an API 35 Google APIs x86_64 emulator, runs `tools/android-emulator-smoke.sh`, and handles launcher ANRs. A Firebase-enabled build captures the auth gate, signs in with the synthetic test phone number, waits for the Firestore bootstrap, and captures `tiny-04-authenticated.png`; it does not pretend the local journey ran. A non-Firebase build continues through home, classes, class detail, attendance, lessons, messages, conversation and settings. The job uploads `tiny-emulator-evidence` with redacted logcat. This is emulator evidence only; it does not prove Gemini Nano on a physical device.
 
-A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45894574508` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token.
+A separate manual workflow, `.github/workflows/firebase-ai-smoke.yml`, materializes the Firebase config and a registered App Check debug token from GitHub secrets, builds an ephemeral APK, and runs only `AiLogicLiveTest`. It does not upload the APK. Run `45943523336` passed with on-device fallback and SDK source `Cloud Gemini`; the reports contain no token. A companion `.github/workflows/firebase-ai-ui-smoke.yml` installs the public judge APK and captures the actual cloud result/source in `artifacts/emulator/tiny-ai-cloud.png` (run `45948484744`).
+
+`.github/workflows/firebase-sync-smoke.yml` starts local Auth/Firestore/Functions emulators and runs `SyncEmulatorE2ETest` on an Android emulator. Run `45943527674` passed success, idempotency, retry and conflict cases. It uses a separate emulator-only FirebaseApp and never contacts the real project.
+
+`.github/workflows/judge-release.yml` builds a public judge APK with a dedicated judge debug token and publishes a prerelease. The token is intentionally public in that test APK and must be revoked after judging; the private CI token is not used.
 
 The normal Compose instrumentation job also sees `AiLogicLiveTest`; it skips via a JUnit assumption when `google-services.json` is absent, so the local journey remains green. The private AI job supplies the config and runs the test for real.
 
@@ -213,14 +217,12 @@ The `Compose instrumentation` job boots an API 35 Pixel 5 emulator and runs `./g
 
 ### Judge-accessible approach
 
-1. Create a dedicated `judges` group in Firebase App Distribution for the non-production project.
-2. Collect judge email addresses through the operator’s approved channel; do not commit them.
-3. Add judges to the `judges` group and send the App Distribution invitation link.
-4. Upload the verified debug/staging APK with release notes containing the build number and commit SHA.
-5. Use the protected `distribution` GitHub environment with manual approval so judge-facing uploads are deliberate.
-6. If an invitation expires, re-send it; do not publish a public APK link.
-7. If a judge cannot use App Distribution, use an approved protected artifact destination with access control. Do not make the APK public.
-8. Record the exact distribution link, build number, commit SHA and tester-group scope in `AI_HANDOFF.md`.
+1. Use the public judge release `v0.1.0-preview.1` (`tiny-judge-preview.apk`) for zero-cost, unrestricted access through judging. It uses a dedicated revocable App Check debug token. See `docs/JUDGE_ACCESS.md`.
+2. Alternatively, create/use the `judges` App Distribution group and add approved emails privately.
+3. Upload the same verified judge APK with release notes containing the build number and commit SHA.
+4. Use the protected `distribution` GitHub environment with manual approval for restricted App Distribution uploads.
+5. If an invitation expires, re-send it. The public judge release stays available until judging ends.
+6. Record the exact release/App Distribution link, build number, commit SHA and tester-group scope in `AI_HANDOFF.md`.
 
 App Distribution is the preferred route; it is independent of Cloud Functions and does not require Blaze. It does require a Firebase Android app registration and a project on the free Spark plan.
 
@@ -236,12 +238,12 @@ App Distribution is the preferred route; it is independent of Cloud Functions an
 ## 6. Phase 1 evidence
 
 - Workflow file: `.github/workflows/android-ci.yml`.
-- CI run: latest Firebase-enabled regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45891064395` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation, test-phone auth/bootstrap smoke). Manual pre-Firebase smoke/demo images came from `45809071551`; the Firebase-enabled smoke signs in and loads a synthetic workspace.
+- CI run: latest integration regression `https://github.com/onyebuchidaniel60/tiny/actions/runs/45942661936` (build/test, 9 rules tests, 10 backend E2E tests, Compose instrumentation). The sync and AI workflows have their own runs.
 - Pinned stack: JDK 17 for Android, JDK 21 for Firebase emulators, AGP 8.13.2, Gradle 8.13, Kotlin 2.3.0, Compose BOM 2026.06.01, compileSdk/targetSdk 36, minSdk 26, Room 2.7.2, SQLCipher 4.20.0, Functions Node 22.
-- APK artifact: `tiny-dev-debug-apk` from run 45891064395; 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
+- APK artifact: `tiny-dev-debug-apk` from run 45942661936; 31,097,300 bytes; SHA-256 `17036AFE1792A2401EBAC359C3C2AD819A63056AAB9616785F35A8ADC2DB145A`.
 - Emulator evidence: Firebase-enabled run captured `tiny-03-auth-gate.png` and `tiny-04-authenticated.png` (Home with `Tiny Synthetic E2E`, 1 class / 1 pupil). Pre-Firebase journey images remain in `artifacts/emulator/` and the demo.
 - Firestore rules: 9/9 emulator tests pass. Backend E2E: 10/10. Compose instrumentation: see the latest `Compose instrumentation` job.
-- App Distribution: not uploaded; no tester group/project or invitation link yet.
+- App Distribution: groups `internal-testers` and `judges` created; no tester emails or invitation sent yet. The public judge prerelease `v0.1.0-preview.1` is available separately.
 - App Check debug tokens are never committed; the raw CI logcat containing the first token was deleted and that token was revoked. A separate private-CI token is stored only in GitHub secrets and used by the non-uploaded AI APK. The smoke script redacts future occurrences.
 - Known limitations: no hosted Functions; Note 10+ is general testing only, not Gemini Nano-supported; translation resources are partial.
 

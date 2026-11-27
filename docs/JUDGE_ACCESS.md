@@ -6,9 +6,9 @@
 
 The official hackathon rules require a test build that is free and available through the judging period. A public GitHub Release is the simplest zero-cost route and does not require a Google account.
 
-- Release page: `https://github.com/onyebuchidaniel60/tiny/releases`
-- APK: `tiny-judge-preview.apk`
-- Checksum: `tiny-judge-preview.apk.sha256`
+- Release page: `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.1`
+- APK: `https://github.com/onyebuchidaniel60/tiny/releases/download/v0.1.0-preview.1/tiny-judge-preview.apk`
+- Checksum: `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`
 - Source: this public repository, Apache-2.0.
 
 The release APK is a **debug-signed preview** built with a dedicated, registered App Check debug token. The token is intentionally embedded because Firebase AI Logic requires App Check and the hackathon rules accept debug tokens. It is limited to the non-production `tiny-b9f29` project and will be revoked after judging. Do not reuse it for production.

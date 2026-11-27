@@ -30,9 +30,10 @@ Firebase.ai(
 
 | Check | Result |
 |---|---|
-| Cloud fallback app-level test | `AiLogicLiveTest` passed in run `45898850030` |
+| Cloud fallback app-level test | `AiLogicLiveTest` passed in run `45943523336` |
+| Cloud fallback UI evidence | Manual run `45948484744`; judge APK displayed `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png` |
 | On-device availability on test emulator | `FirebaseAIOnDeviceNotAvailableException`; SDK fell back to cloud |
-| Reported source | `Cloud Gemini` asserted by the test |
+| Reported source | `Cloud Gemini` asserted by the instrumentation test and shown in the UI |
 | On-device hardware test | **Not run**; Samsung Galaxy Note 10+ (Android 12) is not supported |
 | On-device claim | **None** |
 

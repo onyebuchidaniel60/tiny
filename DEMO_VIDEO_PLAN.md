@@ -1,6 +1,6 @@
 # Tiny — Demo Video Plan
 
-**Status:** Refreshed 26 November 2026. `artifacts/demo/tiny-demo.mp4` - 146.0s, 1920x1080 H.264/AAC, 5,513,988 bytes, SHA-256 `823BBE59C5FE81CAACCDD74124093B463A987777B5C188C897E33152F2443B2E`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. Includes the authenticated Firebase test-phone/Firestore scene. On-device Gemini Nano evidence remains blocked.
+**Status:** Refreshed 26 November 2026. `artifacts/demo/tiny-demo.mp4` - 146.6s, 1920x1080 H.264/AAC, 5,551,546 bytes, SHA-256 `6B2BB28A849BB58CCD666AD5A9858E52857EE56CEF5DA04D91555816C7215DD6`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. Includes the authenticated Firebase test-phone/Firestore scene. On-device Gemini Nano evidence remains blocked.
 
 **Current mode:** mock SMS adapter; Auth/Firestore and app-level cloud AI fallback are verified against the non-production project. On-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
 
@@ -60,7 +60,7 @@ Default directory: `artifacts/demo/`.
 
 ## Final review checklist
 
-- [x] Video duration <=180 seconds (target 90-150; rendered 146.0s).
+- [x] Video duration <=180 seconds (target 90-150; rendered 146.6s).
 - [x] Full rendered file plays from beginning to end.
 - [x] Audio is present, intelligible and synchronized.
 - [x] No clipped narration or awkward long silences.

@@ -1,6 +1,6 @@
 # Tiny — Build Log
 
-**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport but live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, Auth/test phone numbers, App Check debug exchange, authenticated bootstrap and app-level AI cloud fallback. App Check enforcement, Play Integrity and Functions-emulator client sync remain pending. No production deployment or live SMS has occurred.
+**Status:** Phase 1 local/CI preview is implemented and verified (Android shell, encrypted local data, CI APK, rules tests, backend E2E, Android-to-emulator sync E2E, instrumentation, emulator evidence, landing page, demo). Phase 2/3 backend foundations are emulator-tested; the Android client has a real Firebase transport and an emulator-backed sync E2E; live callable sync remains unavailable on Spark. The non-production Firebase project `tiny-b9f29` is configured with the dev app, Firestore database/rules/indexes, Auth/test phone numbers, App Check debug exchange, authenticated bootstrap and app-level AI cloud fallback. App Check enforcement, Play Integrity and supported-device Nano verification remain pending. A public judge APK is published. No production deployment or live SMS has occurred.
 
 ## Planning baseline
 
@@ -106,7 +106,7 @@
 - Tests executed:
   - Backend emulator E2E: **10/10 passed**, including guardian code verification and class/guardian sync.
   - Firestore rules: **9/9 passed**, including own workspace index access.
-  - Android unit tests: **34/34 passed**, including sync outcome mapping, durable processor, JSON payload and retry policy.
+  - Android unit tests: **35/35 passed**, including sync outcome mapping, durable processor, JSON payload, retry policy and AI source labels.
   - Local debug APK builds successfully; APK size increased to **31,094,724 bytes** (still under 35 MB).
 - Blocked:
   - Firebase CLI has no authenticated account. Project audit, app registration, `google-services.json`, Auth test numbers, Firestore database/rules deployment, App Check token registration and AI Logic enablement cannot be performed yet.
@@ -150,7 +150,7 @@
   - App-level bootstrap loaded `Tiny Synthetic E2E` (1 class / 1 pupil) into the Home screen.
   - `INVALID_CERT_HASH` appears in the auth-domain/reCAPTCHA path because the CI debug keystore is not the registered local SHA; test-phone auth still succeeded. Register the CI/release fingerprint before claiming Play Integrity.
 - CI:
-  - Run `45891064395` succeeded: build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
+  - Run `45891064395` succeeded: build, 35/35 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation.
   - The emulator smoke captured the auth gate, dismissed launcher ANRs, signed in with the test number, and captured `tiny-04-authenticated.png` showing the synthetic remote workspace. Logcat contains no unredacted App Check token.
   - APK artifact: 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
 - Security cleanup: no debug token, service-account key, OAuth token or real phone number was committed. The old emulator log artifact was deleted; the embedded test number/code is synthetic.
@@ -160,12 +160,23 @@
 
 - Added `.github/workflows/firebase-ai-smoke.yml` (manual private build) and `AiLogicLiveTest`.
 - The workflow materializes `google-services.json` and a registered App Check debug token from GitHub secrets, builds an **ephemeral** APK, runs the emulator instrumentation test, and does not upload the APK.
-- Run `45894574508`: **1 test passed, 0 failed** in 3.551s (test case 2.653s).
+- Run `45943523336`: **1 test passed, 0 failed** in the private AI smoke (on-device unavailable, cloud fallback, `Cloud Gemini`).
 - Test evidence: SDK tried the on-device provider (`FirebaseAIOnDeviceNotAvailableException`), fell back to cloud, returned text, and reported `Cloud Gemini`; the emulator was asserted not to report on-device `Available`.
 - Final regression run `45898846102` is green; the normal instrumentation job skips `AiLogicLiveTest` when `google-services.json` is absent and runs `TinyNavigationTest` normally.
 - Reports `tiny-firebase-ai-reports` contain no unredacted App Check debug token. The APK was not uploaded.
 - No on-device Gemini Nano claim; the Note 10+ remains unsupported.
 - Next: Functions-emulator client sync, App Check enforcement, Play Integrity/release fingerprint and App Distribution.
+
+## Android sync E2E and judge-release checkpoint — 27 November 2026
+
+- Added `SyncEmulatorE2ETest` and `.github/workflows/firebase-sync-smoke.yml`.
+- Run `45943527674`: **1 test passed, 0 failed** against local Auth/Firestore/Functions emulators; test uses the real Firebase Functions Android SDK and `SyncProcessor`. It covers accepted acknowledgement, idempotent replay, transport retry/backoff and a server conflict. No real project was contacted.
+- Added `AiInferenceSourceTest` for honest source labels (`ON_DEVICE` / `IN_CLOUD` / unknown); unit suite is now **35/35**.
+- Added Apache-2.0 `LICENSE`; GitHub detects it in repository metadata.
+- Added `docs/JUDGE_ACCESS.md`, `docs/JUDGE_RELEASE_NOTES.md`, `docs/AI_HYBRID_VERIFICATION.md` and `docs/HACKATHON_SUBMISSION.md`.
+- Created App Distribution groups `internal-testers` and `judges`; tester emails remain pending.
+- Published public judge prerelease `v0.1.0-preview.1`: `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`). It contains a dedicated revocable App Check debug token; the private CI token is not used.
+- No real data, live SMS, billing, production deployment or Blaze activation.
 
 ## Operator confirmations received
 
@@ -200,7 +211,7 @@
 ### Build and distribution
 
 - GitHub Actions `ubuntu-24.04` is the primary Android build/test environment.
-- Firebase App Distribution is the preferred preview route; `internal-testers`/`judges` groups and a Firebase project are still needed before first distribution. No public APK link.
+- Firebase App Distribution groups are created; tester/judge emails are still needed for invitations. A public judge APK is now published for the hackathon (`docs/JUDGE_ACCESS.md`).
 - Workflow permissions, signing and judge-access requirements are in `docs/CI_ANDROID_BUILD.md`.
 
 ### Credential handling
@@ -214,14 +225,14 @@
 | Phase | Status | Commit | Preview build/URL | Tests/evidence | Issues |
 |---|---|---|---|---|---|
 | 0 — Operator intake/readiness | COMPLETE — current scope | `58d1b33`, `342e0cd` | — | Package validation; repo/environment inspected; budget/authority explicit | Firebase project/App Distribution later; on-device AI separate gate |
-| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; App Distribution pending | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 34 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, lint, CI build, instrumentation, prior emulator smoke/screens | App Distribution/judge access pending; physical-device run pending |
+| 1 - Repo + skeletal Android shell + protected preview | COMPLETE for local/CI scope; public judge APK published | `9d9b060`, `13b7e60`, `00318fc` | CI artifact `tiny-dev-debug-apk`; run 45853884690 | 35 Android unit tests, 19 Functions tests, 9 rules tests, 10 backend E2E tests, 1 sync E2E, lint, CI build, instrumentation, emulator smoke/screens | App Distribution tester emails pending; physical-device run pending |
 | 2 - Backend/data/auth foundation | EMULATOR-VERIFIED; Firestore/Auth live verified | `13b7e60` | - | Functions build; 9 rules tests; demo project aliases; live Firestore rules/indexes; test-phone auth | App Check enforcement/Play Integrity pending |
 | 3 - Core domain + APIs + integrations | SERVER IMPLEMENTED + E2E; Android transport implemented | `13b7e60` | - | 19 domain tests; 10 callable/webhook/scheduler/sync E2E tests; sync dispatcher | Live callable sync blocked by Spark/emulator-only |
 | 4 - Functional Android integration | PARTIAL | `13b7e60`, `00318fc` | CI APK | Local Room flows, mock attendance/progress/messages, pupil registration, startup seed gate, instrumentation journey | Auth-gated cloud flows and broader device QA pending |
 | 5 - E2E functionality gate | PARTIAL - emulator-level | `13b7e60` | CI backend job | 10 backend E2E tests + instrumentation + manual smoke | Hosted backend and physical low-end device unavailable; on-device AI gate separate |
 | 6 - Reference-led final UI | PARTIAL | `2776ba1` | Landing page + app screenshots | Original visual system, responsive landing, app screens, AI card fix | StageShow unavailable; final visual/accessibility pass on a physical device pending |
 | 7 - Frontend/docs completeness | COMPLETE for preview scope | `2776ba1` | - | README, API/data/security/testing/setup/deployment docs, landing legal/security/contact, demo notes | Native translation review and pilot legal gates pending |
-| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1`, demo refresh | `artifacts/demo/tiny-demo.mp4` | 146.0s 1080p H.264/AAC slideshow from real emulator screenshots incl. authenticated Firebase scene and AI fallback; captions/script/notes | No motion screen recording; physical-device capture absent |
+| 8 - Demo video | COMPLETE for preview; motion capture not claimed | `2776ba1`, demo refresh | `artifacts/demo/tiny-demo.mp4` | 146.6s 1080p H.264/AAC slideshow from real emulator screenshots incl. authenticated Firebase and judge-APK cloud AI scenes; captions/script/notes | No motion screen recording; physical-device capture absent |
 | 9 - Final regression/security/release | PARTIAL - release blocked | `2776ba1` | - | Unit/domain/rules/E2E/instrumentation green; rules tightened; secrets scan; zero-spend boundaries | Production authority not granted; Spark/NGN 0; no App Distribution or physical-device release validation |
 
 ## Firebase Agent Skills and MCP status

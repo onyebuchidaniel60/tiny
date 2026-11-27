@@ -2,11 +2,11 @@
 
 **Last updated:** 26 November 2026 (Auth, Firestore and app-level AI verification)
 
-**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. App Check enforcement, Play Integrity and on-device AI remain unverified.
+**Current status:** Firebase CLI is authenticated as the project owner. `tiny-b9f29` is audited (Spark, billing disabled); the dev-debug Android app, SHA-1/SHA-256, `google-services.json`, Firestore database in `africa-south1`, rules/indexes and free-tier APIs are configured. Firebase Auth was initialized from the Console, Phone Auth is enabled with two synthetic test numbers, and the SMS region allowlist is `NG`. App Check debug-token exchange and the AI Logic cloud proxy were verified with synthetic traffic. The Firebase-enabled CI emulator signs in with a test number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). The private AI smoke test passed with on-device fallback and SDK-reported source `Cloud Gemini`. A public Apache-2.0 judge APK (`v0.1.0-preview.1`) is published. App Check enforcement, Play Integrity and on-device Nano remain unverified.
 
-**Current blocker:** none for the completed Auth/Firestore/AI-cloud path. Remaining gates are App Check enforcement, Play Integrity/release fingerprint, Functions-emulator client sync, App Distribution and on-device AI. No new operator approval is required for the permitted emulator/protocol work.
+**Current blocker:** no technical blocker for the tested Android/Firebase path. Submission gates: public YouTube upload, Devpost entry/eligibility confirmation, App Distribution tester emails and a supported Nano device. App Check enforcement/Play Integrity remain deliberate release-hardening items.
 
-**Next task:** exercise the Functions-emulator sync path, then enable App Check enforcement deliberately, configure Play Integrity/release fingerprints, and refresh the demo/CI evidence. See `docs/FIREBASE_EVIDENCE.md` for the sanitized audit record.
+**Next task:** finish the official submission (YouTube demo upload, Devpost entry, eligibility confirmation), then run the on-device Nano acceptance procedure if a supported device is available. App Check enforcement/Play Integrity and Functions-emulator client sync are documented follow-ups. See `docs/HACKATHON_SUBMISSION.md` and `docs/FIREBASE_EVIDENCE.md`.
 
 ## Live Firebase setup checkpoint (26 November 2026)
 
@@ -20,15 +20,16 @@
 - **Rules behaviour:** live unauthenticated Firestore `GET` on `workspaces` returns HTTP 403 `Missing or insufficient permissions`, with or without App Check, as designed. A synthetic member user can read the workspace/class/pupil (200); a second non-member test user is denied (403).
 - **Auth:** Console setup completed 2026-11-26; config subtype `FIREBASE_AUTH`; Phone enabled with `+2348000000001`/`123456` and `+2348000000002`/`654321`; SMS region allowlist `NG`; no real SMS. REST test sign-in and the app-level test-phone sign-in both succeeded.
 - **App-level bootstrap:** CI run `45891064395` signed in and loaded `Tiny Synthetic E2E` (1 class / 1 pupil) from Firestore. Evidence: `artifacts/emulator/tiny-04-authenticated.png`.
-- **App-level AI:** manual run `45894574508`; `AiLogicLiveTest` 1/1 passed. Ephemeral APK and token were not uploaded; reports contain no token. On-device Nano was not available and not claimed.
-- **CI:** run `45891064395` succeeded (build, 34/34 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens. Final regression run `45898846102` is also green; the live AI test is skipped in the normal instrumentation job when Firebase config is absent.
+- **App-level AI:** manual run `45943523336`; `AiLogicLiveTest` 1/1 passed. Ephemeral APK and token were not uploaded; reports contain no token. On-device Nano was not available and not claimed.
+- **CI:** run `45891064395` succeeded (build, 35/35 Android unit, 19/19 Functions domain, 9/9 rules, 10/10 backend E2E, Compose instrumentation). The smoke script handles launcher ANRs, attempts test-phone auth, captures the authenticated Home, and redacts App Check tokens. Final regression run `45898846102` is also green; the live AI test is skipped in the normal instrumentation job when Firebase config is absent.
+- **Android sync E2E:** manual run `45943527674`; `SyncEmulatorE2ETest` passed against Auth/Firestore/Functions emulators, covering accepted acknowledgement, idempotent replay, transport retry and conflict. No real project was contacted.
 - **Not claimed:** App Check enforcement, Play Integrity, Phone Auth SMS, hosted Functions, App Distribution, on-device Gemini Nano.
 
 ## Firebase integration stage (26 November 2026)
 
 - **Project:** `tiny-b9f29`; `.firebaserc`, `.env.example`, configuration and credential registers updated. Project ID is not a secret.
 - **Implemented:** App Check bootstrap (debug + Play Integrity), phone-auth gate/screen, Firebase Functions callable transport, WorkManager durable sync with receipts/conflicts/backoff, Firestore bootstrap reads, workspace/class creation, guardian linking/verification, AI Logic hybrid client, backend `verifyGuardianCode` and class/guardian sync handlers.
-- **Emulator evidence:** backend E2E 10/10 (now includes guardian code verification and class/guardian sync); rules 9/9; Android unit tests 34/34.
+- **Emulator evidence:** backend E2E 10/10 (now includes guardian code verification and class/guardian sync); rules 9/9; Android unit tests 35/35; Android-to-emulator sync E2E 1/1.
 - **Auth/Firestore verified:** Firebase Auth was initialized from the Console; Phone Auth uses synthetic test numbers only. The CI emulator signed in and loaded a synthetic Firestore workspace.
 - **Spark limits:** real phone verification SMS requires Blaze and is not authorized; use Firebase test phone numbers only. Cloud Functions remain emulator-only.
 - **Not claimed:** Phone Auth SMS, App Check enforcement, Play Integrity, hosted Functions, App Distribution or on-device Gemini Nano. App Check token exchange, the AI Logic proxy and the app-level cloud fallback were verified; Auth/Firestore were verified end-to-end with synthetic data.
@@ -78,7 +79,7 @@
 | Android build environment | CONFIRMED | GitHub Actions `ubuntu-24.04`; local portable JDK 17 + Android CLI SDK verification; no full Android Studio |
 | Android shell | IMPLEMENTED — preview | Onboarding, Home, Classes, Attendance, Lessons, Messages, Progress, Settings, Sync |
 | Local data layer | IMPLEMENTED — preview | Room + SQLCipher + Keystore-wrapped key + DataStore + synthetic seed data |
-| Android tests | PASS - 34/34 unit | Domain, JSON, sync outcome and durable processor tests |
+| Android tests | PASS - 35/35 unit | Domain, JSON, sync outcome, source label and durable processor tests |
 | Compose instrumentation | PASS | API 35 Pixel 5 journey in run 45891064395 |
 | Android build | PASS - CI | `tiny-dev-debug-apk` from run 45891064395; Firebase config injected |
 | Android lint | PASS | After deferring partial-translation `MissingTranslation` backlog |
@@ -89,11 +90,12 @@
 | Firestore live database | DEPLOYED | `(default)` in `africa-south1`; rules release live; 7 indexes READY; unauthenticated and non-member reads denied |
 | Firebase Auth | VERIFIED - Console initialized | Config subtype `FIREBASE_AUTH`; Phone enabled; synthetic test numbers; SMS region `NG`; app-level sign-in succeeded |
 | App-level Firestore | VERIFIED - bootstrap | Synthetic workspace/class/pupil loaded into the app; member read 200, non-member 403 |
+| Android sync E2E | PASS - emulator | `SyncEmulatorE2ETest` 1/1: accepted, idempotent replay, retry and conflict against Auth/Firestore/Functions emulators |
 | App Check | PARTIAL - debug + private CI token | Exchange succeeded; first token revoked; private CI token in GitHub secrets; enforcement off; Play Integrity pending |
 | Firebase Emulator Suite | PASS — rules + backend E2E | Config/rules/indexes working; 9/9 rules tests and 10/10 callable/webhook/scheduler/sync E2E |
 | Hosted Cloud Functions | NOT AUTHORIZED — emulator-only | Spark/NGN 0; no deploy/Blaze/paid hosting |
 | Cloud AI | VERIFIED — free tier | App-level `AiLogicLiveTest` passed: on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; on-device still pending |
-| Protected preview distribution | PENDING — App Distribution preferred | App registered; tester/judge groups still needed; CI APK artifact available |
+| Protected preview distribution | PUBLIC JUDGE APK + App Distribution groups | `v0.1.0-preview.1` published; `internal-testers`/`judges` groups created; tester emails still needed for App Distribution |
 | Physical Android device | GENERAL TESTING ONLY | Samsung Galaxy Note 10+, Android 12; no second device; not Gemini Nano-supported |
 | On-device AI gate | BLOCKED — separate acceptance gate | No supported physical device; emulator does not prove Nano inference |
 | eSMS sandbox | NOT REQUIRED NOW | Mock SMS adapter; no live/sandbox sends authorized |
@@ -133,7 +135,7 @@
 - Progress: validation, draft save, revision reset on approved edit, approval state, digest eligibility.
 - Messages: mock parent inbox, teacher reply queued through mock adapter, status labelled as mock.
 - Sync: mock engine processes pending commands without claiming cloud sync; sync center explains the limitation.
-- Unit tests: 34/34 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
+- Unit tests: 35/35 pass across phone normalization, attendance, SMS segmentation, progress, digest, sync rules, JSON escaping and AI source labels.\n- Startup waits for the encrypted local seed before composing, preventing a first-launch race where Home showed zero classes/pending.
 - Local build: `testDevDebugUnitTest assembleDevDebug` successful; final CI APK 31,094,724 bytes; SHA-256 `E124B01C005C93FF272A6B0617FF5A319C81442F165BCD09984ABEDC69327F72`.
 - Lint: `lintDevDebug` successful after disabling `MissingTranslation` for the partial draft translation set.
 - GitHub Actions: build/test job success; APK artifact `tiny-dev-debug-apk`.
@@ -184,7 +186,7 @@
 |---|---|---|
 | App Check enforcement / Play Integrity | Debug exchange and app-level cloud AI work, but enforcement is off and release attestation is unconfigured | Register the CI/release SHA-256 and enable enforcement deliberately after the remaining app checks |
 | Supported on-device AI device | Note 10+ (Android 12) is general testing only; separate acceptance gate | Provide a currently supported physical device, or accept on-device demo blocked |
-| App Distribution / judge access | Preview APK exists but no tester/judge groups | Supply tester/judge emails privately and the App Distribution groups |
+| App Distribution tester emails | Public APK is available, but App Distribution invitations need approved emails | Supply judge/tester emails privately; groups `internal-testers` and `judges` exist |
 | Native translation review | Hausa/Yoruba/Igbo app strings are draft/partial | Arrange native review before pilot; English fallback is active |
 | Pilot/legal gates | DPIA, controller/processor, privacy notice, retention, NERDC rights | Identify approvers and timing before a real-school pilot |
 
@@ -194,8 +196,10 @@
 - GitHub Actions build/test and rules jobs: **success**.
 - Emulator smoke: **test-phone sign-in succeeded**; `artifacts/emulator/tiny-04-authenticated.png` shows Home with the synthetic Firestore workspace (1 class / 1 pupil). `artifacts/emulator/tiny-03-auth-gate.png` remains as the gate evidence. The prior pre-Firebase screenshots remain at `artifacts/emulator/tiny-01-language.png` through `tiny-10-settings.png` and in the demo.
 - Compose instrumentation: **success** in CI on API 35 Pixel 5 (no Firebase client config injected; local-mode journey).
-- App-level AI smoke: manual run `45894574508`; `AiLogicLiveTest` 1/1 passed with cloud fallback and `Cloud Gemini` source. Ephemeral APK not uploaded; no token in reports.
-- App Distribution: not uploaded; no tester group.
+- Android sync E2E: manual run `45943527674`; `SyncEmulatorE2ETest` 1/1 passed against local Auth/Firestore/Functions emulators.
+- App-level AI smoke: manual run `45943523336`; `AiLogicLiveTest` 1/1 passed with cloud fallback and `Cloud Gemini` source. Ephemeral APK not uploaded; no token in reports.
+- Judge APK AI UI: manual run `45948484744`; real cloud result displayed `Source: Cloud Gemini`; screenshot `artifacts/emulator/tiny-ai-cloud.png`.
+- Public judge preview: `v0.1.0-preview.1`; `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`). App Distribution groups `internal-testers` and `judges` created; tester emails pending.
 - Landing page: local static preview; GitHub Pages workflow manual and not enabled/published.
 - Hosted backend: not deployed; Spark/NGN 0.
 - Production: not authorized.
@@ -209,16 +213,20 @@
 - [x] Landing page and legal/security/contact pages
 - [x] Phase 1 evidence in this handoff and build log
 - [x] Firebase live-setup audit and sanitized evidence: `docs/FIREBASE_EVIDENCE.md`
+- [x] Hybrid AI verification and on-device gap: `docs/AI_HYBRID_VERIFICATION.md`
+- [x] Judge access and public APK/App Distribution: `docs/JUDGE_ACCESS.md`
+- [x] Official hackathon submission review: `docs/HACKATHON_SUBMISSION.md`
+- [x] Apache-2.0 `LICENSE`; GitHub detects it
 - [x] Final design notes against app screenshots
 - [ ] Native translation review
 - [x] Full README build/preview results after CI run
 
 ## Demo status
 
-- Video: `artifacts/demo/tiny-demo.mp4` — 146.0s, 1920x1080 H.264/AAC, 5,513,988 bytes, SHA-256 `823BBE59C5FE81CAACCDD74124093B463A987777B5C188C897E33152F2443B2E`.
+- Video: `artifacts/demo/tiny-demo.mp4` — 146.6s, 1920x1080 H.264/AAC, 5,551,546 bytes, SHA-256 `6B2BB28A849BB58CCD666AD5A9858E52857EE56CEF5DA04D91555816C7215DD6`.
 - Capture: reviewed screenshot slideshow with narration, not motion screen recording. Uses the pre-Firebase product screens plus the authenticated `tiny-04-authenticated.png` Firebase scene; test-phone Auth and cloud AI fallback are shown/enounced honestly.
-- **Disclosure:** the product-flow screens remain from the earlier emulator run. The Firebase scene is backed by separate live evidence (run `45891064395` for Auth/Firestore and `45894574508` for cloud AI). The demo does not show App Check enforcement or on-device Nano.
-- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is 146.0s, within target.
+- **Disclosure:** product-flow screens remain from the earlier emulator run. The Firebase Auth/Firestore screenshot and the AI `Source: Cloud Gemini` screenshot are from the Firebase-enabled/judge APK runs. The demo does not show App Check enforcement or on-device Nano.
+- Target length: 90-150 seconds; absolute maximum 180 seconds. Final render is 146.6s, within target.
 - Demo data: synthetic only.
 - Demo journeys: sign-in/Firestore verification, offline lesson, local attendance, cloud AI fallback with honest source, parent mock message/teacher reply, approved progress/digest; on-device Nano evidence blocked.
 - Output: `artifacts/demo/` (MP4, captions, narration script, production notes).
@@ -226,7 +234,8 @@
 
 ## Authorization boundaries
 
-- Do not reveal or commit secrets, real pupil/guardian data or private URLs. No credentials through chat.
+- Do not reveal or commit secrets, real pupil/guardian data or private URLs. No credentials through chat. Exception: the dedicated `FIREBASE_JUDGE_DEBUG_TOKEN` is intentionally embedded in the public judge test APK for the hackathon, is non-production, and must be revoked after judging. The private CI token must never be public.
+- The public judge APK is a synthetic-data preview, not a production deployment. Keep App Check enforcement/Play Integrity off until release fingerprints are configured.
 - Do not incur unapproved charges. Cloud, AI, SMS, voice and third-party budgets are NGN 0.
 - Do not send live SMS. Mock adapter only.
 - Do not process real pupil/guardian data in development or demos.

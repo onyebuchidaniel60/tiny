@@ -107,15 +107,16 @@ Store test reports, screenshots, device/API information, build hashes, emulator 
 
 ## 6. Phase 1 evidence (26 November 2026)
 
-- Android unit tests: **24 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest, sync rules and JSON escaping.
+- Android unit tests: **35 passed, 0 failed** across phone, attendance, SMS segmentation, progress, digest, sync rules, JSON escaping and AI source labels.
 - Firestore rules tests: **9 passed, 0 failed** in the Firestore emulator, including class-scoped guardian/link/conversation/message reads.
 - Functions domain tests: **19 passed, 0 failed** across 6 Vitest suites; TypeScript build passed.
 - Backend emulator E2E: **10 passed, 0 failed** covering workspace/class/pupil/guardian/verification, absence job creation, progress approval, teacher reply, mixed sync batch replay, signed inbound SMS dedupe and weekly digest.
+- Android client sync E2E: manual run `45943527674`; `SyncEmulatorE2ETest` **1 passed, 0 failed** against local Auth/Firestore/Functions emulators, covering accepted acknowledgement, idempotent replay, transport retry and conflict.
 - Android lint: `lintDevDebug` passed after deferring the partial-translation `MissingTranslation` backlog.
 - Android debug build: CI `assembleDevDebug` passed; latest Firebase-enabled APK 31,097,300 bytes; SHA-256 `14105D643987805C534621E0F29ABBC8A18DB7F10E52EFD2C8AD5142957625D9`.
 - Emulator smoke: API 35 install/launch succeeded; the Firebase-enabled build signed in with a synthetic test phone number, loaded the synthetic Firestore workspace, and captured `artifacts/emulator/tiny-04-authenticated.png`; launcher ANRs were dismissed and the debug token was redacted.
 - Compose instrumentation journey: **1 passed, 0 failed** on API 35 Pixel 5 (onboarding to Home, Classes, class detail and Attendance), run by CI without Firebase client config.
-- App-level AI smoke: manual private run `45894574508`; `AiLogicLiveTest` **1 passed, 0 failed**; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded. In the normal instrumentation job the same test skips when Firebase config is absent; final regression run `45898846102` shows 1 skipped + 1 navigation test passed.
+- App-level AI smoke: manual private run `45943523336`; `AiLogicLiveTest` **1 passed, 0 failed**; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded. Public judge APK UI run `45948484744` shows the cloud response and `Source: Cloud Gemini` in `artifacts/emulator/tiny-ai-cloud.png`. In the normal instrumentation job the same test skips when Firebase config is absent.
 - Landing page: local link/nav/alt checks passed; responsive desktop/mobile screenshots captured.
-- Not yet run: physical-device install, App Distribution, App Check enforcement, Functions-emulator client sync.
+- Not yet run: physical-device install, App Distribution invitations (tester emails pending), App Check enforcement, supported-device Gemini Nano.
 

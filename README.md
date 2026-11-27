@@ -129,13 +129,13 @@ npx --yes serve landing
 
 ## Current build status
 
-**Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **34 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45898846102`. The emulator signs in with a synthetic test phone number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). App Distribution/judge access and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
+**Phase 1 preview implemented and CI-verified; Firebase client integration in place.** Kotlin/Compose shell, encrypted Room/SQLCipher foundation, demo data, local attendance/progress/message flows, mock adapters, Functions/rules backend, CI workflow and responsive landing page are present. Verification: **35 Android unit tests**, **19 Functions domain tests**, **9 Firestore rules tests**, **10 backend emulator E2E tests**, **1 Android-to-Functions-emulator sync E2E**, **1 app-level AI cloud test**, **lint**, **debug APK**, **emulator smoke** and a **Compose instrumentation journey**. Latest Firebase-enabled CI run: `https://github.com/onyebuchidaniel60/tiny/actions/runs/45942661936`. The emulator signs in with a synthetic test phone number, reaches Home, and loads a synthetic Firestore workspace (1 class / 1 pupil). App Distribution tester emails and a physical-device run are still pending. Native translations are draft. Production release is not authorized.
 
-A reviewed 146.0-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording; the Firebase scene uses the authenticated test-phone/Firestore screenshot.
+A reviewed 146.6-second demo built from the real emulator evidence is at `artifacts/demo/tiny-demo.mp4` with captions, narration script and production notes. It is a narrated screenshot walkthrough, not motion screen recording; the Firebase scene uses the authenticated test-phone/Firestore screenshot and the AI scene shows the judge APK's `Source: Cloud Gemini` result. YouTube upload copy is in `artifacts/demo/youtube-description.md`; the public YouTube URL is still an operator action.
 
 ## Judge access
 
-- Public test build: [GitHub Releases](https://github.com/onyebuchidaniel60/tiny/releases) (`tiny-judge-preview.apk`).
+- Public test build: [Tiny judge preview v0.1.0-preview.1](https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.1) (`tiny-judge-preview.apk`).
 - Test phone: `08000000001`; code: `123456`.
 - Installation, limitations and the App Distribution alternative: [`docs/JUDGE_ACCESS.md`](docs/JUDGE_ACCESS.md).
 - Hybrid AI verification and the on-device hardware gap: [`docs/AI_HYBRID_VERIFICATION.md`](docs/AI_HYBRID_VERIFICATION.md).
