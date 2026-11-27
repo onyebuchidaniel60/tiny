@@ -4,8 +4,8 @@
 
 ## 1. References
 
-- **REF-001:** https://www.framer.com/marketplace/templates/atelio-studio/ — visual personality reference only. Warm riso-print energy, serif display type, ink outlines, offset shadows, hand-drawn details, tomato/cobalt/butter palette. Limited licence; no source, illustrations, assets, copy or branding copied.
-- **REF-002:** https://pass-web-dun.vercel.app/ — structural/storytelling reference only. Hero → problem → solution → steps → features → final CTA → substantial footer, with product demonstrations embedded in the page. No copy or assets copied.
+- **REF-001:** https://www.framer.com/marketplace/templates/atelio-studio/ — visual personality reference only. Rendered page re-inspected 27 November 2026 (`artifacts/screenshots/ref-atelio-render.png`): cream field, oversized near-black display type, one cobalt primary action, asymmetric product specimen with hard offset shadow, yellow sticker and quiet logo rail. Limited licence; no source, illustrations, assets, copy or branding copied.
+- **REF-002:** https://pass-web-dun.vercel.app/ — structural/storytelling reference only. Rendered page re-inspected 27 November 2026 (`artifacts/screenshots/ref-pass-render.png`): direct hero promise, bordered product specimen, numbered process rail, feature sections, final CTA and substantial footer. No copy or assets copied.
 
 ## 2. Product design principles
 

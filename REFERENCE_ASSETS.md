@@ -11,7 +11,13 @@
 | REF-001 | https://www.framer.com/marketplace/templates/atelio-studio/ | Framer Marketplace listing for Atelio Studio by Mehmet Kırlangıç | Visual direction: warm human illustrative SaaS character, strong typography/hierarchy, bold balanced colour, hand-drawn details, playful accents, feature cards, responsive composition | **Reference only.** Listing indicates a limited licence. Do not copy source, illustrations, assets, copy, branding or implementation. Create original Tiny identity and assets | SUPPLIED — REFERENCE ONLY |
 | REF-002 | https://pass-web-dun.vercel.app/ | PASS public landing page (operator-supplied reference) | Structural/storytelling direction: strong hero, problem/solution, feature sections, step-by-step walkthrough, embedded interface demonstrations, final CTA, substantial footer | **Reference only.** Do not copy copy, branding, layout code or proprietary assets. Use structure and storytelling principles only | SUPPLIED — REFERENCE ONLY |
 
-Retrieved and inspected: 26 November 2026.
+Retrieved and inspected: 26 November 2026. Re-inspected as rendered pages on 27 November 2026; actual-page captures are `artifacts/screenshots/ref-atelio-render.png` and `artifacts/screenshots/ref-pass-render.png`.
+
+### Rendered inspection notes (27 November 2026)
+
+- **Atelio:** cream field, oversized near-black sans display type, a single cobalt primary action, outline secondary action, an asymmetric product specimen with a hard offset shadow, a yellow circular sticker and a quiet logo ticker. The warmth comes from colour and proportion, not gradients or decoration.
+- **PASS:** near-black field, one hot accent, a large direct hero promise, a bordered product specimen on the right, numbered horizontal process steps, evidence labels and a long structured story. The product interface is presented as proof, not as a generic illustration.
+- **Tiny adaptation:** warm paper and serif identity from Atelio; direct promise, specimen/card proof and numbered how-it-works rhythm from PASS. Tiny does not copy the trading content, dark palette, illustrations, assets, source or exact layout.
 
 ## 2. Inspection notes
 
