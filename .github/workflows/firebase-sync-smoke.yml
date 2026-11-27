@@ -1,0 +1,87 @@
+name: Firebase sync smoke (manual)
+
+# Android client -> local Auth/Firestore/Functions emulators. No real Firebase
+# project, credentials, App Check token or production data is used.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sync-smoke:
+    name: Android sync against emulators
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+
+      - name: Install Android SDK packages
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          fi
+          yes | "$SDKMANAGER" --licenses > /dev/null || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Normalize Gradle wrapper
+        run: |
+          chmod +x gradlew
+          sed -i 's/\r$//' gradlew
+
+      - name: Install and build Functions
+        run: |
+          npm ci --prefix functions
+          npm --prefix functions run build
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Android sync E2E against emulators
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: |
+            npx --yes firebase-tools@15.14.0 emulators:exec \
+              --only auth,firestore,functions \
+              --project demo-tiny-e2e \
+              "./gradlew connectedDevDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=ng.tiny.education.SyncEmulatorE2ETest --stacktrace"
+
+      - name: Upload sync test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiny-firebase-sync-reports
+          path: |
+            app/build/reports/androidTests/**
+            app/build/outputs/androidTest-results/**
+          if-no-files-found: warn
+          retention-days: 14
