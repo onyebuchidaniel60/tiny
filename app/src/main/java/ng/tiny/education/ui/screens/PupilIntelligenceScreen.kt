@@ -168,19 +168,26 @@ fun PupilIntelligenceScreen(
                 StatusPill(stringResource(confidenceRes(profile.confidence)), TinyCobalt)
             }
             Spacer(Modifier.height(8.dp))
+            val reasonText = StringBuilder()
+            for (reason in profile.statusReasonKeys) {
+                if (reasonText.isNotEmpty()) reasonText.append(' ')
+                reasonText.append(
+                    stringResource(
+                        when (reason) {
+                            "status_reason_attendance" -> R.string.status_reason_attendance
+                            "status_reason_assessment" -> R.string.status_reason_assessment
+                            "status_reason_observations" -> R.string.status_reason_observations
+                            "status_reason_assessment_trend" -> R.string.status_reason_assessment_trend
+                            "status_reason_recent_observation" -> R.string.status_reason_recent_observation
+                            "status_reason_strong_evidence" -> R.string.status_reason_strong_evidence
+                            "status_reason_steady" -> R.string.status_reason_steady
+                            else -> R.string.status_reason_insufficient
+                        },
+                    ),
+                )
+            }
             Text(
-                profile.statusReasonKeys.joinToString(" ") { reason ->
-                    when (reason) {
-                        "status_reason_attendance" -> stringResource(R.string.status_reason_attendance)
-                        "status_reason_assessment" -> stringResource(R.string.status_reason_assessment)
-                        "status_reason_observations" -> stringResource(R.string.status_reason_observations)
-                        "status_reason_assessment_trend" -> stringResource(R.string.status_reason_assessment_trend)
-                        "status_reason_recent_observation" -> stringResource(R.string.status_reason_recent_observation)
-                        "status_reason_strong_evidence" -> stringResource(R.string.status_reason_strong_evidence)
-                        "status_reason_steady" -> stringResource(R.string.status_reason_steady)
-                        else -> stringResource(R.string.status_reason_insufficient)
-                    }
-                },
+                reasonText.toString(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -270,14 +277,16 @@ fun PupilIntelligenceScreen(
                             TextButton(onClick = { viewModel.updateFollowUpStatus(followUp.id, "done") }) { Text(stringResource(R.string.mark_done)) }
                         }
                     }
+                    val suggestedTitle = stringResource(actionRes(profile.nextActions.firstOrNull() ?: "action_continue_monitoring"))
+                    val followUpNote = stringResource(R.string.override_note)
                     TinySecondaryButton(
                         text = stringResource(R.string.add_suggested_followup),
                         onClick = {
                             viewModel.addFollowUp(
                                 pupilId = pupilId,
                                 classId = profile.pupil.classId,
-                                title = stringResource(actionRes(profile.nextActions.firstOrNull() ?: "action_continue_monitoring")),
-                                detail = stringResource(R.string.override_note),
+                                title = suggestedTitle,
+                                detail = followUpNote,
                                 dueDate = LocalDate.now().plusDays(3).toString(),
                                 source = "manual",
                             )
