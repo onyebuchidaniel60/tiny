@@ -45,12 +45,23 @@ export const curatedStrategies = [
 
 export type AiSource = 'On-device Gemini Nano' | 'Cloud Gemini' | 'Unknown inference source' | 'Curated offline library';
 
+export type AiInferenceMode = 'prefer_on_device' | 'only_in_cloud' | 'only_on_device' | 'prefer_in_cloud';
+
+export const inferenceModeOptions: Array<{ value: AiInferenceMode; labelKey: string }> = [
+  { value: 'prefer_on_device', labelKey: 'mode_prefer_device' },
+  { value: 'only_in_cloud', labelKey: 'mode_cloud_only' },
+  { value: 'only_on_device', labelKey: 'mode_device_only' },
+];
+
 export interface AiResult {
   text: string;
   source: AiSource;
   title?: string;
   detail?: string;
   fallback?: boolean;
+  requestedMode?: AiInferenceMode;
+  durationMs?: number;
+  error?: string;
 }
 
 export function sourceLabel(source: InferenceSource | undefined): AiSource {
@@ -78,35 +89,108 @@ export function browserAiAvailability(): BrowserAiState {
   return languageModel ? 'detected' : 'unavailable';
 }
 
-export async function generateTeachingStrategy(index = 0, mode: AiMode = 'lesson_plan'): Promise<AiResult> {
+function modelFor(mode: AiInferenceMode) {
+  if (!app) return null;
+  const ai = getAI(app, {
+    backend: new GoogleAIBackend(),
+    useLimitedUseAppCheckTokens: true,
+  });
+  const firebaseMode = mode === 'only_in_cloud'
+    ? InferenceMode.ONLY_IN_CLOUD
+    : mode === 'only_on_device'
+      ? InferenceMode.ONLY_ON_DEVICE
+      : mode === 'prefer_in_cloud'
+        ? InferenceMode.PREFER_IN_CLOUD
+        : InferenceMode.PREFER_ON_DEVICE;
+  return getGenerativeModel(ai, {
+    mode: firebaseMode,
+    inCloudParams: { model: CLOUD_MODEL },
+  });
+}
+
+export async function generateTeachingStrategy(
+  index = 0,
+  mode: AiMode = 'lesson_plan',
+  inferenceMode: AiInferenceMode = 'prefer_on_device',
+): Promise<AiResult> {
+  const started = performance.now();
   if (!app) {
     return {
       ...fallbackStrategy(index),
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
       detail: 'Firebase is not configured in this build, so the reviewed offline strategy is used.',
     };
   }
   try {
-    const ai = getAI(app, {
-      backend: new GoogleAIBackend(),
-      useLimitedUseAppCheckTokens: true,
-    });
-    const model = getGenerativeModel(ai, {
-      mode: InferenceMode.PREFER_ON_DEVICE,
-      inCloudParams: { model: CLOUD_MODEL },
-    });
+    const model = modelFor(inferenceMode);
+    if (!model) throw new Error('Model unavailable');
     const response = await model.generateContent(modePrompts[mode]);
     const text = response.response.text().trim();
     if (!text) throw new Error('The model returned no text.');
     return {
       text,
       source: sourceLabel(response.response.inferenceSource),
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
       detail: response.response.inferenceSource === InferenceSource.ON_DEVICE
         ? 'The SDK reported on-device inference.'
         : response.response.inferenceSource === InferenceSource.IN_CLOUD
           ? 'The SDK reported cloud inference.'
           : 'The SDK did not report an inference source.',
     };
-  } catch {
-    return fallbackStrategy(index);
+  } catch (error) {
+    return {
+      ...fallbackStrategy(index),
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
+      error: error instanceof Error ? error.message : 'AI request failed',
+    };
+  }
+}
+
+/** Single-turn evidence analysis. The caller supplies the already-minimized prompt. */
+export async function generateEvidenceText(
+  prompt: string,
+  fallbackText: string,
+  inferenceMode: AiInferenceMode = 'prefer_on_device',
+): Promise<AiResult> {
+  const started = performance.now();
+  if (!app) {
+    return {
+      text: fallbackText,
+      source: 'Curated offline library',
+      fallback: true,
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
+      detail: 'Firebase is not configured in this build; the deterministic evidence template is shown.',
+    };
+  }
+  try {
+    const model = modelFor(inferenceMode);
+    if (!model) throw new Error('Model unavailable');
+    const response = await model.generateContent(prompt);
+    const text = response.response.text().trim();
+    if (!text) throw new Error('The model returned no text.');
+    return {
+      text,
+      source: sourceLabel(response.response.inferenceSource),
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
+      detail: response.response.inferenceSource === InferenceSource.ON_DEVICE
+        ? 'The SDK reported on-device inference.'
+        : response.response.inferenceSource === InferenceSource.IN_CLOUD
+          ? 'The SDK reported cloud inference.'
+          : 'The SDK did not report an inference source.',
+    };
+  } catch (error) {
+    return {
+      text: fallbackText,
+      source: 'Curated offline library',
+      fallback: true,
+      requestedMode: inferenceMode,
+      durationMs: Math.round(performance.now() - started),
+      error: error instanceof Error ? error.message : 'AI request failed',
+    };
   }
 }

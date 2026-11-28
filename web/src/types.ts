@@ -94,6 +94,62 @@ export interface LessonPlan {
   version: number;
 }
 
+export interface Assessment {
+  id: string;
+  workspaceId: string;
+  classId: string;
+  pupilId: string;
+  subjectId: string;
+  objectiveId: string;
+  objectiveLabel: string;
+  score: number;
+  maxScore: number;
+  schoolDate: string;
+  teacherNote: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type FollowUpStatus = 'open' | 'done' | 'dismissed';
+export type FollowUpSource = 'attendance' | 'assessment' | 'observation' | 'message' | 'manual' | 'ai';
+
+export interface FollowUp {
+  id: string;
+  workspaceId: string;
+  classId: string;
+  pupilId?: string;
+  title: string;
+  detail: string;
+  dueDate: string;
+  status: FollowUpStatus;
+  source: FollowUpSource;
+  sourceId?: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export type AiAnalysisScope = 'pupil' | 'class' | 'lesson' | 'parent_draft' | 'weekly';
+export type AiAnalysisStatus = 'draft' | 'approved' | 'dismissed';
+
+export interface AiAnalysis {
+  id: string;
+  workspaceId: string;
+  scope: AiAnalysisScope;
+  task: string;
+  pupilId?: string;
+  classId?: string;
+  evidenceFingerprint: string;
+  evidenceIds: string[];
+  evidenceSummary: string;
+  output: string;
+  requestedMode: string;
+  source: string;
+  durationMs: number;
+  fallback: boolean;
+  status: AiAnalysisStatus;
+  createdAt: string;
+}
+
 export type ProgressIndicator = 'doing_well' | 'developing' | 'needs_support' | 'not_assessed';
 
 export interface ProgressEntry {
@@ -104,6 +160,7 @@ export interface ProgressEntry {
   periodStart: string;
   periodEnd: string;
   subjectId: string;
+  objectiveId?: string;
   indicator: ProgressIndicator;
   teacherNote: string;
   homeActivity: string;
@@ -164,6 +221,9 @@ export interface AppState {
   attendance: AttendanceSession[];
   lessons: LessonPlan[];
   progress: ProgressEntry[];
+  assessments: Assessment[];
+  followUps: FollowUp[];
+  aiAnalyses: AiAnalysis[];
   conversations: Conversation[];
   messages: Message[];
   outbox: OutboxCommand[];

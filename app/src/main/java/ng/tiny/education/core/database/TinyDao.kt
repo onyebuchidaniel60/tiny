@@ -40,6 +40,9 @@ interface TinyDao {
     @Query("SELECT * FROM pupils WHERE classId = :classId AND enrollmentStatus = 'active' ORDER BY displayName")
     fun observePupils(classId: String): Flow<List<PupilEntity>>
 
+    @Query("SELECT * FROM pupils WHERE workspaceId = :workspaceId AND enrollmentStatus = 'active' ORDER BY displayName")
+    fun observeAllPupils(workspaceId: String): Flow<List<PupilEntity>>
+
     @Query("SELECT * FROM pupils WHERE classId = :classId AND enrollmentStatus = 'active' ORDER BY displayName")
     suspend fun getPupils(classId: String): List<PupilEntity>
 
@@ -133,6 +136,59 @@ interface TinyDao {
 
     @Query("SELECT * FROM progress_entries WHERE workspaceId = :workspaceId AND approvalStatus = 'APPROVED' ORDER BY updatedAt DESC")
     fun observeApprovedProgress(workspaceId: String): Flow<List<ProgressEntryEntity>>
+
+    @Query(
+        "SELECT e.pupilId AS pupilId, e.status AS status, s.schoolDate AS schoolDate, s.classId AS classId " +
+            "FROM attendance_entries e INNER JOIN attendance_sessions s ON e.sessionId = s.id " +
+            "WHERE s.classId = :classId AND s.status = 'SUBMITTED' ORDER BY s.schoolDate",
+    )
+    fun observeAttendanceEvidence(classId: String): Flow<List<AttendanceEvidenceRow>>
+
+    @Query(
+        "SELECT e.pupilId AS pupilId, e.status AS status, s.schoolDate AS schoolDate, s.classId AS classId " +
+            "FROM attendance_entries e INNER JOIN attendance_sessions s ON e.sessionId = s.id " +
+            "WHERE s.workspaceId = :workspaceId AND s.status = 'SUBMITTED' ORDER BY s.schoolDate",
+    )
+    fun observeAttendanceEvidenceForWorkspace(workspaceId: String): Flow<List<AttendanceEvidenceRow>>
+
+    @Query("SELECT * FROM assessments WHERE workspaceId = :workspaceId ORDER BY schoolDate DESC")
+    fun observeAssessments(workspaceId: String): Flow<List<AssessmentEntity>>
+
+    @Query("SELECT * FROM assessments WHERE pupilId = :pupilId ORDER BY schoolDate DESC")
+    fun observePupilAssessments(pupilId: String): Flow<List<AssessmentEntity>>
+
+    @Query("SELECT * FROM assessments WHERE classId = :classId ORDER BY schoolDate DESC")
+    fun observeClassAssessments(classId: String): Flow<List<AssessmentEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAssessments(assessments: List<AssessmentEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAssessment(assessment: AssessmentEntity)
+
+    @Query("SELECT * FROM follow_ups WHERE workspaceId = :workspaceId ORDER BY status, dueDate, createdAt DESC")
+    fun observeFollowUps(workspaceId: String): Flow<List<FollowUpEntity>>
+
+    @Query("SELECT * FROM follow_ups WHERE pupilId = :pupilId ORDER BY status, dueDate")
+    fun observePupilFollowUps(pupilId: String): Flow<List<FollowUpEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertFollowUp(followUp: FollowUpEntity)
+
+    @Query("UPDATE follow_ups SET status = :status, completedAt = :completedAt WHERE id = :followUpId")
+    suspend fun updateFollowUpStatus(followUpId: String, status: String, completedAt: Long?)
+
+    @Query("SELECT * FROM ai_analyses WHERE workspaceId = :workspaceId ORDER BY createdAt DESC LIMIT 40")
+    fun observeAiAnalyses(workspaceId: String): Flow<List<AiAnalysisEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAiAnalysis(analysis: AiAnalysisEntity)
+
+    @Query("SELECT * FROM progress_entries WHERE classId = :classId ORDER BY periodEnd DESC")
+    fun observeClassProgress(classId: String): Flow<List<ProgressEntryEntity>>
+
+    @Query("SELECT * FROM progress_entries WHERE workspaceId = :workspaceId ORDER BY periodEnd DESC")
+    fun observeWorkspaceProgress(workspaceId: String): Flow<List<ProgressEntryEntity>>
 
     @Query("SELECT * FROM conversations WHERE workspaceId = :workspaceId ORDER BY lastMessageAt DESC")
     fun observeConversations(workspaceId: String): Flow<List<ConversationEntity>>

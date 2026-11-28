@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
@@ -67,6 +68,7 @@ import ng.tiny.education.ui.theme.TinyTomato
 enum class TinyTab(val route: String) {
     HOME("home"),
     CLASSES("classes"),
+    PUPILS("pupils"),
     LESSONS("lessons"),
     MESSAGES("messages"),
 }
@@ -133,6 +135,13 @@ fun TinyBottomBar(currentRoute: String?, onNavigate: (TinyTab) -> Unit) {
             modifier = Modifier.testTag("tab_classes"),
             icon = { Icon(Icons.Outlined.List, contentDescription = stringResource(R.string.nav_classes)) },
             label = { Text(stringResource(R.string.nav_classes)) },
+        )
+        NavigationBarItem(
+            selected = currentRoute?.startsWith("pupils") == true || currentRoute?.startsWith("pupil/") == true,
+            onClick = { onNavigate(TinyTab.PUPILS) },
+            modifier = Modifier.testTag("tab_pupils"),
+            icon = { Icon(Icons.Outlined.Person, contentDescription = stringResource(R.string.nav_pupils)) },
+            label = { Text(stringResource(R.string.nav_pupils)) },
         )
         NavigationBarItem(
             selected = currentRoute?.startsWith("lessons") == true,

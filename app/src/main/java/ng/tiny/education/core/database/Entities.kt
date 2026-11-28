@@ -141,6 +141,68 @@ data class ProgressEntryEntity(
     val updatedAt: Long,
 )
 
+@Entity(tableName = "assessments", indices = [Index("workspaceId"), Index("classId"), Index("pupilId")])
+data class AssessmentEntity(
+    @PrimaryKey val id: String,
+    val workspaceId: String,
+    val classId: String,
+    val pupilId: String,
+    val subjectId: String,
+    val objectiveId: String,
+    val objectiveLabel: String,
+    val score: Double,
+    val maxScore: Double,
+    val schoolDate: String,
+    val teacherNote: String,
+    val createdAt: Long,
+    val updatedAt: Long,
+    val syncState: SyncState = SyncState.LOCAL_ONLY,
+)
+
+@Entity(tableName = "follow_ups", indices = [Index("workspaceId"), Index("classId"), Index("pupilId")])
+data class FollowUpEntity(
+    @PrimaryKey val id: String,
+    val workspaceId: String,
+    val classId: String,
+    val pupilId: String?,
+    val title: String,
+    val detail: String,
+    val dueDate: String,
+    val status: String,
+    val source: String,
+    val sourceId: String?,
+    val createdAt: Long,
+    val completedAt: Long?,
+    val syncState: SyncState = SyncState.LOCAL_ONLY,
+)
+
+@Entity(tableName = "ai_analyses", indices = [Index("workspaceId"), Index("pupilId"), Index("classId")])
+data class AiAnalysisEntity(
+    @PrimaryKey val id: String,
+    val workspaceId: String,
+    val scope: String,
+    val task: String,
+    val pupilId: String?,
+    val classId: String?,
+    val evidenceFingerprint: String,
+    val evidenceIdsJson: String,
+    val evidenceSummary: String,
+    val output: String,
+    val requestedMode: String,
+    val source: String,
+    val durationMs: Long,
+    val fallback: Boolean,
+    val status: String,
+    val createdAt: Long,
+)
+
+data class AttendanceEvidenceRow(
+    val pupilId: String,
+    val status: AttendanceStatus,
+    val schoolDate: String,
+    val classId: String,
+)
+
 @Entity(tableName = "conversations", indices = [Index("workspaceId"), Index("guardianId")])
 data class ConversationEntity(
     @PrimaryKey val id: String,

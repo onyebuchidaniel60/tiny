@@ -32,12 +32,18 @@ function db() {
 }
 
 function migrateState(state: AppState): AppState {
-  // Remove the development-only school label from previously saved local
-  // workspaces without touching any pupil, guardian or attendance record.
-  if (['Kofar Demo Primary', 'Tiny Web Demo Primary', 'Tiny Synthetic E2E'].includes(state.workspace?.name ?? '')) {
-    return { ...state, workspace: { ...state.workspace, name: 'Kofar Primary' } };
+  // Fill newer evidence collections when restoring an older local snapshot,
+  // and remove the development-only school label without touching records.
+  const withEvidence: AppState = {
+    ...state,
+    assessments: state.assessments ?? [],
+    followUps: state.followUps ?? [],
+    aiAnalyses: state.aiAnalyses ?? [],
+  };
+  if (['Kofar Demo Primary', 'Tiny Web Demo Primary', 'Tiny Synthetic E2E'].includes(withEvidence.workspace?.name ?? '')) {
+    return { ...withEvidence, workspace: { ...withEvidence.workspace, name: 'Kofar Primary' } };
   }
-  return state;
+  return withEvidence;
 }
 
 export async function loadState(): Promise<AppState | null> {

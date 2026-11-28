@@ -51,6 +51,8 @@ fun SettingsScreen(
     viewModel: TinyViewModel,
     onOpenSync: () -> Unit,
     onOpenHelp: () -> Unit,
+    onOpenIntelligence: () -> Unit,
+    onOpenFollowUps: () -> Unit,
     onShowTeacherTour: () -> Unit,
     onShowGuardianTour: () -> Unit,
 ) {
@@ -60,6 +62,22 @@ fun SettingsScreen(
     var showCreateWorkspace by remember { mutableStateOf(false) }
     var workspaceName by remember { mutableStateOf("") }
     var workspaceType by remember { mutableStateOf(WorkspaceType.SCHOOL) }
+    var showReset by remember { mutableStateOf(false) }
+
+    if (showReset) {
+        AlertDialog(
+            onDismissRequest = { showReset = false },
+            title = { Text(stringResource(R.string.reset_local)) },
+            text = { Text(stringResource(R.string.reset_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.resetDemoData()
+                    showReset = false
+                }) { Text(stringResource(R.string.reset_local)) }
+            },
+            dismissButton = { TextButton(onClick = { showReset = false }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
 
     if (showCreateWorkspace) {
         AlertDialog(
@@ -194,6 +212,19 @@ fun SettingsScreen(
         item {
             PaperCard {
                 Column {
+                    Text(stringResource(R.string.intelligence_title), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(6.dp))
+                    Text(stringResource(R.string.intelligence_subtitle), style = MaterialTheme.typography.bodySmall)
+                    Spacer(Modifier.height(10.dp))
+                    TinySecondaryButton(stringResource(R.string.intelligence_title), onOpenIntelligence, Modifier.fillMaxWidth())
+                    Spacer(Modifier.height(8.dp))
+                    TinySecondaryButton(stringResource(R.string.open_followups), onOpenFollowUps, Modifier.fillMaxWidth())
+                }
+            }
+        }
+        item {
+            PaperCard {
+                Column {
                     Text(stringResource(R.string.help_about), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(6.dp))
                     Text(stringResource(R.string.help_subtitle), style = MaterialTheme.typography.bodySmall)
@@ -239,6 +270,17 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+            }
+        }
+        item {
+            PaperCard {
+                Column {
+                    Text(stringResource(R.string.reset_local), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(6.dp))
+                    Text(stringResource(R.string.reset_confirm), style = MaterialTheme.typography.bodySmall)
+                    Spacer(Modifier.height(8.dp))
+                    TinySecondaryButton(stringResource(R.string.reset_local), { showReset = true }, Modifier.fillMaxWidth())
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -16,15 +17,23 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ng.tiny.education.AppContainer
 import ng.tiny.education.R
+import ng.tiny.education.core.ai.AiInferenceMode
 import ng.tiny.education.core.ai.AiTask
 import ng.tiny.education.core.ai.DeviceAiStatus
+import ng.tiny.education.core.database.AiAnalysisEntity
+import ng.tiny.education.core.database.AssessmentEntity
 import ng.tiny.education.core.database.AttendanceSessionEntity
 import ng.tiny.education.core.database.ClassroomEntity
 import ng.tiny.education.core.database.ConversationEntity
+import ng.tiny.education.core.database.FollowUpEntity
 import ng.tiny.education.core.database.LessonPlanEntity
 import ng.tiny.education.core.database.ProgressEntryEntity
+import ng.tiny.education.core.intelligence.IntelligenceEngine
+import ng.tiny.education.core.intelligence.PupilIntelligence
 import ng.tiny.education.core.model.AttendanceStatus
+import ng.tiny.education.core.model.LessonStatus
 import ng.tiny.education.core.model.ProgressIndicator
+import ng.tiny.education.core.model.SyncState
 import ng.tiny.education.core.preferences.TinyPreferences
 
 data class AiUiState(
@@ -33,6 +42,12 @@ data class AiUiState(
     val busy: Boolean = false,
     val text: String? = null,
     val source: String? = null,
+    val error: Boolean = false,
+)
+
+data class EvidenceUiState(
+    val busy: Boolean = false,
+    val result: AiAnalysisEntity? = null,
     val error: Boolean = false,
 )
 
@@ -74,6 +89,34 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     val unreadMessageCount = conversations
         .map { list -> list.sumOf { it.unreadCount } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    val followUps = workspace
+        .flatMapLatest { ws -> if (ws == null) flowOf(emptyList()) else repository.observeFollowUps(ws.id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val pupilDirectory: StateFlow<List<PupilIntelligence>> = workspace
+        .flatMapLatest { ws ->
+            if (ws == null) {
+                flowOf(emptyList())
+            } else {
+                combine(
+                    repository.observeAllPupils(ws.id),
+                    repository.observeAttendanceEvidenceForWorkspace(ws.id),
+                    repository.observeAssessments(ws.id),
+                    repository.observeWorkspaceProgress(ws.id),
+                ) { pupils, attendance, assessments, progress ->
+                    pupils.map { pupil -> IntelligenceEngine.pupil(pupil, attendance, assessments, progress) }
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    val aiAnalyses = workspace
+        .flatMapLatest { ws -> if (ws == null) flowOf(emptyList()) else repository.observeAiAnalyses(ws.id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    private val _evidenceState = MutableStateFlow(EvidenceUiState())
+    val evidenceState: StateFlow<EvidenceUiState> = _evidenceState.asStateFlow()
 
     private val _message = MutableStateFlow<UiMessage?>(null)
     val message: StateFlow<UiMessage?> = _message.asStateFlow()
@@ -135,6 +178,162 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     fun observeGuardian(guardianId: String) = repository.observeGuardian(guardianId)
     fun observeGuardianLinks(pupilId: String) = repository.observeGuardianLinks(pupilId)
     fun observeMessages(conversationId: String) = repository.observeMessages(conversationId)
+    fun observePupilAssessments(pupilId: String) = repository.observePupilAssessments(pupilId)
+    fun observeClassAssessments(classId: String) = repository.observeClassAssessments(classId)
+    fun observeAttendanceEvidence(classId: String) = repository.observeAttendanceEvidence(classId)
+    fun observeClassProgress(classId: String) = repository.observeClassProgress(classId)
+    fun observePupilFollowUps(pupilId: String) = repository.observePupilFollowUps(pupilId)
+
+    fun saveAssessment(
+        pupilId: String,
+        classId: String,
+        subjectId: String,
+        objectiveId: String,
+        objectiveLabel: String,
+        score: Double,
+        maxScore: Double,
+        schoolDate: String,
+        teacherNote: String,
+    ) = viewModelScope.launch {
+        val ws = workspace.value ?: return@launch
+        repository.saveAssessment(
+            AssessmentEntity(
+                id = "assessment_${java.util.UUID.randomUUID()}",
+                workspaceId = ws.id,
+                classId = classId,
+                pupilId = pupilId,
+                subjectId = subjectId,
+                objectiveId = objectiveId,
+                objectiveLabel = objectiveLabel,
+                score = score,
+                maxScore = maxScore,
+                schoolDate = schoolDate,
+                teacherNote = teacherNote,
+                createdAt = System.currentTimeMillis(),
+                updatedAt = System.currentTimeMillis(),
+            ),
+        ).onSuccess { _message.value = UiMessage(R.string.assessment_saved) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
+    }
+
+    fun addFollowUp(
+        pupilId: String?,
+        classId: String,
+        title: String,
+        detail: String,
+        dueDate: String,
+        source: String,
+    ) = viewModelScope.launch {
+        val ws = workspace.value ?: return@launch
+        repository.saveFollowUp(
+            FollowUpEntity(
+                id = "followup_${java.util.UUID.randomUUID()}",
+                workspaceId = ws.id,
+                classId = classId,
+                pupilId = pupilId,
+                title = title,
+                detail = detail,
+                dueDate = dueDate,
+                status = "open",
+                source = source,
+                sourceId = null,
+                createdAt = System.currentTimeMillis(),
+                completedAt = null,
+            ),
+        ).onSuccess { _message.value = UiMessage(R.string.followup_saved) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
+    }
+
+    fun updateFollowUpStatus(followUpId: String, status: String) = viewModelScope.launch {
+        repository.updateFollowUpStatus(followUpId, status)
+            .onSuccess { _message.value = UiMessage(if (status == "done") R.string.followup_done else R.string.followup_updated) }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
+    }
+
+    fun generateEvidenceAnalysis(
+        scope: String,
+        task: String,
+        pupilId: String?,
+        classId: String?,
+        evidenceFingerprint: String,
+        evidenceIds: List<String>,
+        evidenceSummary: String,
+        prompt: String,
+        fallback: String,
+        mode: AiInferenceMode = AiInferenceMode.PREFER_ON_DEVICE,
+    ) = viewModelScope.launch {
+        val ws = workspace.value ?: return@launch
+        if (_evidenceState.value.busy) return@launch
+        _evidenceState.value = EvidenceUiState(busy = true)
+        val generated = container.aiService.generateEvidence(prompt, mode)
+        val generation = generated.getOrNull()
+        val entity = AiAnalysisEntity(
+            id = "analysis_${java.util.UUID.randomUUID()}",
+            workspaceId = ws.id,
+            scope = scope,
+            task = task,
+            pupilId = pupilId,
+            classId = classId,
+            evidenceFingerprint = evidenceFingerprint,
+            evidenceIdsJson = evidenceIds.joinToString(prefix = "[\"", separator = "\",\"", postfix = "\"]"),
+            evidenceSummary = evidenceSummary,
+            output = generation?.text ?: fallback,
+            requestedMode = generation?.requestedMode?.label ?: mode.label,
+            source = generation?.source ?: "Curated offline library",
+            durationMs = generation?.durationMs ?: 0,
+            fallback = generation == null,
+            status = "draft",
+            createdAt = System.currentTimeMillis(),
+        )
+        repository.saveAiAnalysis(entity)
+        _evidenceState.value = EvidenceUiState(busy = false, result = entity, error = generation == null)
+    }
+
+    fun clearEvidenceResult() {
+        _evidenceState.value = EvidenceUiState()
+    }
+
+    fun resetDemoData() = viewModelScope.launch {
+        repository.resetDemoData()
+        _message.value = UiMessage(R.string.reset_local_done)
+    }
+
+    fun createEvidenceLesson(
+        classId: String,
+        plan: List<Pair<String, String>>,
+        onCreated: (String) -> Unit,
+    ) = viewModelScope.launch {
+        val ws = workspace.value ?: return@launch
+        val classroom = classes.value.find { it.id == classId } ?: return@launch
+        val lessonId = "lesson_${java.util.UUID.randomUUID()}"
+        val find = { key: String -> plan.firstOrNull { it.first == key }?.second.orEmpty() }
+        val lesson = LessonPlanEntity(
+            id = lessonId,
+            workspaceId = ws.id,
+            classId = classId,
+            gradeLevel = classroom.gradeLevel,
+            subjectId = "basic_science",
+            topic = find("Objective").take(70).ifBlank { "Evidence-informed lesson" },
+            objective = find("Objective"),
+            durationMinutes = 40,
+            materials = "Locally available objects, chalkboard, pupil exercise books",
+            priorKnowledge = find("Prior knowledge"),
+            engage = find("Engage"),
+            explore = find("Explore"),
+            explain = find("Explain"),
+            elaborate = find("Elaborate"),
+            evaluate = find("Evaluate"),
+            status = LessonStatus.DRAFT,
+            syncState = SyncState.LOCAL_ONLY,
+            updatedAt = System.currentTimeMillis(),
+        )
+        repository.saveLesson(lesson)
+            .onSuccess {
+                _message.value = UiMessage(R.string.lesson_saved)
+                onCreated(lessonId)
+            }
+            .onFailure { _message.value = UiMessage(R.string.error_generic) }
+    }
 
     fun addPupil(classId: String, displayName: String, localPupilCode: String?) = viewModelScope.launch {
         val ws = workspace.value ?: return@launch

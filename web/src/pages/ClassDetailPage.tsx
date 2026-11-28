@@ -44,6 +44,7 @@ export function ClassDetailPage() {
         actions={
           <div className="button-row">
             <Link to={`/attendance/${classroom.id}`}><Button><Icon name="attendance" size={17} /> {t('register')}</Button></Link>
+            <Link to={`/classes/${classroom.id}/intelligence`}><Button variant="secondary"><Icon name="spark" size={16} /> {t('class_intelligence')}</Button></Link>
             <Button variant="secondary" onClick={() => setOpen((value) => !value)}><Icon name="plus" size={16} /> {t('pupil')}</Button>
           </div>
         }
@@ -81,6 +82,7 @@ export function ClassDetailPage() {
                   <div className="list-row" key={pupil.id}>
                     <span className="avatar">{pupil.displayName.slice(0, 1)}</span>
                     <div className="list-main"><strong>{pupil.displayName}</strong><small>{pupil.localPupilCode || t('no_local_code')} · {tn('classes_guardian_links', links.length)}</small></div>
+                    <Link to={`/pupils/${pupil.id}`} className="text-link">{t('pupil_profile')}</Link>
                     <Link to={`/progress/${pupil.id}`} className="text-link">{t('progress')}</Link>
                   </div>
                 );
@@ -109,7 +111,7 @@ export function ClassDetailPage() {
       </div>
 
       <Card>
-        <div className="card-heading"><div><div className="eyebrow">{t('lessons_title')}</div><h3>{t('lessons_for_class')}</h3></div><Link to="/lessons" className="text-link">{t('all_lessons')}</Link></div>
+        <div className="card-heading"><div><div className="eyebrow">{t('lessons_title')}</div><h3>{t('lessons_for_class')}</h3></div><div className="button-row"><Link to={`/classes/${classroom.id}/intelligence`} className="text-link">{t('class_intelligence')}</Link><Link to="/lessons" className="text-link">{t('all_lessons')}</Link></div></div>
         <div className="mini-card-grid">
           {state.lessons.filter((lesson) => lesson.classId === classroom.id).slice(0, 4).map((lesson) => (
             <Link to={`/lessons/${lesson.id}`} key={lesson.id} className="mini-card">

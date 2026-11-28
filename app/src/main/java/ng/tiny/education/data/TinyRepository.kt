@@ -2,8 +2,12 @@ package ng.tiny.education.data
 
 import androidx.room.withTransaction
 import kotlinx.coroutines.flow.Flow
+import ng.tiny.education.core.database.AiAnalysisEntity
+import ng.tiny.education.core.database.AssessmentEntity
 import ng.tiny.education.core.database.AttendanceEntryEntity
+import ng.tiny.education.core.database.AttendanceEvidenceRow
 import ng.tiny.education.core.database.AttendanceSessionEntity
+import ng.tiny.education.core.database.FollowUpEntity
 import ng.tiny.education.core.database.AuditEventEntity
 import ng.tiny.education.core.database.ClassroomEntity
 import ng.tiny.education.core.database.ConversationEntity
@@ -57,6 +61,9 @@ class TinyRepository(
 
     fun observeWorkspace(): Flow<WorkspaceEntity?> = dao.observeWorkspace()
     fun observeClasses(workspaceId: String): Flow<List<ClassroomEntity>> = dao.observeClasses(workspaceId)
+    fun observeAllPupils(workspaceId: String): Flow<List<PupilEntity>> = dao.observeAllPupils(workspaceId)
+    fun observeAttendanceEvidenceForWorkspace(workspaceId: String): Flow<List<AttendanceEvidenceRow>> = dao.observeAttendanceEvidenceForWorkspace(workspaceId)
+    fun observeWorkspaceProgress(workspaceId: String): Flow<List<ProgressEntryEntity>> = dao.observeWorkspaceProgress(workspaceId)
     fun observeClass(classId: String): Flow<ClassroomEntity?> = dao.observeClass(classId)
     fun observePupils(classId: String): Flow<List<PupilEntity>> = dao.observePupils(classId)
     fun observePupil(pupilId: String): Flow<PupilEntity?> = dao.observePupil(pupilId)
@@ -78,6 +85,11 @@ class TinyRepository(
     fun observeAudit(workspaceId: String): Flow<List<AuditEventEntity>> = dao.observeAudit(workspaceId)
 
     suspend fun seedDemoData() = DemoData.seedIfEmpty(dao)
+
+    suspend fun resetDemoData() {
+        database.clearAllTables()
+        DemoData.seedIfEmpty(dao)
+    }
 
     suspend fun currentWorkspace(): ng.tiny.education.core.database.WorkspaceEntity? = dao.getWorkspace()
 
@@ -582,6 +594,35 @@ class TinyRepository(
     }
 
     suspend fun markConversationRead(conversationId: String) = dao.markConversationRead(conversationId)
+
+    fun observeAssessments(workspaceId: String): Flow<List<AssessmentEntity>> = dao.observeAssessments(workspaceId)
+    fun observePupilAssessments(pupilId: String): Flow<List<AssessmentEntity>> = dao.observePupilAssessments(pupilId)
+    fun observeClassAssessments(classId: String): Flow<List<AssessmentEntity>> = dao.observeClassAssessments(classId)
+    fun observeAttendanceEvidence(classId: String): Flow<List<AttendanceEvidenceRow>> = dao.observeAttendanceEvidence(classId)
+    fun observeClassProgress(classId: String): Flow<List<ProgressEntryEntity>> = dao.observeClassProgress(classId)
+    fun observeFollowUps(workspaceId: String): Flow<List<FollowUpEntity>> = dao.observeFollowUps(workspaceId)
+    fun observePupilFollowUps(pupilId: String): Flow<List<FollowUpEntity>> = dao.observePupilFollowUps(pupilId)
+    fun observeAiAnalyses(workspaceId: String): Flow<List<AiAnalysisEntity>> = dao.observeAiAnalyses(workspaceId)
+
+    suspend fun saveAssessment(assessment: AssessmentEntity): Result<Unit> = runCatching {
+        dao.upsertAssessment(assessment)
+    }
+
+    suspend fun saveLesson(lesson: LessonPlanEntity): Result<Unit> = runCatching {
+        dao.upsertLessonPlans(listOf(lesson))
+    }
+
+    suspend fun saveFollowUp(followUp: FollowUpEntity): Result<Unit> = runCatching {
+        dao.upsertFollowUp(followUp)
+    }
+
+    suspend fun updateFollowUpStatus(followUpId: String, status: String): Result<Unit> = runCatching {
+        dao.updateFollowUpStatus(followUpId, status, if (status == "done") System.currentTimeMillis() else null)
+    }
+
+    suspend fun saveAiAnalysis(analysis: AiAnalysisEntity): Result<Unit> = runCatching {
+        dao.upsertAiAnalysis(analysis)
+    }
 
     suspend fun syncNow(workspaceId: String): SyncSummary {
         val processor = syncProcessor

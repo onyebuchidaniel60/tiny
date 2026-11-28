@@ -1,9 +1,26 @@
-import type { AppState } from '../types';
+import type { AppState, AttendanceStatus } from '../types';
 
-const now = '2026-11-27T08:00:00.000Z';
-const ws = 'ws_local_demo';
+/**
+ * Canonical synthetic workspace shared (by stable IDs and records) with the
+ * Android demo seed. Never place real pupil or guardian data here.
+ */
+const ws = 'ws_kofar_primary';
 const p4 = 'class_p4_blue';
 const p5 = 'class_p5_gold';
+const now = '2026-11-27T08:00:00.000Z';
+
+const attendanceDate = (date: string) => `${date}T08:00:00.000Z`;
+
+export const canonicalPupilIds = [
+  'pupil_amina',
+  'pupil_musa',
+  'pupil_ngozi',
+  'pupil_tunde',
+  'pupil_fatima',
+  'pupil_emeka',
+  'pupil_zainab',
+  'pupil_ibrahim',
+] as const;
 
 export function seedState(): AppState {
   return {
@@ -61,41 +78,94 @@ export function seedState(): AppState {
       { id: 'link_amina', workspaceId: ws, pupilId: 'pupil_amina', guardianId: 'guardian_amina', relationshipLabel: 'Mother', classId: p4, notificationEligible: true },
       { id: 'link_musa', workspaceId: ws, pupilId: 'pupil_musa', guardianId: 'guardian_musa', relationshipLabel: 'Father', classId: p4, notificationEligible: true },
       { id: 'link_ngozi', workspaceId: ws, pupilId: 'pupil_ngozi', guardianId: 'guardian_musa', relationshipLabel: 'Father', classId: p4, notificationEligible: true },
+      { id: 'link_tunde', workspaceId: ws, pupilId: 'pupil_tunde', guardianId: 'guardian_musa', relationshipLabel: 'Family contact', classId: p4, notificationEligible: true },
       { id: 'link_fatima', workspaceId: ws, pupilId: 'pupil_fatima', guardianId: 'guardian_fatima', relationshipLabel: 'Mother', classId: p5, notificationEligible: true },
       { id: 'link_emeka', workspaceId: ws, pupilId: 'pupil_emeka', guardianId: 'guardian_emeka', relationshipLabel: 'Father', classId: p5, notificationEligible: true },
       { id: 'link_ibrahim', workspaceId: ws, pupilId: 'pupil_ibrahim', guardianId: 'guardian_emeka', relationshipLabel: 'Father', classId: p5, notificationEligible: true },
     ],
     attendance: [
-      {
-        id: `${p4}_2026-11-26`,
+      ...([
+        ['2026-11-17', { pupil_amina: 'present', pupil_musa: 'absent', pupil_ngozi: 'present', pupil_tunde: 'late', pupil_fatima: 'present', pupil_emeka: 'absent', pupil_zainab: 'present', pupil_ibrahim: 'present' }],
+        ['2026-11-18', { pupil_amina: 'present', pupil_musa: 'absent', pupil_ngozi: 'present', pupil_tunde: 'present', pupil_fatima: 'present', pupil_emeka: 'present', pupil_zainab: 'present', pupil_ibrahim: 'late' }],
+        ['2026-11-19', { pupil_amina: 'present', pupil_musa: 'present', pupil_ngozi: 'present', pupil_tunde: 'absent', pupil_fatima: 'present', pupil_emeka: 'present', pupil_zainab: 'present', pupil_ibrahim: 'late' }],
+        ['2026-11-20', { pupil_amina: 'present', pupil_musa: 'absent', pupil_ngozi: 'late', pupil_tunde: 'late', pupil_fatima: 'present', pupil_emeka: 'absent', pupil_zainab: 'present', pupil_ibrahim: 'present' }],
+        ['2026-11-24', { pupil_amina: 'present', pupil_musa: 'present', pupil_ngozi: 'present', pupil_tunde: 'present', pupil_fatima: 'present', pupil_emeka: 'present', pupil_zainab: 'present', pupil_ibrahim: 'present' }],
+        ['2026-11-25', { pupil_amina: 'late', pupil_musa: 'absent', pupil_ngozi: 'present', pupil_tunde: 'absent', pupil_fatima: 'present', pupil_emeka: 'absent', pupil_zainab: 'present', pupil_ibrahim: 'present' }],
+        ['2026-11-26', { pupil_amina: 'present', pupil_musa: 'present', pupil_ngozi: 'present', pupil_tunde: 'present', pupil_fatima: 'present', pupil_emeka: 'present', pupil_zainab: 'present', pupil_ibrahim: 'present' }],
+      ] as Array<[string, Record<string, AttendanceStatus>]>).map(([date, statuses]) => ({
+        id: `${p4}_${date}`,
         workspaceId: ws,
         classId: p4,
-        schoolDate: '2026-11-26',
-        status: 'submitted',
-        entries: [
-          { pupilId: 'pupil_amina', status: 'present' },
-          { pupilId: 'pupil_musa', status: 'absent' },
-          { pupilId: 'pupil_ngozi', status: 'present' },
-          { pupilId: 'pupil_tunde', status: 'late' },
-        ],
-        updatedAt: now,
+        schoolDate: date,
+        status: 'submitted' as const,
+        entries: (['pupil_amina', 'pupil_musa', 'pupil_ngozi', 'pupil_tunde'] as const).map((pupilId) => ({
+          pupilId,
+          status: statuses[pupilId],
+        })),
+        updatedAt: attendanceDate(date),
         version: 1,
-      },
-      {
-        id: `${p5}_2026-11-26`,
+      })),
+      ...['2026-11-17', '2026-11-18', '2026-11-19', '2026-11-20', '2026-11-24', '2026-11-25', '2026-11-26'].map((date, index) => ({
+        id: `${p5}_${date}`,
         workspaceId: ws,
         classId: p5,
-        schoolDate: '2026-11-26',
-        status: 'submitted',
+        schoolDate: date,
+        status: 'submitted' as const,
         entries: [
-          { pupilId: 'pupil_fatima', status: 'present' },
-          { pupilId: 'pupil_emeka', status: 'absent' },
-          { pupilId: 'pupil_zainab', status: 'present' },
-          { pupilId: 'pupil_ibrahim', status: 'present' },
+          { pupilId: 'pupil_fatima', status: 'present' as const },
+          { pupilId: 'pupil_emeka', status: index % 3 === 1 ? 'absent' as const : 'present' as const },
+          { pupilId: 'pupil_zainab', status: 'present' as const },
+          { pupilId: 'pupil_ibrahim', status: index % 4 === 3 ? 'late' as const : 'present' as const },
         ],
-        updatedAt: now,
+        updatedAt: attendanceDate(date),
         version: 1,
-      },
+      })),
+    ],
+    assessments: [
+      ...([
+        ['pupil_amina', 'basic_science', 'water_sources', 'Water sources and uses', [82, 88, 90], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_musa', 'basic_science', 'water_sources', 'Water sources and uses', [42, 51, 60], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_ngozi', 'basic_science', 'plant_parts', 'Plant parts and functions', [74, 70, 68], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_tunde', 'basic_science', 'plant_parts', 'Plant parts and functions', [35, 31, 38], ['2026-11-06', '2026-11-13', '2026-11-20']],
+      ] as const).flatMap(([pupilId, subjectId, objectiveId, objectiveLabel, scores, dates]) =>
+        scores.map((score, index) => ({
+          id: `assessment_${pupilId}_${index + 1}`,
+          workspaceId: ws,
+          classId: p4,
+          pupilId,
+          subjectId,
+          objectiveId,
+          objectiveLabel,
+          score,
+          maxScore: 100,
+          schoolDate: dates[index],
+          teacherNote: index === scores.length - 1 ? 'End-of-week check' : 'Class exercise',
+          createdAt: attendanceDate(dates[index]),
+          updatedAt: attendanceDate(dates[index]),
+        })),
+      ),
+      ...([
+        ['pupil_fatima', 'social_studies', 'map_reading', 'Map reading and directions', [80, 84, 86], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_emeka', 'social_studies', 'map_reading', 'Map reading and directions', [38, 44, 47], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_zainab', 'social_studies', 'community', 'Community responsibilities', [72, 76, 79], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_ibrahim', 'social_studies', 'community', 'Community responsibilities', [55, 52, 58], ['2026-11-06', '2026-11-13', '2026-11-20']],
+      ] as const).flatMap(([pupilId, subjectId, objectiveId, objectiveLabel, scores, dates]) =>
+        scores.map((score, index) => ({
+          id: `assessment_${pupilId}_${index + 1}`,
+          workspaceId: ws,
+          classId: p5,
+          pupilId,
+          subjectId,
+          objectiveId,
+          objectiveLabel,
+          score,
+          maxScore: 100,
+          schoolDate: dates[index],
+          teacherNote: index === scores.length - 1 ? 'End-of-week check' : 'Class exercise',
+          createdAt: attendanceDate(dates[index]),
+          updatedAt: attendanceDate(dates[index]),
+        })),
+      ),
     ],
     lessons: [
       {
@@ -154,52 +224,41 @@ export function seedState(): AppState {
       },
     ],
     progress: [
-      {
-        id: 'progress_amina',
+      ...([
+        ['pupil_amina', 'basic_science', 'water_sources', 'doing_well', 'Amina explained three water sources and helped her group sort picture cards.', 'Ask Amina to teach a younger sibling one water-saving habit.', 'approved', '2026-11-16', '2026-11-20'],
+        ['pupil_amina', 'basic_science', 'plant_parts', 'doing_well', 'Amina labelled roots, stem and leaf correctly and explained the leaf function.', 'Ask Amina to find one plant at home and name two parts.', 'approved', '2026-11-23', '2026-11-27'],
+        ['pupil_musa', 'basic_science', 'water_sources', 'developing', 'Musa names sources with prompting and is gaining confidence in group work.', 'Practise naming one water source at home each evening.', 'draft', '2026-11-16', '2026-11-20'],
+        ['pupil_musa', 'basic_science', 'plant_parts', 'developing', 'Musa matched two plant parts correctly after a second demonstration.', 'Draw one plant and label the leaf and root.', 'draft', '2026-11-23', '2026-11-27'],
+        ['pupil_ngozi', 'basic_science', 'plant_parts', 'developing', 'Ngozi participates well orally but needs support writing full explanations.', 'Ask Ngozi to explain one plant part to a family member.', 'draft', '2026-11-23', '2026-11-27'],
+        ['pupil_tunde', 'basic_science', 'plant_parts', 'needs_support', 'Tunde is still confusing roots and stems; he responded well to a picture prompt.', 'Practise naming two plant parts using a leaf or plant at home.', 'draft', '2026-11-23', '2026-11-27'],
+        ['pupil_fatima', 'social_studies', 'map_reading', 'doing_well', 'Fatima used the map key accurately and gave clear directions.', 'Draw a simple map of the route home.', 'approved', '2026-11-16', '2026-11-20'],
+        ['pupil_emeka', 'social_studies', 'map_reading', 'needs_support', 'Emeka can identify the key but needs help ordering directions.', 'Practise left and right, then north and south, on a short walk.', 'draft', '2026-11-23', '2026-11-27'],
+        ['pupil_zainab', 'social_studies', 'community', 'doing_well', 'Zainab described two community responsibilities with clear examples.', 'Ask Zainab to name one responsibility at home and one at school.', 'approved', '2026-11-16', '2026-11-20'],
+        ['pupil_ibrahim', 'social_studies', 'community', 'developing', 'Ibrahim contributed one example and listened carefully to others.', 'Ask Ibrahim to name one service in the community.', 'draft', '2026-11-23', '2026-11-27'],
+      ] as const).map(([pupilId, subjectId, objectiveId, indicator, teacherNote, homeActivity, approvalStatus, periodStart, periodEnd], index) => ({
+        id: `progress_${pupilId}_${index + 1}`,
         workspaceId: ws,
-        pupilId: 'pupil_amina',
-        classId: p4,
-        periodStart: '2026-11-16',
-        periodEnd: '2026-11-20',
-        subjectId: 'basic_science',
-        indicator: 'doing_well',
-        teacherNote: 'Amina names three water sources and explains two uses clearly.',
-        homeActivity: 'Ask Amina to teach a younger sibling one water-saving habit.',
-        approvalStatus: 'approved',
+        pupilId,
+        classId: (pupilId.startsWith('pupil_fatima') || ['pupil_emeka', 'pupil_zainab', 'pupil_ibrahim'].includes(pupilId)) ? p5 : p4,
+        periodStart,
+        periodEnd,
+        subjectId,
+        objectiveId,
+        indicator: indicator as 'doing_well' | 'developing' | 'needs_support' | 'not_assessed',
+        teacherNote,
+        homeActivity,
+        approvalStatus: approvalStatus as 'draft' | 'approved',
         revision: 1,
-        updatedAt: now,
-      },
-      {
-        id: 'progress_musa',
-        workspaceId: ws,
-        pupilId: 'pupil_musa',
-        classId: p4,
-        periodStart: '2026-11-16',
-        periodEnd: '2026-11-20',
-        subjectId: 'basic_science',
-        indicator: 'developing',
-        teacherNote: 'Musa names sources with prompting and is gaining confidence.',
-        homeActivity: 'Practise naming one water source at home each evening.',
-        approvalStatus: 'draft',
-        revision: 1,
-        updatedAt: now,
-      },
-      {
-        id: 'progress_fatima',
-        workspaceId: ws,
-        pupilId: 'pupil_fatima',
-        classId: p5,
-        periodStart: '2026-11-16',
-        periodEnd: '2026-11-20',
-        subjectId: 'social_studies',
-        indicator: 'doing_well',
-        teacherNote: 'Fatima uses the map key accurately and gives clear directions.',
-        homeActivity: 'Draw a simple map of the route home.',
-        approvalStatus: 'approved',
-        revision: 1,
-        updatedAt: now,
-      },
+        updatedAt: attendanceDate(periodEnd),
+      })),
     ],
+    followUps: [
+      { id: 'followup_musa_attendance', workspaceId: ws, classId: p4, pupilId: 'pupil_musa', title: 'Check Musa attendance pattern', detail: 'Musa has missed three of the last seven school days. Confirm the reason with the family and record the outcome.', dueDate: '2026-11-30', status: 'open', source: 'attendance', sourceId: 'attendance_musa', createdAt: now },
+      { id: 'followup_tunde_support', workspaceId: ws, classId: p4, pupilId: 'pupil_tunde', title: 'Plan a plant-parts support activity', detail: 'Tunde is still confusing roots and stems. Prepare a concrete sorting activity and check again next week.', dueDate: '2026-12-01', status: 'open', source: 'assessment', sourceId: 'assessment_tunde_3', createdAt: now },
+      { id: 'followup_emeka_map', workspaceId: ws, classId: p5, pupilId: 'pupil_emeka', title: 'Follow up map directions', detail: 'Emeka can read the key but needs support with direction order. Use a short route activity.', dueDate: '2026-12-01', status: 'open', source: 'observation', sourceId: 'progress_pupil_emeka_8', createdAt: now },
+      { id: 'followup_fatima_digest', workspaceId: ws, classId: p5, pupilId: 'pupil_fatima', title: 'Review Fatima digest wording', detail: 'The approved map-reading observation is ready for the next family digest.', dueDate: '2026-11-28', status: 'open', source: 'manual', createdAt: now },
+    ],
+    aiAnalyses: [],
     conversations: [
       {
         id: 'conversation_amina',

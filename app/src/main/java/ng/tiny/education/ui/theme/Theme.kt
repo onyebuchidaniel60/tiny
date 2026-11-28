@@ -1,6 +1,5 @@
 package ng.tiny.education.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -65,7 +64,10 @@ private val TinyShapes = Shapes(
 
 @Composable
 fun TinyTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Tiny is intentionally light-first for low-end classroom devices. The
+    // dark palette remains available behind this switch for a future explicit
+    // accessibility setting, but is not the default product appearance.
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(

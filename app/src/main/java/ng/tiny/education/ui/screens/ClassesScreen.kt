@@ -180,6 +180,8 @@ fun ClassDetailScreen(
     onBack: () -> Unit,
     onAttendance: () -> Unit,
     onProgress: (String) -> Unit,
+    onIntelligence: () -> Unit,
+    onPupilProfile: (String) -> Unit,
 ) {
     val classroom by viewModel.observeClass(classId).collectAsStateWithLifecycle(initialValue = null)
     val pupils by viewModel.observePupils(classId).collectAsStateWithLifecycle(initialValue = emptyList())
@@ -240,7 +242,7 @@ fun ClassDetailScreen(
             Spacer(Modifier.height(8.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TinyPrimaryButton(stringResource(R.string.mark_attendance), onAttendance, Modifier.weight(1f))
-                TinySecondaryButton(stringResource(R.string.progress), { pupils.firstOrNull()?.let { onProgress(it.id) } })
+                TinySecondaryButton(stringResource(R.string.class_intelligence), onIntelligence)
             }
         }
         item {
@@ -253,7 +255,7 @@ fun ClassDetailScreen(
             )
         }
         items(pupils, key = { it.id }) { pupil ->
-            PupilRow(pupil = pupil, onProgress = { onProgress(pupil.id) })
+            PupilRow(pupil = pupil, onProgress = { onPupilProfile(pupil.id) })
         }
         if (pupils.isEmpty()) {
             item { PaperCard { Text(stringResource(R.string.no_pupils_body)) } }

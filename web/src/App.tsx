@@ -23,6 +23,11 @@ import { SettingsPage } from './pages/SettingsPage';
 import { AiPage } from './pages/AiPage';
 import { GuardianSimulatorPage } from './pages/GuardianSimulatorPage';
 import { HelpPage } from './pages/HelpPage';
+import { PupilDirectoryPage } from './pages/PupilDirectoryPage';
+import { PupilProfilePage } from './pages/PupilProfilePage';
+import { ClassIntelligencePage } from './pages/ClassIntelligencePage';
+import { FollowUpsPage } from './pages/FollowUpsPage';
+import { IntelligencePage } from './pages/IntelligencePage';
 
 type NavItem = {
   to: string;
@@ -70,9 +75,12 @@ function TeacherLayout() {
   const navItems: NavItem[] = [
     { to: '/', label: t('nav_home'), icon: 'home', end: true, mobile: true },
     { to: '/classes', label: t('nav_classes'), icon: 'classes', mobile: true },
-    { to: '/lessons', label: t('nav_lessons'), icon: 'book', mobile: true },
+    { to: '/pupils', label: t('nav_pupils'), icon: 'people', mobile: true },
+    { to: '/lessons', label: t('nav_lessons'), icon: 'book' },
     { to: '/messages', label: t('nav_messages'), icon: 'message', mobile: true },
-    { to: '/guardians', label: t('nav_guardians'), icon: 'people', mobile: true },
+    { to: '/intelligence', label: t('nav_insights'), icon: 'spark', mobile: true },
+    { to: '/followups', label: t('nav_followups'), icon: 'check' },
+    { to: '/guardians', label: t('nav_guardians'), icon: 'people' },
     { to: '/sync', label: t('nav_sync'), icon: 'sync' },
     { to: '/help', label: t('nav_help'), icon: 'search' },
     { to: '/settings', label: t('nav_settings'), icon: 'settings' },
@@ -217,6 +225,11 @@ export default function App() {
         <Route index element={<DashboardPage />} />
         <Route path="classes" element={<ClassesPage />} />
         <Route path="classes/:classId" element={<ClassDetailPage />} />
+        <Route path="classes/:classId/intelligence" element={<ClassIntelligencePage />} />
+        <Route path="pupils" element={<PupilDirectoryPage />} />
+        <Route path="pupils/:pupilId" element={<PupilProfilePage />} />
+        <Route path="followups" element={<FollowUpsPage />} />
+        <Route path="intelligence" element={<IntelligencePage />} />
         <Route path="attendance/:classId" element={<AttendancePage />} />
         <Route path="lessons" element={<LessonsPage />} />
         <Route path="lessons/:lessonId" element={<LessonDetailPage />} />

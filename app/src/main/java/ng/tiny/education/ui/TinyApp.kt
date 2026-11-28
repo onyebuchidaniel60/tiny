@@ -37,8 +37,13 @@ import ng.tiny.education.ui.screens.AttendanceScreen
 import ng.tiny.education.ui.screens.ClassDetailScreen
 import ng.tiny.education.ui.screens.ClassesScreen
 import ng.tiny.education.ui.screens.ConversationScreen
+import ng.tiny.education.ui.screens.ClassIntelligenceScreen
+import ng.tiny.education.ui.screens.FollowUpsScreen
 import ng.tiny.education.ui.screens.HelpScreen
 import ng.tiny.education.ui.screens.HomeScreen
+import ng.tiny.education.ui.screens.IntelligenceScreen
+import ng.tiny.education.ui.screens.PupilDirectoryScreen
+import ng.tiny.education.ui.screens.PupilIntelligenceScreen
 import ng.tiny.education.ui.screens.LanguageScreen
 import ng.tiny.education.ui.screens.LessonDetailScreen
 import ng.tiny.education.ui.screens.LessonsScreen
@@ -62,6 +67,11 @@ private const val ROUTE_PROGRESS = "progress/{pupilId}"
 private const val ROUTE_SETTINGS = "settings"
 private const val ROUTE_SYNC = "sync"
 private const val ROUTE_HELP = "help"
+private const val ROUTE_PUPILS = "pupils"
+private const val ROUTE_PUPIL = "pupil/{pupilId}"
+private const val ROUTE_CLASS_INTELLIGENCE = "class/{classId}/intelligence"
+private const val ROUTE_FOLLOWUPS = "followups"
+private const val ROUTE_INTELLIGENCE = "intelligence"
 
 private const val TOUR_TEACHER = "teacher"
 private const val TOUR_GUARDIAN = "guardian"
@@ -120,7 +130,8 @@ private fun MainShell(viewModel: TinyViewModel) {
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val route = backStackEntry?.destination?.route
-    val isMainRoute = route == ROUTE_HOME || route == ROUTE_CLASSES || route == ROUTE_LESSONS || route == ROUTE_MESSAGES
+    val isMainRoute = route == ROUTE_HOME || route == ROUTE_CLASSES || route == ROUTE_PUPILS ||
+        route == ROUTE_LESSONS || route == ROUTE_MESSAGES
     var activeTour by rememberSaveable { mutableStateOf<String?>(null) }
 
     LaunchedEffect(message) {
@@ -178,6 +189,48 @@ private fun MainShell(viewModel: TinyViewModel) {
                     onOpenLesson = { navController.navigate(ROUTE_LESSONS) },
                     onOpenSync = { navController.navigate(ROUTE_SYNC) },
                     onShowTour = { activeTour = TOUR_TEACHER },
+                    onOpenPupils = { navController.navigate(ROUTE_PUPILS) },
+                    onOpenIntelligence = { navController.navigate(ROUTE_INTELLIGENCE) },
+                    onOpenFollowUps = { navController.navigate(ROUTE_FOLLOWUPS) },
+                    onOpenPupil = { navController.navigate("pupil/$it") },
+                )
+            }
+            composable(ROUTE_PUPILS) {
+                PupilDirectoryScreen(
+                    viewModel = viewModel,
+                    onOpenPupil = { navController.navigate("pupil/$it") },
+                    onOpenFollowUps = { navController.navigate(ROUTE_FOLLOWUPS) },
+                )
+            }
+            composable(
+                route = ROUTE_PUPIL,
+                arguments = listOf(navArgument("pupilId") { type = NavType.StringType }),
+            ) { entry ->
+                PupilIntelligenceScreen(
+                    pupilId = entry.arguments?.getString("pupilId").orEmpty(),
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() },
+                )
+            }
+            composable(
+                route = ROUTE_CLASS_INTELLIGENCE,
+                arguments = listOf(navArgument("classId") { type = NavType.StringType }),
+            ) { entry ->
+                ClassIntelligenceScreen(
+                    classId = entry.arguments?.getString("classId").orEmpty(),
+                    viewModel = viewModel,
+                    onOpenPupil = { navController.navigate("pupil/$it") },
+                    onOpenLesson = { navController.navigate("lesson/$it") },
+                )
+            }
+            composable(ROUTE_FOLLOWUPS) {
+                FollowUpsScreen(viewModel = viewModel)
+            }
+            composable(ROUTE_INTELLIGENCE) {
+                IntelligenceScreen(
+                    viewModel = viewModel,
+                    onOpenClass = { navController.navigate("class/$it/intelligence") },
+                    onOpenPupil = { navController.navigate("pupil/$it") },
                 )
             }
             composable(ROUTE_CLASSES) {
@@ -198,6 +251,8 @@ private fun MainShell(viewModel: TinyViewModel) {
                     onBack = { navController.popBackStack() },
                     onAttendance = { navController.navigate("attendance/$classId") },
                     onProgress = { navController.navigate("progress/$it") },
+                    onIntelligence = { navController.navigate("class/$classId/intelligence") },
+                    onPupilProfile = { navController.navigate("pupil/$it") },
                 )
             }
             composable(
@@ -258,6 +313,8 @@ private fun MainShell(viewModel: TinyViewModel) {
                     viewModel = viewModel,
                     onOpenSync = { navController.navigate(ROUTE_SYNC) },
                     onOpenHelp = { navController.navigate(ROUTE_HELP) },
+                    onOpenIntelligence = { navController.navigate(ROUTE_INTELLIGENCE) },
+                    onOpenFollowUps = { navController.navigate(ROUTE_FOLLOWUPS) },
                     onShowTeacherTour = { activeTour = TOUR_TEACHER },
                     onShowGuardianTour = { activeTour = TOUR_GUARDIAN },
                 )
@@ -320,5 +377,10 @@ private fun titleForRoute(route: String?): String = when (route) {
     ROUTE_SETTINGS -> stringResource(R.string.settings_title)
     ROUTE_SYNC -> stringResource(R.string.sync_center_title)
     ROUTE_HELP -> stringResource(R.string.help_title)
+    ROUTE_PUPILS -> stringResource(R.string.pupil_directory)
+    ROUTE_PUPIL -> stringResource(R.string.pupil_profile)
+    ROUTE_CLASS_INTELLIGENCE -> stringResource(R.string.class_intelligence)
+    ROUTE_FOLLOWUPS -> stringResource(R.string.open_followups)
+    ROUTE_INTELLIGENCE -> stringResource(R.string.intelligence_title)
     else -> stringResource(R.string.app_name)
 }

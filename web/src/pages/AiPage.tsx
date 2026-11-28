@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icon';
 import { Button, Card, PageHeader, Pill } from '../components/ui';
 import { aiModes, browserAiAvailability, generateTeachingStrategy, type AiMode, type AiResult } from '../ai/service';
@@ -42,6 +43,12 @@ export function AiPage() {
         subtitle={t('ai_subtitle')}
         actions={<Button onClick={() => void generate()} disabled={busy}><Icon name="spark" size={17} /> {busy ? t('ai_thinking') : t('ai_generate')}</Button>}
       />
+
+      <Card className="evidence-plan-card">
+        <div className="card-heading"><div><div className="eyebrow">{t('nav_insights')}</div><h3>{t('intelligence_title')}</h3></div><Pill tone="forest">{t('evidence_summary')}</Pill></div>
+        <p className="muted">{t('intelligence_subtitle')}</p>
+        <div className="button-row"><Link to="/intelligence"><Button>{t('intelligence_title')}</Button></Link><Link to="/pupils"><Button variant="secondary">{t('pupil_directory')}</Button></Link><Link to="/followups"><Button variant="ghost">{t('open_followups')}</Button></Link></div>
+      </Card>
 
       <div className="two-column wide-left">
         <Card className="ai-card">

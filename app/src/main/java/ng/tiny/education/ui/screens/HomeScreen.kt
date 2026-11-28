@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.List
 import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
@@ -35,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ng.tiny.education.R
 import ng.tiny.education.core.database.ClassroomEntity
+import ng.tiny.education.core.intelligence.PupilIntelligenceStatus
 import ng.tiny.education.ui.TinyViewModel
 import ng.tiny.education.ui.components.InfoBanner
 import ng.tiny.education.ui.components.PaperCard
@@ -60,12 +63,20 @@ fun HomeScreen(
     onOpenLesson: () -> Unit,
     onOpenSync: () -> Unit,
     onShowTour: () -> Unit,
+    onOpenPupils: () -> Unit,
+    onOpenIntelligence: () -> Unit,
+    onOpenFollowUps: () -> Unit,
+    onOpenPupil: (String) -> Unit,
 ) {
     val workspace by viewModel.workspace.collectAsStateWithLifecycle()
     val classes by viewModel.classes.collectAsStateWithLifecycle()
     val pupilCount by viewModel.pupilCount.collectAsStateWithLifecycle()
     val pending by viewModel.pendingOutboxCount.collectAsStateWithLifecycle()
     val unread by viewModel.unreadMessageCount.collectAsStateWithLifecycle()
+    val directory by viewModel.pupilDirectory.collectAsStateWithLifecycle()
+    val followUps by viewModel.followUps.collectAsStateWithLifecycle()
+    val attention = directory.filter { it.status == PupilIntelligenceStatus.NEEDS_ATTENTION }
+    val openFollowUps = followUps.count { it.status == "open" }
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val today = remember { LocalDate.now() }
     val locale = LocalConfiguration.current.locales[0]
@@ -132,6 +143,39 @@ fun HomeScreen(
         }
 
         item {
+            PaperCard(onClick = onOpenIntelligence) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(stringResource(R.string.pupils_attention), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                            Spacer(Modifier.width(8.dp))
+                            StatusPill("${attention.size}", if (attention.isEmpty()) TinyForest else TinyTomato)
+                        }
+                        Text(
+                            if (attention.isEmpty()) stringResource(R.string.no_open_followups) else attention.take(3).joinToString(", ") { it.pupil.displayName },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Text(
+                            "$openFollowUps ${stringResource(R.string.open_followups).lowercase()} · ${stringResource(R.string.honest_scope)}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TinyCobalt,
+                        )
+                    }
+                    Text(stringResource(R.string.nav_insights), style = MaterialTheme.typography.labelLarge, color = TinyForest)
+                }
+                if (attention.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        attention.take(3).forEach { profile ->
+                            TinySecondaryButton(profile.pupil.displayName, { onOpenPupil(profile.pupil.id) })
+                        }
+                    }
+                }
+            }
+        }
+
+        item {
             SectionHeading(
                 title = stringResource(R.string.home_quick_actions),
                 subtitle = stringResource(R.string.home_today),
@@ -154,6 +198,27 @@ fun HomeScreen(
                     icon = Icons.Outlined.Star,
                     tint = TinyCobalt,
                     onClick = onOpenLesson,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                QuickAction(
+                    title = stringResource(R.string.pupil_directory),
+                    subtitle = stringResource(R.string.pupil_directory_subtitle),
+                    icon = Icons.Outlined.Person,
+                    tint = TinyCobalt,
+                    onClick = onOpenPupils,
+                    modifier = Modifier.weight(1f),
+                )
+                QuickAction(
+                    title = stringResource(R.string.followups),
+                    subtitle = "$openFollowUps ${stringResource(R.string.open_followups).lowercase()}",
+                    icon = Icons.Outlined.Check,
+                    tint = TinyTomato,
+                    onClick = onOpenFollowUps,
                     modifier = Modifier.weight(1f),
                 )
             }

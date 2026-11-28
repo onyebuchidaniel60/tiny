@@ -30,6 +30,9 @@ import type {
   PupilGuardianLink,
   WebSettings,
   Workspace,
+  Assessment,
+  FollowUp,
+  AiAnalysis,
 } from '../types';
 
 const id = (prefix: string) => `${prefix}_${crypto.randomUUID()}`;
@@ -50,7 +53,22 @@ interface StoreValue {
   saveLesson: (lesson: Omit<LessonPlan, 'id' | 'workspaceId' | 'updatedAt' | 'version'> & { id?: string }) => LessonPlan;
   saveProgress: (entry: Omit<ProgressEntry, 'id' | 'workspaceId' | 'updatedAt' | 'revision'> & { id?: string }, approve?: boolean) => ProgressEntry;
   approveProgress: (entryId: string) => void;
+  addAssessment: (input: {
+    classId: string;
+    pupilId: string;
+    subjectId: string;
+    objectiveId: string;
+    objectiveLabel: string;
+    score: number;
+    maxScore: number;
+    schoolDate: string;
+    teacherNote: string;
+  }) => Assessment;
+  addFollowUp: (input: Omit<FollowUp, 'id' | 'workspaceId' | 'createdAt' | 'status'> & { status?: FollowUp['status'] }) => FollowUp;
+  updateFollowUpStatus: (followUpId: string, status: FollowUp['status']) => void;
+  saveAiAnalysis: (analysis: AiAnalysis) => void;
   sendMessage: (conversationId: string, body: string) => void;
+  queueParentUpdate: (pupilId: string, body: string) => void;
   receiveGuardianMessage: (conversationId: string, body: string, broadcast?: boolean) => void;
   receiveTeacherMessage: (conversationId: string, body: string, broadcast?: boolean) => void;
   syncNow: () => Promise<void>;
@@ -335,6 +353,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         ...remote,
         outbox: current.outbox,
         settings: current.settings,
+        assessments: current.assessments,
+        followUps: current.followUps,
+        aiAnalyses: current.aiAnalyses,
         version: 1,
         workspace: remote.workspace ?? current.workspace,
       }));
@@ -550,6 +571,57 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setMessage(t('progress_approved'));
   };
 
+  const addAssessment: StoreValue['addAssessment'] = (input) => {
+    const assessment: Assessment = {
+      id: id('assessment'),
+      workspaceId: state.workspace.id,
+      ...input,
+      createdAt: now(),
+      updatedAt: now(),
+    };
+    update((current) => {
+      current.assessments.push(assessment);
+      return current;
+    });
+    setMessage(t('assessment_saved'));
+    return assessment;
+  };
+
+  const addFollowUp: StoreValue['addFollowUp'] = (input) => {
+    const followUp: FollowUp = {
+      id: id('followup'),
+      workspaceId: state.workspace.id,
+      ...input,
+      status: input.status ?? 'open',
+      createdAt: now(),
+    };
+    update((current) => {
+      current.followUps.push(followUp);
+      return current;
+    });
+    setMessage(t('followup_saved'));
+    return followUp;
+  };
+
+  const updateFollowUpStatus: StoreValue['updateFollowUpStatus'] = (followUpId, status) => {
+    update((current) => {
+      const item = current.followUps.find((candidate) => candidate.id === followUpId);
+      if (item) {
+        item.status = status;
+        item.completedAt = status === 'done' ? now() : undefined;
+      }
+      return current;
+    });
+    setMessage(status === 'done' ? t('followup_done') : t('followup_updated'));
+  };
+
+  const saveAiAnalysis: StoreValue['saveAiAnalysis'] = (analysis) => {
+    update((current) => {
+      current.aiAnalyses = [analysis, ...current.aiAnalyses].slice(0, 40);
+      return current;
+    });
+  };
+
   const sendMessage: StoreValue['sendMessage'] = (conversationId, body) => {
     const trimmed = body.trim();
     if (!trimmed) return;
@@ -589,6 +661,59 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       // BroadcastChannel is optional.
     }
     setMessage(t('reply_queued'));
+  };
+
+  const queueParentUpdate: StoreValue['queueParentUpdate'] = (pupilId, body) => {
+    const trimmed = body.trim();
+    if (!trimmed) return;
+    const pupil = state.pupils.find((item) => item.id === pupilId);
+    const link = state.links.find((item) => item.pupilId === pupilId && item.notificationEligible);
+    const guardian = state.guardians.find((item) => item.id === link?.guardianId);
+    if (!pupil || !guardian) {
+      setMessage(t('guardian_not_found'));
+      return;
+    }
+    let conversationId = state.conversations.find((item) => item.pupilId === pupilId && item.guardianId === guardian.id)?.id;
+    update((current) => {
+      if (!conversationId) {
+        conversationId = id('conversation');
+        current.conversations.push({
+          id: conversationId,
+          workspaceId: current.workspace.id,
+          guardianId: guardian.id,
+          pupilId,
+          classId: pupil.classId,
+          status: 'waiting_parent',
+          lastMessageAt: now(),
+          unread: 0,
+        });
+      }
+      const message: Message = {
+        id: id('msg'),
+        conversationId: conversationId!,
+        workspaceId: current.workspace.id,
+        direction: 'outbound',
+        body: trimmed,
+        status: 'queued',
+        provider: 'mock',
+        createdAt: now(),
+      };
+      current.messages.push(message);
+      const conversation = current.conversations.find((item) => item.id === conversationId);
+      if (conversation) {
+        conversation.status = 'waiting_parent';
+        conversation.lastMessageAt = message.createdAt;
+        conversation.unread = 0;
+      }
+      enqueue(current, 'message.reply', {
+        conversationId,
+        body: trimmed,
+        locale: guardian.preferredLocale,
+        clientMessageId: message.id,
+      });
+      return current;
+    });
+    setMessage(t('parent_draft_queued'));
   };
 
   const receiveGuardianMessage: StoreValue['receiveGuardianMessage'] = (conversationId, body, broadcast = true) => {
@@ -757,7 +882,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     saveLesson,
     saveProgress,
     approveProgress,
+    addAssessment,
+    addFollowUp,
+    updateFollowUpStatus,
+    saveAiAnalysis,
     sendMessage,
+    queueParentUpdate,
     receiveGuardianMessage,
     receiveTeacherMessage,
     syncNow,
