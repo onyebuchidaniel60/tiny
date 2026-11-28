@@ -1,6 +1,6 @@
 # Tiny AI Logic Hybrid Verification
 
-**Status (27 November 2026):** Cloud fallback verified; on-device Gemini Nano not verified because no supported physical device is available.
+**Status (28 November 2026):** Cloud fallback verified; evidence-backed pupil/class workflows added on Android and web. On-device Gemini Nano still not verified because no supported physical device is available.
 
 ## 1. Implementation review
 
@@ -25,6 +25,22 @@ Firebase.ai(
   - anything else → `Unknown inference source`
 - The mapping is covered by `AiInferenceSourceTest`.
 - The UI reports the device model status from `onDeviceExtension.checkStatus()`; it does not infer on-device use from configuration.
+
+### 1.1 Evidence-backed teaching tasks
+
+Both apps expose the same inference modes through Firebase AI Logic: `PREFER_ON_DEVICE`, `ONLY_IN_CLOUD`, `ONLY_ON_DEVICE` (Android and web diagnostics) and `PREFER_IN_CLOUD` where supported. The selected mode is recorded with the result, but the displayed source is always the SDK-reported inference source, never the request.
+
+Before any AI request, `IntelligenceEngine`/`intelligence.ts` computes attendance, assessment, observation, follow-up and class-gap facts deterministically. The AI prompt contains only de-identified aggregates and redacted observation text:
+
+- the pupil name and guardian names are replaced with “the pupil”;
+- phone numbers and emails are masked;
+- no guardian identifier, message body, photo or diagnosis is included;
+- the model is told to use only the supplied evidence and not to invent grades or events;
+- output is capped and treated as a teacher-review draft.
+
+The deterministic review, parent draft and lesson plan are always available without AI. If the model is unavailable, the app shows the deterministic template and marks it as a fallback. AI output never creates a parent message automatically: the teacher must inspect and approve the draft, and the approved message still enters the mock outbox.
+
+Diagnostics (`/intelligence` on web, Intelligence tab on Android) show the requested mode, actual SDK source, duration, evidence fingerprint and fallback flag. AI analyses are stored locally with their evidence IDs so a teacher can see what supported a result.
 
 ## 2. Evidence
 

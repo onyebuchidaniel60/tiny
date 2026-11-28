@@ -82,6 +82,8 @@ Messages must be safe and non-enumerating. Do not reveal whether an untrusted ph
 
 The following names are callable function names (not REST paths). Every mutation takes the common envelope unless noted. Typed request schemas use Zod in Functions; response fields are stable and versioned.
 
+**Implementation status of this catalogue:** the callables exported by `functions/src/index.ts` today are `createWorkspace`, `createInvitation`, `acceptInvitation`, `createClassroom`, `registerPupil`, `upsertGuardian`, `linkGuardianToPupil`, `requestGuardianVerification`, `verifyGuardianCode`, `submitAttendanceSession`, `createProgressEntry`, `approveProgressEntry`, `sendTeacherMessage`, `recordAssessment`, `upsertLesson`, `upsertFollowUp`, `updateFollowUpStatus` and `syncCommands`, plus the SMS webhooks and weekly-digest scheduler. Rows for functions such as `revokeMembership`, `updatePupil`, `correctAttendanceEntry`, pull-change endpoints or `getAiUsageStatus` are roadmap contracts, not current exports; clients must not call them.
+
 | Callable | Actor | Purpose | Idempotent / special |
 |---|---|---|---|
 | `createWorkspace` | Auth teacher | Create school or independent workspace and owner membership atomically | Required idempotency key |
@@ -108,6 +110,10 @@ The following names are callable function names (not REST paths). Every mutation
 | `updateProgressEntry` | Author/assigned teacher/admin | Revise draft/approved entry | `expectedVersion`; resets approval |
 | `approveProgressEntry` | Authoring teacher/admin | Approve current revision for parent sharing | Required; audit |
 | `withdrawProgressEntry` | Author/admin | Withdraw from future sharing | Required; audit |
+| `recordAssessment` | Assigned teacher/admin | Record a factual score for one pupil/objective/date | `expectedVersion` on update; pupil must be enrolled |
+| `upsertLesson` | Assigned teacher/admin | Create or edit a 5E lesson plan | `expectedVersion` |
+| `upsertFollowUp` | Assigned teacher/admin | Create or edit a teacher follow-up | `expectedVersion` |
+| `updateFollowUpStatus` | Assigned teacher/admin | Mark a follow-up open/done/dismissed | Class access resolved from the record |
 | `sendTeacherMessage` | Authorized teacher/admin | Queue outbound reply to a known conversation | Idempotent; provider job only |
 | `resolveConversation` | Authorized teacher/admin | Resolve/reopen conversation | Required |
 | `createSchoolAnnouncement` | School admin | Create approved digest announcement | Idempotent; MVP may omit UI if no time |
@@ -272,7 +278,9 @@ Request `payload`:
 
 Max 20. Server processes independently and returns per-command results. One rejected item must not silently cause the client to assume every command failed or succeeded. Any command type not explicitly allowlisted is rejected.
 
-Implemented command types: `pupil.register`, `attendance.submit`, `progress.upsert`, `progress.approve`, `message.reply`. Each command must carry the complete domain payload (for example attendance `entries`, or the progress observation fields), not just a local row id. Accepted commands receive a workspace receipt; a replayed accepted key returns `alreadyApplied`. Permanent validation/permission failures return `rejected` or `conflict`; provider/transient failures return `retryable` without a terminal receipt.
+Implemented command types: `class.create`, `pupil.register`, `guardian.upsert`, `guardian.link`, `guardian.verify`, `attendance.submit`, `progress.upsert`, `progress.approve`, `message.reply`, `assessment.record`, `lesson.upsert`, `followup.upsert`, `followup.status`. Each command must carry the complete domain payload (for example attendance `entries`, the progress observation fields, or a full assessment score), not just a local row id. Accepted commands receive a workspace receipt; a replayed accepted key returns `alreadyApplied`. Permanent validation/permission failures return `rejected` or `conflict`; provider/transient failures return `retryable` without a terminal receipt.
+
+Versioned commands: progress uses a server revision; `assessment.record`, `lesson.upsert` and `followup.upsert` accept `expectedVersion` in their payload. A stale value returns `conflict` and leaves the stored record unchanged. A second attendance register for the same class/date is also a conflict.
 
 ## 4. Webhook contracts
 

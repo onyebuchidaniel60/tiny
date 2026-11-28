@@ -150,6 +150,62 @@ const approveProgressCommand = workspaceCommand.extend({
   payload: z.object({ progressEntryId: z.string().min(3) }),
 });
 
+const assessmentCommand = workspaceCommand.extend({
+  payload: z.object({
+    assessmentId: z.string().regex(/^assessment_[A-Za-z0-9-]{6,90}$/).optional(),
+    classId: z.string().min(3),
+    pupilId: z.string().min(3),
+    subjectId: z.string().min(1).max(80),
+    objectiveId: z.string().min(1).max(80),
+    objectiveLabel: z.string().min(1).max(160),
+    score: z.number().nonnegative().max(1000),
+    maxScore: z.number().positive().max(1000),
+    schoolDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    teacherNote: z.string().max(300).optional(),
+    expectedVersion: z.number().int().positive().optional().nullable(),
+  }),
+});
+
+const lessonCommand = workspaceCommand.extend({
+  payload: z.object({
+    lessonId: z.string().regex(/^lesson_[A-Za-z0-9-]{3,90}$/).optional(),
+    classId: z.string().min(3),
+    gradeLevel: z.string().min(2).max(8),
+    subjectId: z.string().min(1).max(80),
+    title: z.string().min(1).max(160),
+    objective: z.string().max(500).default(''),
+    engage: z.string().max(1000).default(''),
+    explore: z.string().max(1000).default(''),
+    explain: z.string().max(1000).default(''),
+    elaborate: z.string().max(1000).default(''),
+    evaluate: z.string().max(1000).default(''),
+    materials: z.string().max(500).default(''),
+    status: z.enum(['draft', 'ready']).default('draft'),
+    expectedVersion: z.number().int().positive().optional().nullable(),
+  }),
+});
+
+const followUpCommand = workspaceCommand.extend({
+  payload: z.object({
+    followUpId: z.string().regex(/^followup_[A-Za-z0-9-]{6,90}$/).optional(),
+    classId: z.string().min(3),
+    pupilId: z.string().min(3).optional(),
+    title: z.string().min(1).max(160),
+    detail: z.string().max(500).default(''),
+    dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    source: z.enum(['attendance', 'assessment', 'observation', 'message', 'manual', 'ai']).default('manual'),
+    sourceId: z.string().max(120).optional(),
+    expectedVersion: z.number().int().positive().optional().nullable(),
+  }),
+});
+
+const followUpStatusCommand = workspaceCommand.extend({
+  payload: z.object({
+    followUpId: z.string().min(3),
+    status: z.enum(['open', 'done', 'dismissed']),
+  }),
+});
+
 const messageCommand = workspaceCommand.extend({
   payload: z.object({
     conversationId: z.string().min(3),
@@ -842,6 +898,186 @@ export const sendTeacherMessage = onCall(callableOptions, wrap(async (request) =
   return { ok: true, outcome: 'accepted', messageId, status: 'queued', provider: 'mock' };
 }));
 
+export const recordAssessment = onCall(callableOptions, wrap(async (request) => {
+  const uid = requireAuth(request);
+  const command = parse(assessmentCommand, request.data);
+  await requireClassAccess(command.workspaceId, uid, command.payload.classId);
+  const workspaceRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId);
+  const classRef = workspaceRef.collection(COLLECTIONS.classrooms).doc(command.payload.classId);
+  const pupilRef = workspaceRef.collection(COLLECTIONS.pupils).doc(command.payload.pupilId);
+  const [classSnap, pupilSnap] = await Promise.all([classRef.get(), pupilRef.get()]);
+  if (!classSnap.exists) throw new DomainError('RESOURCE_NOT_FOUND', 'Class not found.');
+  if (!pupilSnap.exists || asRecord(pupilSnap.data()).classId !== command.payload.classId) {
+    throw new DomainError('VALIDATION_FAILED', 'This pupil is not enrolled in the selected class.');
+  }
+  if (command.payload.score > command.payload.maxScore) {
+    throw new DomainError('VALIDATION_FAILED', 'The assessment score cannot exceed the maximum score.');
+  }
+  const assessmentId = command.payload.assessmentId ?? `assessment_${randomUUID()}`;
+  const entryRef = workspaceRef.collection(COLLECTIONS.assessments).doc(assessmentId);
+  const existing = await entryRef.get();
+  if (existing.exists && (
+    asRecord(existing.data()).classId !== command.payload.classId ||
+    asRecord(existing.data()).pupilId !== command.payload.pupilId
+  )) {
+    throw new DomainError('VERSION_CONFLICT', 'This assessment id already belongs to another pupil or class.');
+  }
+  const currentVersion = existing.exists ? Number(asRecord(existing.data()).version ?? 1) : 0;
+  const expectedVersion = command.payload.expectedVersion ?? null;
+  if (existing.exists && expectedVersion !== null && currentVersion !== expectedVersion) {
+    throw new DomainError('VERSION_CONFLICT', 'Assessment changed on another device; refresh and retry.');
+  }
+  await db.runTransaction(async (transaction) => {
+    const fresh = await transaction.get(entryRef);
+    const freshVersion = fresh.exists ? Number(asRecord(fresh.data()).version ?? 1) : 0;
+    if (fresh.exists && expectedVersion !== null && freshVersion !== expectedVersion) {
+      throw new DomainError('VERSION_CONFLICT', 'Assessment changed on another device; refresh and retry.');
+    }
+    const now = new Date();
+    transaction.set(entryRef, {
+      assessmentId,
+      workspaceId: command.workspaceId,
+      classId: command.payload.classId,
+      pupilId: command.payload.pupilId,
+      subjectId: command.payload.subjectId,
+      objectiveId: command.payload.objectiveId,
+      objectiveLabel: command.payload.objectiveLabel,
+      score: command.payload.score,
+      maxScore: command.payload.maxScore,
+      schoolDate: command.payload.schoolDate,
+      teacherNote: command.payload.teacherNote ?? '',
+      recordedByUid: fresh.exists ? asRecord(fresh.data()).recordedByUid ?? uid : uid,
+      createdAt: fresh.exists ? asRecord(fresh.data()).createdAt : now,
+      updatedAt: now,
+      version: freshVersion + 1,
+    });
+  });
+  await audit(db, command.workspaceId, 'assessment.recorded', 'assessment', assessmentId, 'Assessment recorded by teacher.', uid);
+  return { ok: true, outcome: 'accepted', assessmentId, version: currentVersion + 1 };
+}));
+
+export const upsertLesson = onCall(callableOptions, wrap(async (request) => {
+  const uid = requireAuth(request);
+  const command = parse(lessonCommand, request.data);
+  await requireClassAccess(command.workspaceId, uid, command.payload.classId);
+  const workspaceRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId);
+  const classSnap = await workspaceRef.collection(COLLECTIONS.classrooms).doc(command.payload.classId).get();
+  if (!classSnap.exists) throw new DomainError('RESOURCE_NOT_FOUND', 'Class not found.');
+  const lessonId = command.payload.lessonId ?? `lesson_${randomUUID()}`;
+  const lessonRef = workspaceRef.collection(COLLECTIONS.lessonPlans).doc(lessonId);
+  const existing = await lessonRef.get();
+  if (existing.exists && asRecord(existing.data()).classId !== command.payload.classId) {
+    throw new DomainError('VERSION_CONFLICT', 'This lesson id already belongs to another class.');
+  }
+  const currentVersion = existing.exists ? Number(asRecord(existing.data()).version ?? 1) : 0;
+  const expectedVersion = command.payload.expectedVersion ?? null;
+  if (existing.exists && expectedVersion !== null && currentVersion !== expectedVersion) {
+    throw new DomainError('VERSION_CONFLICT', 'Lesson changed on another device; refresh and retry.');
+  }
+  await db.runTransaction(async (transaction) => {
+    const fresh = await transaction.get(lessonRef);
+    const freshVersion = fresh.exists ? Number(asRecord(fresh.data()).version ?? 1) : 0;
+    if (fresh.exists && expectedVersion !== null && freshVersion !== expectedVersion) {
+      throw new DomainError('VERSION_CONFLICT', 'Lesson changed on another device; refresh and retry.');
+    }
+    const now = new Date();
+    transaction.set(lessonRef, {
+      lessonId,
+      workspaceId: command.workspaceId,
+      classId: command.payload.classId,
+      gradeLevel: command.payload.gradeLevel,
+      subjectId: command.payload.subjectId,
+      title: command.payload.title,
+      objective: command.payload.objective,
+      engage: command.payload.engage,
+      explore: command.payload.explore,
+      explain: command.payload.explain,
+      elaborate: command.payload.elaborate,
+      evaluate: command.payload.evaluate,
+      materials: command.payload.materials,
+      status: command.payload.status,
+      createdByUid: fresh.exists ? asRecord(fresh.data()).createdByUid ?? uid : uid,
+      createdAt: fresh.exists ? asRecord(fresh.data()).createdAt : now,
+      updatedAt: now,
+      version: freshVersion + 1,
+    });
+  });
+  await audit(db, command.workspaceId, 'lesson.saved', 'lesson_plan', lessonId, 'Lesson plan saved by teacher.', uid);
+  return { ok: true, outcome: 'accepted', lessonId, version: currentVersion + 1 };
+}));
+
+export const upsertFollowUp = onCall(callableOptions, wrap(async (request) => {
+  const uid = requireAuth(request);
+  const command = parse(followUpCommand, request.data);
+  await requireClassAccess(command.workspaceId, uid, command.payload.classId);
+  const workspaceRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId);
+  if (command.payload.pupilId) {
+    const pupilSnap = await workspaceRef.collection(COLLECTIONS.pupils).doc(command.payload.pupilId).get();
+    if (!pupilSnap.exists || asRecord(pupilSnap.data()).classId !== command.payload.classId) {
+      throw new DomainError('VALIDATION_FAILED', 'This pupil is not enrolled in the selected class.');
+    }
+  }
+  const followUpId = command.payload.followUpId ?? `followup_${randomUUID()}`;
+  const ref = workspaceRef.collection(COLLECTIONS.followUps).doc(followUpId);
+  const existing = await ref.get();
+  if (existing.exists && asRecord(existing.data()).classId !== command.payload.classId) {
+    throw new DomainError('VERSION_CONFLICT', 'This follow-up id already belongs to another class.');
+  }
+  const currentVersion = existing.exists ? Number(asRecord(existing.data()).version ?? 1) : 0;
+  const expectedVersion = command.payload.expectedVersion ?? null;
+  if (existing.exists && expectedVersion !== null && currentVersion !== expectedVersion) {
+    throw new DomainError('VERSION_CONFLICT', 'Follow-up changed on another device; refresh and retry.');
+  }
+  await db.runTransaction(async (transaction) => {
+    const fresh = await transaction.get(ref);
+    const freshVersion = fresh.exists ? Number(asRecord(fresh.data()).version ?? 1) : 0;
+    if (fresh.exists && expectedVersion !== null && freshVersion !== expectedVersion) {
+      throw new DomainError('VERSION_CONFLICT', 'Follow-up changed on another device; refresh and retry.');
+    }
+    const prior = fresh.exists ? asRecord(fresh.data()) : null;
+    const now = new Date();
+    transaction.set(ref, {
+      followUpId,
+      workspaceId: command.workspaceId,
+      classId: command.payload.classId,
+      pupilId: command.payload.pupilId ?? null,
+      title: command.payload.title,
+      detail: command.payload.detail,
+      dueDate: command.payload.dueDate,
+      status: prior?.status ?? 'open',
+      source: command.payload.source,
+      sourceId: command.payload.sourceId ?? null,
+      completedAt: prior?.completedAt ?? null,
+      createdByUid: prior?.createdByUid ?? uid,
+      createdAt: prior?.createdAt ?? now,
+      updatedAt: now,
+      version: freshVersion + 1,
+    });
+  });
+  await audit(db, command.workspaceId, 'followup.saved', 'follow_up', followUpId, 'Teacher follow-up saved.', uid);
+  return { ok: true, outcome: 'accepted', followUpId, version: currentVersion + 1 };
+}));
+
+export const updateFollowUpStatus = onCall(callableOptions, wrap(async (request) => {
+  const uid = requireAuth(request);
+  const command = parse(followUpStatusCommand, request.data);
+  const workspaceRef = db.collection(COLLECTIONS.workspaces).doc(command.workspaceId);
+  const ref = workspaceRef.collection(COLLECTIONS.followUps).doc(command.payload.followUpId);
+  const existing = await ref.get();
+  if (!existing.exists) throw new DomainError('RESOURCE_NOT_FOUND', 'Follow-up not found.');
+  const classId = String(asRecord(existing.data()).classId);
+  await requireClassAccess(command.workspaceId, uid, classId);
+  const status = command.payload.status;
+  await ref.update({
+    status,
+    completedAt: status === 'done' ? new Date() : null,
+    updatedAt: new Date(),
+    version: Number(asRecord(existing.data()).version ?? 1) + 1,
+  });
+  await audit(db, command.workspaceId, `followup.${status}`, 'follow_up', command.payload.followUpId, 'Teacher follow-up status updated.', uid);
+  return { ok: true, outcome: 'accepted', followUpId: command.payload.followUpId, status };
+}));
+
 /**
  * Applies supported offline commands through the same authenticated,
  * membership-checked callable logic used by the direct endpoints. Each command
@@ -864,6 +1100,10 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
     'guardian.upsert': (upsertGuardian as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
     'guardian.link': (linkGuardianToPupil as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
     'guardian.verify': (verifyGuardianCode as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'assessment.record': (recordAssessment as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'lesson.upsert': (upsertLesson as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'followup.upsert': (upsertFollowUp as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
+    'followup.status': (updateFollowUpStatus as unknown as { run: (child: CallableRequest) => Promise<unknown> }).run,
   };
 
   const results = [] as Array<Record<string, unknown>>;
@@ -910,6 +1150,9 @@ export const syncCommands = onCall(callableOptions, wrap(async (request) => {
             asRecord(data).classId ??
             asRecord(data).guardianId ??
             asRecord(data).linkId ??
+            asRecord(data).assessmentId ??
+            asRecord(data).lessonId ??
+            asRecord(data).followUpId ??
             '',
           )
         : '';

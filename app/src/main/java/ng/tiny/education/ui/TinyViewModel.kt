@@ -245,7 +245,8 @@ class TinyViewModel(private val container: AppContainer) : ViewModel() {
     }
 
     fun updateFollowUpStatus(followUpId: String, status: String) = viewModelScope.launch {
-        repository.updateFollowUpStatus(followUpId, status)
+        val ws = workspace.value ?: return@launch
+        repository.updateFollowUpStatus(ws.id, followUpId, status)
             .onSuccess { _message.value = UiMessage(if (status == "done") R.string.followup_done else R.string.followup_updated) }
             .onFailure { _message.value = UiMessage(R.string.error_generic) }
     }

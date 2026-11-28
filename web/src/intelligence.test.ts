@@ -28,6 +28,9 @@ describe('shared intelligence engine', () => {
     expect(amina?.status).toBe('strong');
     expect(musa?.status).toBe('needs_attention');
     expect(musa?.nextActions).toContain('action_contact_family');
+    const ngozi = buildPupilIntelligence(state, 'pupil_ngozi');
+    expect(ngozi?.status).toBe('improving');
+    expect(ngozi?.assessments.trend).toBeGreaterThanOrEqual(8);
   });
 
   it('identifies a class gap without turning it into an individual fact', () => {

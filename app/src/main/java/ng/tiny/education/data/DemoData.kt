@@ -170,7 +170,7 @@ object DemoData {
         val dates = listOf("2026-11-06", "2026-11-13", "2026-11-20")
         assessment(DemoIds.AMINA, DemoIds.CLASS_P4, "basic_science", "water_sources", "Water sources and uses", listOf(82, 88, 90), dates)
         assessment(DemoIds.MUSA, DemoIds.CLASS_P4, "basic_science", "water_sources", "Water sources and uses", listOf(42, 51, 60), dates)
-        assessment(DemoIds.NGOZI, DemoIds.CLASS_P4, "basic_science", "plant_parts", "Plant parts and functions", listOf(74, 70, 68), dates)
+        assessment(DemoIds.NGOZI, DemoIds.CLASS_P4, "basic_science", "plant_parts", "Plant parts and functions", listOf(62, 70, 78), dates)
         assessment(DemoIds.TUNDE, DemoIds.CLASS_P4, "basic_science", "plant_parts", "Plant parts and functions", listOf(35, 31, 38), dates)
         assessment(DemoIds.FATIMA, DemoIds.CLASS_P5, "social_studies", "map_reading", "Map reading and directions", listOf(80, 84, 86), dates)
         assessment(DemoIds.EMEKA, DemoIds.CLASS_P5, "social_studies", "map_reading", "Map reading and directions", listOf(38, 44, 47), dates)

@@ -410,6 +410,130 @@ describe('Tiny backend emulator E2E', () => {
     expect(rejectedResults[0].errorCode).toBe('COMMAND_NOT_SUPPORTED');
   });
 
+  it('syncs lesson, assessment and follow-up records and rejects a stale assessment version', async () => {
+    const base = {
+      schemaVersion: 1,
+    };
+    const assessmentPayload = {
+      assessmentId: 'assessment_sync0001',
+      classId,
+      pupilId: pupilA,
+      subjectId: 'basic_science',
+      objectiveId: 'water_sources',
+      objectiveLabel: 'Water sources and uses',
+      score: 72,
+      maxScore: 100,
+      schoolDate: '2026-11-26',
+      teacherNote: 'Recorded during the evidence sync test.',
+    };
+    const commands = [
+      {
+        ...base,
+        idempotencyKey: 'sync-lesson-upsert-0001',
+        commandType: 'lesson.upsert',
+        payload: {
+          lessonId: 'lesson_sync0001',
+          classId,
+          gradeLevel: 'P4',
+          subjectId: 'basic_science',
+          title: 'Evidence-informed water lesson',
+          objective: 'Re-teach water sources with local examples.',
+          engage: 'Show a cup of water.',
+          explore: 'Pairs sort sources and uses.',
+          explain: 'Model source, use, clean and safe.',
+          elaborate: 'Plan one safe-water habit.',
+          evaluate: 'Exit ticket with two sources.',
+          materials: 'Cup, picture cards, chalkboard',
+          status: 'draft',
+        },
+      },
+      {
+        ...base,
+        idempotencyKey: 'sync-assessment-0001',
+        commandType: 'assessment.record',
+        payload: assessmentPayload,
+      },
+      {
+        ...base,
+        idempotencyKey: 'sync-followup-0001',
+        commandType: 'followup.upsert',
+        payload: {
+          followUpId: 'followup_sync0001',
+          classId,
+          pupilId: pupilA,
+          title: 'Check water-source understanding',
+          detail: 'Use a concrete sorting activity and record a new observation.',
+          dueDate: '2026-12-02',
+          source: 'assessment',
+          sourceId: 'assessment_sync0001',
+        },
+      },
+      {
+        ...base,
+        idempotencyKey: 'sync-followup-status-0001',
+        commandType: 'followup.status',
+        payload: { followUpId: 'followup_sync0001', status: 'done' },
+      },
+    ];
+
+    const applied = await syncFn({
+      workspaceId,
+      idempotencyKey: 'sync-evidence-batch-e2e-0001',
+      schemaVersion: 1,
+      payload: { commands },
+    }, auth);
+    const appliedResults = applied.results as Array<Record<string, unknown>>;
+    expect(appliedResults.map((item) => item.outcome)).toEqual(['accepted', 'accepted', 'accepted', 'accepted']);
+
+    const workspaceRef = db.collection('workspaces').doc(workspaceId);
+    const lesson = await workspaceRef.collection('lessonPlans').doc('lesson_sync0001').get();
+    expect(lesson.data()?.title).toBe('Evidence-informed water lesson');
+    expect(lesson.data()?.version).toBe(1);
+    const assessment = await workspaceRef.collection('assessments').doc('assessment_sync0001').get();
+    expect(assessment.data()?.score).toBe(72);
+    expect(assessment.data()?.version).toBe(1);
+    const followUp = await workspaceRef.collection('followUps').doc('followup_sync0001').get();
+    expect(followUp.data()?.status).toBe('done');
+    expect(followUp.data()?.completedAt).toBeTruthy();
+
+    const updatedAssessment = await syncFn({
+      workspaceId,
+      idempotencyKey: 'sync-evidence-batch-e2e-0002',
+      schemaVersion: 1,
+      payload: {
+        commands: [{
+          ...base,
+          idempotencyKey: 'sync-assessment-update-0001',
+          commandType: 'assessment.record',
+          payload: { ...assessmentPayload, score: 78, expectedVersion: 1 },
+        }],
+      },
+    }, auth);
+    expect((updatedAssessment.results as Array<Record<string, unknown>>)[0].outcome).toBe('accepted');
+    const refreshed = await workspaceRef.collection('assessments').doc('assessment_sync0001').get();
+    expect(refreshed.data()?.score).toBe(78);
+    expect(refreshed.data()?.version).toBe(2);
+
+    const staleAssessment = await syncFn({
+      workspaceId,
+      idempotencyKey: 'sync-evidence-batch-e2e-0003',
+      schemaVersion: 1,
+      payload: {
+        commands: [{
+          ...base,
+          idempotencyKey: 'sync-assessment-stale-0001',
+          commandType: 'assessment.record',
+          payload: { ...assessmentPayload, score: 40, expectedVersion: 1 },
+        }],
+      },
+    }, auth);
+    const staleResult = (staleAssessment.results as Array<Record<string, unknown>>)[0];
+    expect(staleResult.outcome).toBe('conflict');
+    const afterStale = await workspaceRef.collection('assessments').doc('assessment_sync0001').get();
+    expect(afterStale.data()?.score).toBe(78);
+    expect(afterStale.data()?.version).toBe(2);
+  });
+
   it('verifies a signed inbound SMS, routes it and deduplicates the event', async () => {
     const payload = {
       eventId: 'evt-e2e-0001',

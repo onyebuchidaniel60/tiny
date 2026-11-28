@@ -54,6 +54,11 @@ The preview also offers **Continue in offline demo**, which uses the bundled syn
 | `/lessons` | 5E lesson list and local lesson creation |
 | `/lessons/:lessonId` | Editable 5E plan saved offline |
 | `/progress/:pupilId` | Teacher-authored observations, approval, home activity |
+| `/pupils` | Canonical pupil directory with evidence-derived status |
+| `/pupils/:pupilId` | Pupil evidence profile, assessments, follow-ups, AI review and parent draft |
+| `/classes/:classId/intelligence` | Class gaps, strengths, attention pupils and evidence-informed lesson planning |
+| `/followups` | Open/completed follow-ups and evidence-derived suggestions |
+| `/intelligence` | Cross-class intelligence, AI diagnostics and saved evidence analyses |
 | `/messages` | Guardian conversation inbox |
 | `/messages/:conversationId` | Conversation thread and queued teacher reply |
 | `/guardians` | Guardian endpoints, consent state, pupil links |
@@ -72,9 +77,12 @@ Verified journeys:
 6. Record progress, approve it locally and see the approval state and revision.
 7. Queue a teacher reply, open the guardian simulator, send a synthetic guardian message, and see it in the teacher conversation.
 8. Add a guardian and link one endpoint to multiple pupils.
-9. Go offline, confirm the offline banner, reload with the service worker active, and confirm local state survives.
-10. Generate an AI strategy and read the actual SDK source. The verified source in this environment was `Cloud Gemini`.
-11. Toggle large text and reduced motion; use the mobile bottom navigation and topbar Settings shortcut.
+9. Open a pupil profile, record an assessment, add a follow-up and confirm the deterministic status/evidence counts change.
+10. Open class intelligence, inspect the shared gap, generate an evidence-informed lesson, and edit the saved plan.
+11. Generate a pupil/class evidence review and a parent-update draft; confirm the source, duration, fallback flag and evidence summary are visible before approving.
+12. Go offline, confirm the offline banner, reload with the service worker active, and confirm local state survives.
+13. Generate an AI strategy and read the actual SDK source. The verified source in this environment was `Cloud Gemini`.
+14. Toggle large text and reduced motion; use the mobile bottom navigation and topbar Settings shortcut.
 
 ## 4. Architecture
 
@@ -132,7 +140,9 @@ The browser reads, after sign-in:
 
 - `users/{uid}/workspaces` for the workspace index.
 - `workspaces/{workspaceId}` and `workspaces/{workspaceId}/members/{uid}` through the rules-scoped session.
-- Classes, pupils, guardians, pupil-guardian links, lesson plans, progress entries, attendance sessions/entries, conversations and messages.
+- Classes, pupils, guardians, pupil-guardian links, lesson plans, progress entries, assessments, follow-ups, attendance sessions/entries, conversations and messages.
+
+The seed uses the canonical synthetic workspace documented in `shared/demo/CANONICAL_DATASET.md`. The deployed Firebase preview workspace predates that consolidation and remains a read-only legacy synthetic workspace; see `docs/CROSS_PLATFORM_SYNC.md` section 5. Offline demo mode always uses the canonical IDs.
 
 Firestore rules are unchanged. A signed-in user without active workspace membership cannot read the workspace. The browser never receives or uses an administrative service account.
 
@@ -337,15 +347,16 @@ No Cloud Functions were deployed. No billing, Blaze, live SMS, App Distribution 
 | Suite | Result |
 |---|---|
 | TypeScript | `npm run typecheck` passed |
-| Translation guard | 754 keys × 4 languages; 0 hardcoded UI strings |
-| Vitest unit/component | 23 passed, 0 failed (6 files) |
-| Production build | passed; PWA precache 7 entries |
+| Translation guard | 869 keys × 4 languages; 0 hardcoded UI strings |
+| Canonical dataset guard | 20 Android IDs shared with web; 8 pupils, 2 classes, 7 attendance dates |
+| Vitest unit/component | 29 passed, 0 failed (7 files) |
+| Production build | passed; PWA precache generated |
 | Playwright desktop | 12 passed, 1 skipped |
 | Playwright tablet | 12 passed, 1 skipped |
 | Playwright mobile | 12 passed, 1 skipped |
-| Live Firebase/AI check | 1 passed with `TINY_LIVE_FIREBASE=1` |
+| Live Firebase/AI check | manual only with `TINY_LIVE_FIREBASE=1` |
 | Axe serious/critical violations | 0 |
-| Android/backend regression | passed in CI run [46011216901](https://github.com/onyebuchidaniel60/tiny/actions/runs/46011216901) |
+| Latest web UI regression | 36 passed, 3 live tests skipped (2.0 minutes) |
 
 The Playwright suite covers:
 

@@ -125,7 +125,7 @@ export function seedState(): AppState {
       ...([
         ['pupil_amina', 'basic_science', 'water_sources', 'Water sources and uses', [82, 88, 90], ['2026-11-06', '2026-11-13', '2026-11-20']],
         ['pupil_musa', 'basic_science', 'water_sources', 'Water sources and uses', [42, 51, 60], ['2026-11-06', '2026-11-13', '2026-11-20']],
-        ['pupil_ngozi', 'basic_science', 'plant_parts', 'Plant parts and functions', [74, 70, 68], ['2026-11-06', '2026-11-13', '2026-11-20']],
+        ['pupil_ngozi', 'basic_science', 'plant_parts', 'Plant parts and functions', [62, 70, 78], ['2026-11-06', '2026-11-13', '2026-11-20']],
         ['pupil_tunde', 'basic_science', 'plant_parts', 'Plant parts and functions', [35, 31, 38], ['2026-11-06', '2026-11-13', '2026-11-20']],
       ] as const).flatMap(([pupilId, subjectId, objectiveId, objectiveLabel, scores, dates]) =>
         scores.map((score, index) => ({

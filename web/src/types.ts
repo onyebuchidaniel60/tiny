@@ -108,6 +108,7 @@ export interface Assessment {
   teacherNote: string;
   createdAt: string;
   updatedAt: string;
+  version?: number;
 }
 
 export type FollowUpStatus = 'open' | 'done' | 'dismissed';
@@ -126,6 +127,8 @@ export interface FollowUp {
   sourceId?: string;
   createdAt: string;
   completedAt?: string;
+  updatedAt?: string;
+  version?: number;
 }
 
 export type AiAnalysisScope = 'pupil' | 'class' | 'lesson' | 'parent_draft' | 'weekly';

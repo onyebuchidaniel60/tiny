@@ -8,6 +8,7 @@ import ng.tiny.education.core.database.ProgressEntryEntity
 import ng.tiny.education.core.database.PupilEntity
 import ng.tiny.education.core.model.AttendanceStatus
 import ng.tiny.education.core.model.ProgressIndicator
+import kotlin.math.roundToInt
 
 enum class PupilIntelligenceStatus {
     INSUFFICIENT,
@@ -114,7 +115,7 @@ object IntelligenceEngine {
             absent = absent,
             late = late,
             attended = attended,
-            rate = if (marked > 0) (attended * 100.0 / marked).toInt() else 0,
+            rate = if (marked > 0) (attended * 100.0 / marked).roundToInt() else 0,
             recentAbsences = pupilAttendance.takeLast(7).count { it.status == AttendanceStatus.ABSENT },
             consecutiveAbsences = consecutive,
             lastDate = pupilAttendance.lastOrNull()?.schoolDate,
@@ -126,9 +127,9 @@ object IntelligenceEngine {
         val later = scores.drop(midpoint).averageOrZero()
         val assessmentStats = AssessmentStats(
             count = pupilAssessments.size,
-            average = scores.averageOrZero().toInt(),
-            latest = scores.lastOrNull()?.toInt(),
-            trend = if (scores.size >= 2) (later - earlier).toInt() else 0,
+            average = scores.averageOrZero().roundToInt(),
+            latest = scores.lastOrNull()?.roundToInt(),
+            trend = if (scores.size >= 2) (later - earlier).roundToInt() else 0,
             belowSupport = pupilAssessments.filter { it.maxScore > 0 && it.score / it.maxScore < 0.5 },
             strong = pupilAssessments.filter { it.maxScore > 0 && it.score / it.maxScore >= 0.75 },
         )
@@ -238,7 +239,7 @@ object IntelligenceEngine {
             ClassGap(
                 objectiveId = id,
                 objectiveLabel = gap.label,
-                average = gap.scores.averageOrZero().toInt(),
+                average = gap.scores.averageOrZero().roundToInt(),
                 pupilsBelow = gap.scores.count { it < 50 },
                 supportObservations = gap.support,
             )
@@ -249,9 +250,9 @@ object IntelligenceEngine {
         return ClassIntelligence(
             classroom = classroom,
             pupilCount = pupils.size,
-            attendanceRate = if (classAttendance.isNotEmpty()) (attended * 100.0 / classAttendance.size).toInt() else 0,
+            attendanceRate = if (classAttendance.isNotEmpty()) (attended * 100.0 / classAttendance.size).roundToInt() else 0,
             markedAttendance = classAttendance.size,
-            assessmentAverage = average.toInt(),
+            assessmentAverage = average.roundToInt(),
             assessmentCount = classAssessments.size,
             observationCount = profiles.sumOf { it.observations.count },
             commonGaps = commonGaps,

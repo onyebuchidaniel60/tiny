@@ -93,6 +93,8 @@ Phase 0 intake is complete. The Android preview, Firebase client integration, pu
 - GitHub Actions Android build and App Distribution: `docs/CI_ANDROID_BUILD.md`
 - API contracts: `docs/API.md`
 - Database/data model: `docs/DATA_MODEL.md`
+- Canonical synthetic dataset (Android + web): `shared/demo/CANONICAL_DATASET.md`
+- Cross-platform data/synchronization contract: `docs/CROSS_PLATFORM_SYNC.md`
 - Security and privacy: `docs/SECURITY.md`
 - Tests and acceptance: `docs/TESTING.md`
 - Deployment and release: `docs/DEPLOYMENT.md`

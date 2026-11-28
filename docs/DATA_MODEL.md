@@ -169,6 +169,22 @@ Fields: `receiptId`, `provider`, `providerEventId`, `payloadHash`, `signatureVal
 
 Fields: `aiEventId`, `uid`, `workspaceId`, `taskType`, `requestedMode`, `actualInferenceSource`, `modelFamily`, `locale`, `inputLengthBucket`, `outputLengthBucket`, `status`, `createdAt`. No prompt or output content and no pupil identifiers. Use for cost/capability telemetry.
 
+### 2.27 `Assessment`
+
+Fields (implemented shared schema): `assessmentId`, `workspaceId`, `classId`, `pupilId`, `subjectId`, `objectiveId`, `objectiveLabel`, `score`, `maxScore`, `schoolDate`, `teacherNote`, `recordedByUid`, `createdAt`, `updatedAt`, `version`. Scores are teacher-entered factual classroom results, not AI grading. Unique logical key is the client-generated `assessmentId`; the pupil must be actively enrolled in the class. Updates use optimistic `expectedVersion`. On Android it is cached as `AssessmentEntity`; in Firestore it is `workspaces/{workspaceId}/assessments/{assessmentId}`.
+
+### 2.28 `FollowUp`
+
+Fields: `followUpId`, `workspaceId`, `classId`, optional `pupilId`, `title`, `detail`, `dueDate`, `status` (`open|done|dismissed`), `source` (`attendance|assessment|observation|message|manual|ai`), optional `sourceId`, `createdByUid`, optional `completedAt`, `createdAt`, `updatedAt`, `version`. Follow-ups are teacher workflow records derived from evidence or created manually. They never send a parent message automatically. Firestore collection: `workspaces/{workspaceId}/followUps`.
+
+### 2.29 `AIAnalysis`
+
+Fields: `analysisId`, `workspaceId`, `scope` (`pupil|class|lesson|parent_draft|weekly`), `task`, optional `pupilId`, optional `classId`, `evidenceFingerprint`, `evidenceIds[]`, `evidenceSummary`, `output`, `requestedMode`, `source` (SDK-reported), `durationMs`, `fallback`, `status` (`draft|approved|dismissed`), `createdAt`. This is a diagnostic record of a teacher-reviewed AI request. It is **device-local** on Android and web, not a shared authoritative collection, and never replaces a teacher observation or assessment. Prompts and raw model output are not written to production logs.
+
+### 2.30 Implementation mapping note
+
+The canonical cross-platform tables and field-name mappings are maintained in `docs/CROSS_PLATFORM_SYNC.md`. The MVP lesson implementation uses a single `subjectId`, free-text `title`/`objective` and the five 5E text fields rather than the originally sketched `topic` plus `objectiveIds[]` from a curriculum pack. This is a deliberate simplification inside the same lesson entity; curriculum-pack objective references remain a later enhancement. Any future change must update both the Android seed/entity and the web seed/type together, and pass `tools/check-canonical-dataset.mjs`.
+
 ## 3. Relationships
 
 ```text
@@ -183,6 +199,9 @@ Classroom 1 ── * LessonPlan
 Classroom 1 ── * AttendanceSession 1 ── * AttendanceEntry * ── 1 Pupil
 AttendanceEntry 1 ── * AttendanceAmendment
 Pupil 1 ── * ProgressEntry
+Pupil 1 ── * Assessment
+Pupil 1 ── * FollowUp (optional)
+Classroom 1 ── * FollowUp
 Guardian 1 ── * Conversation 1 ── * Message
 Guardian 1 ── * NotificationJob / WeeklyDigest
 Workspace 1 ── * AuditEvent / CommandReceipt / ProviderWebhookReceipt
@@ -213,6 +232,8 @@ workspaces/{workspaceId}
   attendanceAmendments/{amendmentId}
   progressEntries/{progressEntryId}
   progressEntries/{progressEntryId}/revisions/{revisionId}
+  assessments/{assessmentId}
+  followUps/{followUpId}
   conversations/{conversationId}
     messages/{messageId}
   notificationJobs/{jobId}

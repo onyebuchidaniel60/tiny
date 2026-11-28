@@ -87,6 +87,41 @@ function upsert<T extends { id: string }>(items: T[], item: T): T[] {
   return copy;
 }
 
+/**
+ * Remote is authoritative for saved records, but a local record that is still
+ * waiting in the outbox must remain visible and must not be silently replaced
+ * by an older remote copy. Unrelated remote records always survive the merge.
+ */
+function mergePending<T extends { id: string }>(
+  remote: T[],
+  local: T[],
+  pendingIds: Set<string>,
+): T[] {
+  const merged = new Map(remote.map((item) => [item.id, item]));
+  for (const item of local) {
+    if (pendingIds.has(item.id) || !merged.has(item.id)) merged.set(item.id, item);
+  }
+  return [...merged.values()];
+}
+
+function pendingEntityIds(outbox: OutboxCommand[]): Set<string> {
+  const ids = new Set<string>();
+  const keys = ['classId', 'pupilId', 'guardianId', 'lessonId', 'progressEntryId', 'assessmentId', 'followUpId', 'conversationId'];
+  for (const command of outbox) {
+    if (command.state !== 'pending' && command.state !== 'retryable' && command.state !== 'conflict') continue;
+    for (const key of keys) {
+      const value = command.payload[key];
+      if (typeof value === 'string' && value) ids.add(value);
+    }
+    if (command.commandType === 'attendance.submit') {
+      const classId = command.payload.classId;
+      const schoolDate = command.payload.schoolDate;
+      if (typeof classId === 'string' && typeof schoolDate === 'string') ids.add(`${classId}_${schoolDate}`);
+    }
+  }
+  return ids;
+}
+
 function remoteString(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
@@ -127,13 +162,15 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
     version: remoteNumber(data.version),
   };
 
-  const [classesSnap, pupilsSnap, guardiansSnap, linksSnap, lessonsSnap, progressSnap, conversationsSnap] = await Promise.all([
+  const [classesSnap, pupilsSnap, guardiansSnap, linksSnap, lessonsSnap, progressSnap, assessmentsSnap, followUpsSnap, conversationsSnap] = await Promise.all([
     getDocs(collection(db, 'workspaces', workspaceId, 'classes')),
     getDocs(collection(db, 'workspaces', workspaceId, 'pupils')),
     getDocs(collection(db, 'workspaces', workspaceId, 'guardians')),
     getDocs(collection(db, 'workspaces', workspaceId, 'pupilGuardianLinks')),
     getDocs(collection(db, 'workspaces', workspaceId, 'lessonPlans')),
     getDocs(collection(db, 'workspaces', workspaceId, 'progressEntries')),
+    getDocs(collection(db, 'workspaces', workspaceId, 'assessments')),
+    getDocs(collection(db, 'workspaces', workspaceId, 'followUps')),
     getDocs(collection(db, 'workspaces', workspaceId, 'conversations')),
   ]);
 
@@ -225,12 +262,53 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
       periodStart: remoteString(row.periodStart),
       periodEnd: remoteString(row.periodEnd),
       subjectId: remoteString(row.subjectId, 'basic_science'),
+      objectiveId: remoteString(row.objectiveId) || undefined,
       indicator: (['doing_well', 'developing', 'needs_support', 'not_assessed'].includes(row.indicator) ? row.indicator : 'developing') as ProgressEntry['indicator'],
       teacherNote: remoteString(row.teacherNote),
       homeActivity: remoteString(row.homeActivity),
       approvalStatus: row.approvalStatus === 'approved' ? 'approved' : 'draft',
       revision: remoteNumber(row.revision),
       updatedAt: remoteDate(row.updatedAt),
+    };
+  });
+
+  const assessments: Assessment[] = assessmentsSnap.docs.map((item) => {
+    const row = item.data();
+    return {
+      id: item.id,
+      workspaceId,
+      classId: remoteString(row.classId),
+      pupilId: remoteString(row.pupilId),
+      subjectId: remoteString(row.subjectId, 'basic_science'),
+      objectiveId: remoteString(row.objectiveId),
+      objectiveLabel: remoteString(row.objectiveLabel),
+      score: remoteNumber(row.score),
+      maxScore: remoteNumber(row.maxScore, 100),
+      schoolDate: remoteString(row.schoolDate),
+      teacherNote: remoteString(row.teacherNote),
+      createdAt: remoteDate(row.createdAt),
+      updatedAt: remoteDate(row.updatedAt),
+      version: remoteNumber(row.version, 1),
+    };
+  });
+
+  const followUps: FollowUp[] = followUpsSnap.docs.map((item) => {
+    const row = item.data();
+    return {
+      id: item.id,
+      workspaceId,
+      classId: remoteString(row.classId),
+      pupilId: remoteString(row.pupilId) || undefined,
+      title: remoteString(row.title),
+      detail: remoteString(row.detail),
+      dueDate: remoteString(row.dueDate),
+      status: (['open', 'done', 'dismissed'].includes(row.status) ? row.status : 'open') as FollowUp['status'],
+      source: (['attendance', 'assessment', 'observation', 'message', 'manual', 'ai'].includes(row.source) ? row.source : 'manual') as FollowUp['source'],
+      sourceId: remoteString(row.sourceId) || undefined,
+      createdAt: remoteDate(row.createdAt),
+      completedAt: row.completedAt ? remoteDate(row.completedAt) : undefined,
+      updatedAt: remoteDate(row.updatedAt),
+      version: remoteNumber(row.version, 1),
     };
   });
 
@@ -301,6 +379,8 @@ async function readRemote(uid: string): Promise<Partial<AppState> | null> {
     attendance,
     lessons,
     progress,
+    assessments,
+    followUps,
     conversations,
     messages,
     lastRemoteSyncAt: now(),
@@ -348,17 +428,27 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setMessage(t('storage_no_remote'));
         return;
       }
-      update((current) => ({
-        ...current,
-        ...remote,
-        outbox: current.outbox,
-        settings: current.settings,
-        assessments: current.assessments,
-        followUps: current.followUps,
-        aiAnalyses: current.aiAnalyses,
-        version: 1,
-        workspace: remote.workspace ?? current.workspace,
-      }));
+      update((current) => {
+        const pendingIds = pendingEntityIds(current.outbox);
+        return {
+          ...current,
+          ...remote,
+          classes: mergePending(remote.classes ?? [], current.classes, pendingIds),
+          pupils: mergePending(remote.pupils ?? [], current.pupils, pendingIds),
+          guardians: mergePending(remote.guardians ?? [], current.guardians, pendingIds),
+          links: mergePending(remote.links ?? [], current.links, pendingIds),
+          lessons: mergePending(remote.lessons ?? [], current.lessons, pendingIds),
+          progress: mergePending(remote.progress ?? [], current.progress, pendingIds),
+          assessments: mergePending(remote.assessments ?? [], current.assessments, pendingIds),
+          followUps: mergePending(remote.followUps ?? [], current.followUps, pendingIds),
+          attendance: mergePending(remote.attendance ?? [], current.attendance, pendingIds),
+          outbox: current.outbox,
+          settings: current.settings,
+          aiAnalyses: current.aiAnalyses,
+          version: 1,
+          workspace: remote.workspace ?? current.workspace,
+        };
+      });
       setMessage(t('storage_remote_loaded'));
     } catch {
       setMessage(t('storage_bootstrap_failed'));
@@ -514,15 +604,32 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   const saveLesson: StoreValue['saveLesson'] = (lesson) => {
+    const existing = lesson.id ? state.lessons.find((item) => item.id === lesson.id) : undefined;
     const saved: LessonPlan = {
       ...lesson,
       id: lesson.id ?? id('lesson'),
       workspaceId: state.workspace.id,
       updatedAt: now(),
-      version: 1,
+      version: existing ? existing.version + 1 : 1,
     };
     update((current) => {
       current.lessons = upsert(current.lessons, saved);
+      enqueue(current, 'lesson.upsert', {
+        lessonId: saved.id,
+        classId: saved.classId,
+        gradeLevel: saved.gradeLevel,
+        subjectId: saved.subjectId,
+        title: saved.title,
+        objective: saved.objective,
+        engage: saved.engage,
+        explore: saved.explore,
+        explain: saved.explain,
+        elaborate: saved.elaborate,
+        evaluate: saved.evaluate,
+        materials: saved.materials,
+        status: saved.status,
+        expectedVersion: existing?.version ?? null,
+      });
       return current;
     });
     setMessage(t('lesson_saved'));
@@ -547,6 +654,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         periodStart: saved.periodStart,
         periodEnd: saved.periodEnd,
         subjectId: saved.subjectId,
+        objectiveId: saved.objectiveId,
         indicator: saved.indicator,
         teacherNote: saved.teacherNote,
         homeActivity: saved.homeActivity,
@@ -581,6 +689,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
     update((current) => {
       current.assessments.push(assessment);
+      enqueue(current, 'assessment.record', {
+        assessmentId: assessment.id,
+        classId: assessment.classId,
+        pupilId: assessment.pupilId,
+        subjectId: assessment.subjectId,
+        objectiveId: assessment.objectiveId,
+        objectiveLabel: assessment.objectiveLabel,
+        score: assessment.score,
+        maxScore: assessment.maxScore,
+        schoolDate: assessment.schoolDate,
+        teacherNote: assessment.teacherNote,
+      });
       return current;
     });
     setMessage(t('assessment_saved'));
@@ -597,6 +717,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
     update((current) => {
       current.followUps.push(followUp);
+      enqueue(current, 'followup.upsert', {
+        followUpId: followUp.id,
+        classId: followUp.classId,
+        pupilId: followUp.pupilId,
+        title: followUp.title,
+        detail: followUp.detail,
+        dueDate: followUp.dueDate,
+        source: followUp.source,
+        sourceId: followUp.sourceId,
+      });
       return current;
     });
     setMessage(t('followup_saved'));
@@ -609,6 +739,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (item) {
         item.status = status;
         item.completedAt = status === 'done' ? now() : undefined;
+        item.updatedAt = now();
+        enqueue(current, 'followup.status', { followUpId, status });
       }
       return current;
     });

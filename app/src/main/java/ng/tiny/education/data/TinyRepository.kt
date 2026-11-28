@@ -605,19 +605,84 @@ class TinyRepository(
     fun observeAiAnalyses(workspaceId: String): Flow<List<AiAnalysisEntity>> = dao.observeAiAnalyses(workspaceId)
 
     suspend fun saveAssessment(assessment: AssessmentEntity): Result<Unit> = runCatching {
-        dao.upsertAssessment(assessment)
+        database.withTransaction {
+            dao.upsertAssessment(assessment)
+            enqueueOutbox(
+                workspaceId = assessment.workspaceId,
+                commandType = "assessment.record",
+                payload = buildString {
+                    append("{\"assessmentId\":${JsonStrings.quote(assessment.id)}")
+                    append(",\"classId\":${JsonStrings.quote(assessment.classId)}")
+                    append(",\"pupilId\":${JsonStrings.quote(assessment.pupilId)}")
+                    append(",\"subjectId\":${JsonStrings.quote(assessment.subjectId)}")
+                    append(",\"objectiveId\":${JsonStrings.quote(assessment.objectiveId)}")
+                    append(",\"objectiveLabel\":${JsonStrings.quote(assessment.objectiveLabel)}")
+                    append(",\"score\":${assessment.score}")
+                    append(",\"maxScore\":${assessment.maxScore}")
+                    append(",\"schoolDate\":${JsonStrings.quote(assessment.schoolDate)}")
+                    append(",\"teacherNote\":${JsonStrings.quote(assessment.teacherNote)}")
+                    append("}")
+                },
+            )
+        }
     }
 
     suspend fun saveLesson(lesson: LessonPlanEntity): Result<Unit> = runCatching {
-        dao.upsertLessonPlans(listOf(lesson))
+        database.withTransaction {
+            dao.upsertLessonPlans(listOf(lesson))
+            enqueueOutbox(
+                workspaceId = lesson.workspaceId,
+                commandType = "lesson.upsert",
+                payload = buildString {
+                    append("{\"lessonId\":${JsonStrings.quote(lesson.id)}")
+                    append(",\"classId\":${JsonStrings.quote(lesson.classId)}")
+                    append(",\"gradeLevel\":${JsonStrings.quote(lesson.gradeLevel)}")
+                    append(",\"subjectId\":${JsonStrings.quote(lesson.subjectId)}")
+                    append(",\"title\":${JsonStrings.quote(lesson.topic)}")
+                    append(",\"objective\":${JsonStrings.quote(lesson.objective)}")
+                    append(",\"engage\":${JsonStrings.quote(lesson.engage)}")
+                    append(",\"explore\":${JsonStrings.quote(lesson.explore)}")
+                    append(",\"explain\":${JsonStrings.quote(lesson.explain)}")
+                    append(",\"elaborate\":${JsonStrings.quote(lesson.elaborate)}")
+                    append(",\"evaluate\":${JsonStrings.quote(lesson.evaluate)}")
+                    append(",\"materials\":${JsonStrings.quote(lesson.materials)}")
+                    append(",\"status\":${JsonStrings.quote(lesson.status.name.lowercase())}")
+                    append("}")
+                },
+            )
+        }
     }
 
     suspend fun saveFollowUp(followUp: FollowUpEntity): Result<Unit> = runCatching {
-        dao.upsertFollowUp(followUp)
+        database.withTransaction {
+            dao.upsertFollowUp(followUp)
+            enqueueOutbox(
+                workspaceId = followUp.workspaceId,
+                commandType = "followup.upsert",
+                payload = buildString {
+                    append("{\"followUpId\":${JsonStrings.quote(followUp.id)}")
+                    append(",\"classId\":${JsonStrings.quote(followUp.classId)}")
+                    followUp.pupilId?.let { append(",\"pupilId\":${JsonStrings.quote(it)}") }
+                    append(",\"title\":${JsonStrings.quote(followUp.title)}")
+                    append(",\"detail\":${JsonStrings.quote(followUp.detail)}")
+                    append(",\"dueDate\":${JsonStrings.quote(followUp.dueDate)}")
+                    append(",\"source\":${JsonStrings.quote(followUp.source)}")
+                    followUp.sourceId?.let { append(",\"sourceId\":${JsonStrings.quote(it)}") }
+                    append("}")
+                },
+            )
+        }
     }
 
-    suspend fun updateFollowUpStatus(followUpId: String, status: String): Result<Unit> = runCatching {
-        dao.updateFollowUpStatus(followUpId, status, if (status == "done") System.currentTimeMillis() else null)
+    suspend fun updateFollowUpStatus(workspaceId: String, followUpId: String, status: String): Result<Unit> = runCatching {
+        database.withTransaction {
+            dao.updateFollowUpStatus(followUpId, status, if (status == "done") System.currentTimeMillis() else null)
+            enqueueOutbox(
+                workspaceId = workspaceId,
+                commandType = "followup.status",
+                payload = "{\"followUpId\":${JsonStrings.quote(followUpId)},\"status\":${JsonStrings.quote(status)}}",
+            )
+        }
     }
 
     suspend fun saveAiAnalysis(analysis: AiAnalysisEntity): Result<Unit> = runCatching {
