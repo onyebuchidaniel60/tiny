@@ -1,6 +1,6 @@
 # Tiny — Demo Video Plan
 
-**Status:** Refreshed 26 November 2026. `artifacts/demo/tiny-demo.mp4` - 146.6s, 1920x1080 H.264/AAC, 5,551,546 bytes, SHA-256 `6B2BB28A849BB58CCD666AD5A9858E52857EE56CEF5DA04D91555816C7215DD6`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. Includes the authenticated Firebase test-phone/Firestore scene. On-device Gemini Nano evidence remains blocked.
+**Status:** Refreshed 28 November 2026. `artifacts/demo/tiny-demo.mp4` - **133.6s**, 1920x1080 H.264/AAC, **4,742,428 bytes**, SHA-256 `74D1FE1538B51278F99170487D240DE407DE884149BD3F53C575BDD941F3A31A`. Reviewed screenshot slideshow with local SAPI narration, captions, script and production notes; not motion screen recording. It uses the canonical 2-class / 8-pupil Android local-demo screenshots plus real web captures of the same workspace: pupil evidence, class intelligence, follow-ups and AI diagnostics. On-device Gemini Nano evidence remains blocked and is not claimed; the verified AI source is `Cloud Gemini`.
 
 **Current mode:** mock SMS adapter; Auth/Firestore and app-level cloud AI fallback are verified against the non-production project. On-device Gemini Nano evidence requires a currently supported physical device (the supplied Note 10+ is not supported).
 

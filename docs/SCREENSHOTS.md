@@ -43,7 +43,7 @@ Responsive and intelligence evidence in `artifacts/web/`:
 
 Directory: `artifacts/emulator/`
 
-Latest canonical local-demo evidence: run [46095208807](https://github.com/onyebuchidaniel60/tiny/actions/runs/46095208807). The app was built without `google-services.json`, so Room seeded the canonical Kofar Primary workspace: 2 classes, 8 pupils, 3 pupils needing attention and 4 open follow-ups. The script clears stale PNGs before each run. It captures:
+Latest canonical local-demo evidence: run [46098222733](https://github.com/onyebuchidaniel60/tiny/actions/runs/46098222733). The app was built without `google-services.json`, so Room seeded the canonical Kofar Primary workspace: 2 classes, 8 pupils, 3 pupils needing attention and 4 open follow-ups. The script clears stale PNGs before each run. It captures:
 
 - Onboarding language screen and welcome screen
 - Home with the canonical evidence summary

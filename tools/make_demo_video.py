@@ -199,16 +199,16 @@ def make_wide_frame(scene: dict, index: int, total: int) -> Path:
     for offset in range(210):
         alpha = int(120 * (offset / 210) ** 1.2)
         shade.rectangle((0, H - 210 + offset, W, H - 210 + offset + 1), fill=(8, 16, 12, alpha))
-    shade.rounded_rectangle((58, 700, 1280, 1038), radius=26, fill=(10, 24, 18, 242), outline=(255, 253, 247, 70), width=1)
+    shade.rounded_rectangle((58, 650, 1280, 1038), radius=26, fill=(10, 24, 18, 242), outline=(255, 253, 247, 70), width=1)
     img = Image.alpha_composite(img, overlay).convert("RGB")
     draw = ImageDraw.Draw(img)
-    draw.text((96, 735), scene["kicker"].upper(), font=font(FONT_SANS_BOLD, 21), fill=BUTTER)
+    draw.text((96, 684), scene["kicker"].upper(), font=font(FONT_SANS_BOLD, 21), fill=BUTTER)
     title = wrap(scene["title"], 38)
-    draw.multiline_text((96, 772), title, font=font(FONT_SERIF, 50), fill=WHITE, spacing=0)
-    body = wrap(scene["body"], 74)
-    draw.multiline_text((98, 892), body, font=font(FONT_SANS, 23), fill=(238, 230, 214), spacing=5)
-    draw.text((96, 1002), "Synthetic data  ·  no live SMS  ·  no production claim", font=font(FONT_SANS_BOLD, 17), fill=(205, 196, 180))
-    draw.text((W - 210, H - 52), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 20), fill=(238, 230, 214))
+    draw.multiline_text((96, 720), title, font=font(FONT_SERIF, 50), fill=WHITE, spacing=0)
+    body = wrap(scene["body"], 78)
+    draw.multiline_text((98, 848), body, font=font(FONT_SANS, 22), fill=(238, 230, 214), spacing=5)
+    draw.text((96, 1000), "Synthetic data  ·  no live SMS  ·  no production claim", font=font(FONT_SANS_BOLD, 17), fill=(205, 196, 180))
+    draw.text((1150, 1000), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 18), fill=(238, 230, 214))
     path = BUILD / f"{scene['id']}.png"
     img.save(path)
     return path
@@ -341,7 +341,7 @@ def build() -> None:
 - Platform: Windows ffmpeg + Pillow + Windows SAPI (Microsoft Zira Desktop).
 - TTS: local, free, offline fallback. No Google AI TTS credentials/paid service were used.
 - Capture limitation: this is a reviewed screenshot slideshow with narration, not motion screen recording. It does not claim real parent SMS delivery or on-device Gemini Nano inference.
-- Evidence: Android CI 41 JVM / 19 Functions / 9 rules / 11 backend E2E; web CI 29 Vitest / 40 Playwright passed (5 skipped); canonical dataset guard; signed/aligned APK. Verified AI source is `Cloud Gemini`; Gemini Nano is not claimed.
+- Evidence: Android CI 41 JVM / 19 Functions / 9 rules / 11 backend E2E; web CI 29 Vitest / 41 Playwright passed (7 skipped); canonical dataset guard; signed/aligned APK. Verified AI source is `Cloud Gemini`; Gemini Nano is not claimed.
 - Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed. Deployed callable sync is unavailable on Spark.
 - Synthetic data only; no real pupil/guardian data.
 - Rendered duration: {total:.1f}s.

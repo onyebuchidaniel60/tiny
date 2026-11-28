@@ -173,7 +173,7 @@ Firestore collections and Room tables share the same logical fields and stable p
 | Suite | Result | Where |
 |---|---:|---|
 | Web unit/component (Vitest) | **29 passed, 0 failed** (7 files) | web CI |
-| Web browser journeys (Playwright) | **41 passed, 0 failed, 5 skipped** across desktop/tablet/mobile | web CI |
+| Web browser journeys (Playwright) | **41 passed, 0 failed, 7 skipped** across desktop/tablet/mobile | web CI |
 | Web accessibility (axe WCAG 2 A/AA) | **0 serious/critical** on Home + 5 intelligence surfaces | web CI |
 | Android JVM unit tests | **41 passed, 0 failed** | android CI |
 | Functions domain tests | **19 passed, 0 failed** | android CI |
@@ -185,7 +185,7 @@ Firestore collections and Room tables share the same logical fields and stable p
 | Canonical dataset guard | passed (20 Android IDs shared with web) | both workflows |
 | Translation guard | **880 keys × 4 languages**, 0 hardcoded UI strings | both workflows |
 
-The skipped browser tests are the three opt-in live Firebase/AI checks plus two non-desktop duplicate axe sweeps.
+Latest verified CI runs: Android [46098221747](https://github.com/onyebuchidaniel60/tiny/actions/runs/46098221747) and web [46098221766](https://github.com/onyebuchidaniel60/tiny/actions/runs/46098221766). The skipped browser tests are the three opt-in live Firebase/AI checks, two non-desktop duplicate axe sweeps and two non-desktop demo captures.
 
 Latest evidence links are recorded in `docs/BUILD_LOG.md` and `AI_HANDOFF.md`.
 
@@ -215,6 +215,7 @@ Key documents:
 - `docs/CI_ANDROID_BUILD.md` — build, signing and install reliability.
 - `AI_HANDOFF.md` and `docs/BUILD_LOG.md` — state and chronological evidence.
 - `README.md` — setup, capabilities and links.
+- `artifacts/demo/tiny-demo.mp4` — reviewed 133.6s demo with `captions.srt`, `narration-script.md` and `production-notes.md`; not yet uploaded to YouTube.
 
 Commits in this pass:
 

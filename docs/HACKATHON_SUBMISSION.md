@@ -29,7 +29,7 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 | Public code repository | **YES** | `https://github.com/onyebuchidaniel60/tiny` |
 | Open-source license visible at top | **YES** | Apache-2.0 `LICENSE`; GitHub About detects `Apache License 2.0` |
 | AI Logic imported and called in code | **YES** | `app/src/main/java/ng/tiny/education/core/ai/AiLogicService.kt` |
-| Demo video ≤3 minutes, public YouTube link | **LOCAL RENDER READY — NOT UPLOADED** | 146.6s MP4 with captions; operator must upload to YouTube as public and provide the URL |
+| Demo video ≤3 minutes, public YouTube link | **LOCAL RENDER READY — NOT UPLOADED** | 133.6s MP4 with captions (`artifacts/demo/tiny-demo.mp4`, SHA-256 `74D1FE1538B51278F99170487D240DE407DE884149BD3F53C575BDD941F3A31A`); operator must upload to YouTube as public and provide the URL |
 | English language / English captions | **YES** | Narration and captions are English |
 | Text description of AI Logic use, features and value | **DRAFTED** | Use this file and README; finalize on Devpost |
 | Testing instructions | **READY** | `docs/JUDGE_ACCESS.md`, `docs/WEB_APP.md`, `docs/CROSS_PLATFORM_SYNC.md` |
