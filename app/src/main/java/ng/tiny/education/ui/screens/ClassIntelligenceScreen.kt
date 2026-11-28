@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -89,7 +90,7 @@ fun ClassIntelligenceScreen(
                             Row(Modifier.fillMaxWidth().padding(vertical = 5.dp), verticalAlignment = Alignment.CenterVertically) {
                                 Column(Modifier.weight(1f)) {
                                     Text(gap.objectiveLabel, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-                                    Text("${gap.supportObservations} ${stringResource(R.string.observations)} · ${gap.pupilsBelow} < 50%", style = MaterialTheme.typography.labelSmall)
+                                    Text("${pluralStringResource(R.plurals.observation_count, gap.supportObservations, gap.supportObservations)} - ${gap.pupilsBelow} ${stringResource(R.string.pupils).lowercase()} < 50%", style = MaterialTheme.typography.labelSmall)
                                 }
                                 StatusPill("${gap.average}%", TinyTomato)
                             }

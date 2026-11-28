@@ -43,23 +43,28 @@ Responsive and intelligence evidence in `artifacts/web/`:
 
 Directory: `artifacts/emulator/`
 
-Latest manual emulator evidence: run [46008299481](https://github.com/onyebuchidaniel60/tiny/actions/runs/46008299481). The script clears stale PNGs before each run. It captures:
+Latest canonical local-demo evidence: run [46095208807](https://github.com/onyebuchidaniel60/tiny/actions/runs/46095208807). The app was built without `google-services.json`, so Room seeded the canonical Kofar Primary workspace: 2 classes, 8 pupils, 3 pupils needing attention and 4 open follow-ups. The script clears stale PNGs before each run. It captures:
 
 - Onboarding language screen and welcome screen
-- Auth gate (Firebase-configured build)
-- Authenticated Home after a test-phone sign-in
-- Classes, class detail, progress, family contacts
+- Home with the canonical evidence summary
+- Classes and class detail
+- Pupil profile and evidence (Amina)
+- Class intelligence (P79% attendance, 61% assessment, plant-parts gap)
 - Attendance, lessons and AI fallback
 - Messages and conversation
+- Pupils directory, follow-ups and pupil intelligence
 - Settings
 - Per-language Home and Settings screenshots: `tiny-i18n-<language>-home.png`, `tiny-i18n-<language>-settings.png`
 
 Curated in `artifacts/emulator/`:
 
-- `tiny-01-language.png` … `tiny-10-settings.png`
-- `tiny-04-authenticated.png`
+- `tiny-01-language.png` … `tiny-12-followups.png`
+- `tiny-05a-pupil-profile.png`, `tiny-05b-pupil-evidence.png`, `tiny-05c-class-intelligence.png`
+- `tiny-11-pupils.png`, `tiny-11a-pupil-intelligence.png`, `tiny-12-followups.png`
 - `tiny-i18n-{en,ha,yo,ig}-home.png` and `tiny-i18n-{en,ha,yo,ig}-settings.png`
-- `tiny-ai-cloud.png` (older cloud-AI evidence retained separately)
+- `tiny-ai-cloud.png` (older authenticated cloud-AI evidence retained separately)
+
+The separate authenticated smoke run [46094080588](https://github.com/onyebuchidaniel60/tiny/actions/runs/46094080588) still proves test-phone sign-in against the non-production Firestore bootstrap, but that remote workspace is the older one-class synthetic workspace. The canonical screenshots therefore come from the local-demo build, which is the intended canonical demo path.
 
 **Physical-device screenshots are not claimed.** The operator’s Samsung Galaxy Note 10+ (Android 12) requires a manual installation from the public APK; no device was connected to this session. On-device Gemini Nano is not supported on that device.
 

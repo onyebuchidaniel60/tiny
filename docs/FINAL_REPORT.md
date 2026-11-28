@@ -197,7 +197,7 @@ Latest evidence links are recorded in `docs/BUILD_LOG.md` and `AI_HANDOFF.md`.
   - `zipalign -c -v 4`
   - APK size and SHA-256
 - Without the optional stable keystore, uninstall the old debug package before installing a new CI APK. Never disable signature verification.
-- The public judge APK is debug-signed with a dedicated App Check debug token and synthetic data only.
+- The public judge APK is debug-signed with a dedicated App Check debug token and synthetic data only. Current release: [v0.1.0-preview.3](https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.3), `tiny-judge-preview.apk`, 31,819,671 bytes, SHA-256 `a8cd734a95ce50349fb7ec3140df3585bf05e847d0edcde8acb045536074610d`.
 - **Physical Samsung Galaxy Note 10+ install/testing was not performed** in this environment. It is not a supported Gemini Nano device. See `docs/CI_ANDROID_BUILD.md` and `docs/TROUBLESHOOTING.md`.
 
 ## 10. Documentation and repository
