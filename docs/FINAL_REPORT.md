@@ -173,7 +173,7 @@ Firestore collections and Room tables share the same logical fields and stable p
 | Suite | Result | Where |
 |---|---:|---|
 | Web unit/component (Vitest) | **29 passed, 0 failed** (7 files) | web CI |
-| Web browser journeys (Playwright) | **40 passed, 0 failed, 5 skipped** across desktop/tablet/mobile | web CI |
+| Web browser journeys (Playwright) | **41 passed, 0 failed, 5 skipped** across desktop/tablet/mobile | web CI |
 | Web accessibility (axe WCAG 2 A/AA) | **0 serious/critical** on Home + 5 intelligence surfaces | web CI |
 | Android JVM unit tests | **41 passed, 0 failed** | android CI |
 | Functions domain tests | **19 passed, 0 failed** | android CI |

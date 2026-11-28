@@ -172,7 +172,7 @@ No billing was enabled to initialize or test Auth.
 | Browser AI | Hosted `/ai` returned a candidate and SDK source `Cloud Gemini`; no on-device claim; screenshot `artifacts/web/tiny-web-ai-cloud.png` |
 | Browser App Check | Dedicated web debug token registered; value stored only in ignored `web/.env.local` and GitHub secret; enforcement off; revoke after judging |
 | Browser hosting | Firebase Hosting <https://tiny-b9f29.web.app>; Spark; no Functions deployment. Intelligence UI deployed 28 Nov 2026 and verified with Playwright at `/pupils/pupil_amina` (heading + assessment trend visible). |
-| Browser tests | Typecheck; 29/29 Vitest; 40 passed/5 skipped Playwright across desktop/tablet/mobile; live Firebase/AI manual check; 0 serious/critical axe on Home + five intelligence surfaces |
+| Browser tests | Typecheck; 29/29 Vitest; 41 passed/7 skipped Playwright across desktop/tablet/mobile; live Firebase/AI manual check; 0 serious/critical axe on Home + five intelligence surfaces |
 | Log redaction | The logcat, browser evidence and AI test artifacts contain no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 

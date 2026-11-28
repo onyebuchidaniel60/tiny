@@ -1,53 +1,45 @@
 # Tiny demo narration script
 
-Target: 90–150s; rendered: 146.6s
+Target: 90–150s; rendered: 133.6s
 
 ## Scenes
 
 ### 01. Tiny  -  teacher preview
 
-Tiny is an offline-first teacher tool for rural primary schools. Teachers use their Android phone. Parents use ordinary SMS, and pupils have no account or app.
+Tiny is an offline-first teacher workspace for a Nigerian primary school. Parents use ordinary SMS. Pupils have no account or app. This demonstration uses synthetic data only.
 
-### 02. Language
+### 02. Android  -  teacher home
 
-Teachers can choose English, Hausa, Yoruba, or Igbo. Non-English strings are drafts with English fallback until review.
+The Android app is the product. Home shows classes, pending work, family messages, and an evidence summary: three pupils need attention.
 
-### 03. Firebase verified
+### 03. Pupil evidence profile
 
-Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. SMS stays mocked.
+Every pupil has an evidence profile. Attendance, assessment scores, teacher observations, follow-ups and confidence are all traceable to recorded facts.
 
-### 04. Home
+### 04. Web companion  -  same workspace
 
-The home screen shows today's classes, pending sync, parent messages, and the next useful action.
+The web companion uses the same canonical workspace: two classes, eight pupils, the same guardians and histories.
 
-### 05. Classes
+### 05. Amina  -  evidence profile
 
-Manage more than one class, open a roster, and add a class or pupil locally.
+Amina's profile shows one hundred percent attendance, an eighty-seven percent assessment average, and high-confidence evidence. The status is calculated from records, not chosen by AI.
 
-### 06. Offline attendance
+### 06. Class intelligence
 
-Attendance works offline. Mark every active pupil, review the register, and submit locally. Only absences create an immediate notification job after server acceptance.
+Class intelligence surfaces the shared plant-parts gap, the pupils who need attention, and Ngozi's twelve-point improvement.
 
-### 07. 5E lessons
+### 07. Follow-up actions
 
-A saved 5E lesson opens offline. It is a teacher-authored scaffold, not full NERDC coverage.
+Evidence creates follow-up suggestions. The teacher decides what to add, when it is due, and when it is done.
 
-### 08. Optional AI
+### 08. Optional AI  -  honest diagnostics
 
-AI is optional. On this emulator, Gemini Nano is unavailable. The SDK falls back to cloud AI and reports its source; here it says Cloud Gemini. Curated strategies still work offline, and the core lesson never depends on a model.
+Optional AI receives only de-identified evidence. The screen reports the requested mode, the actual SDK source, duration, evidence fingerprint and fallback. The verified source in this environment is Cloud Gemini. Gemini Nano is not claimed.
 
-### 09. Parent SMS
+### 09. Android  -  offline intelligence
 
-Parent messages arrive through the SMS adapter. In this preview it is mocked, so nothing leaves the device.
+The same deterministic rules run on the phone, offline. AI never blocks attendance, lessons or parent communication.
 
-### 10. Teacher reply
+### 10. The next gates
 
-A teacher can reply from Tiny without exposing a personal phone number. Provider acceptance is not the same as delivery.
-
-### 11. Family contacts
-
-A pupil can have more than one guardian. Verify an endpoint in person and record opt-in before any child-specific SMS. A shared family contact is reused for siblings.
-
-### 12. The next gates
-
-Tiny is not finished. Remaining gates are App Distribution, App Check enforcement and Play Integrity, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.
+Tiny is not finished. Remaining gates are a supported on-device Nano device, deployed callables under a paid plan, live SMS, physical-device testing, and native translation review. Big impact. Small requirements. Accessible everywhere.

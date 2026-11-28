@@ -196,20 +196,19 @@ def make_wide_frame(scene: dict, index: int, total: int) -> Path:
 
     overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     shade = ImageDraw.Draw(overlay)
-    for offset in range(360):
-        alpha = int(222 * (offset / 360) ** 1.15)
-        shade.rectangle((0, H - 360 + offset, W, H - 360 + offset + 1), fill=(10, 18, 14, alpha))
-    shade.rounded_rectangle((60, 52, 430, 106), radius=26, fill=(10, 18, 14, 175), outline=(255, 253, 247, 90), width=1)
+    for offset in range(210):
+        alpha = int(120 * (offset / 210) ** 1.2)
+        shade.rectangle((0, H - 210 + offset, W, H - 210 + offset + 1), fill=(8, 16, 12, alpha))
+    shade.rounded_rectangle((58, 700, 1280, 1038), radius=26, fill=(10, 24, 18, 242), outline=(255, 253, 247, 70), width=1)
     img = Image.alpha_composite(img, overlay).convert("RGB")
     draw = ImageDraw.Draw(img)
-    draw.text((86, 68), "Tiny  ·  evidence intelligence", font=font(FONT_SANS_BOLD, 22), fill=PAPER)
-    draw.text((80, 748), scene["kicker"].upper(), font=font(FONT_SANS_BOLD, 22), fill=BUTTER)
-    title = wrap(scene["title"], 42)
-    draw.multiline_text((80, 792), title, font=font(FONT_SERIF, 56), fill=WHITE, spacing=2)
-    body = wrap(scene["body"], 76)
-    draw.multiline_text((82, 920), body, font=font(FONT_SANS, 24), fill=(238, 230, 214), spacing=6)
-    draw.text((W - 230, H - 52), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 20), fill=(238, 230, 214))
-    draw.text((80, H - 52), "Synthetic data  ·  no live SMS  ·  no production claim", font=font(FONT_SANS_BOLD, 18), fill=(215, 206, 190))
+    draw.text((96, 735), scene["kicker"].upper(), font=font(FONT_SANS_BOLD, 21), fill=BUTTER)
+    title = wrap(scene["title"], 38)
+    draw.multiline_text((96, 772), title, font=font(FONT_SERIF, 50), fill=WHITE, spacing=0)
+    body = wrap(scene["body"], 74)
+    draw.multiline_text((98, 892), body, font=font(FONT_SANS, 23), fill=(238, 230, 214), spacing=5)
+    draw.text((96, 1002), "Synthetic data  ·  no live SMS  ·  no production claim", font=font(FONT_SANS_BOLD, 17), fill=(205, 196, 180))
+    draw.text((W - 210, H - 52), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 20), fill=(238, 230, 214))
     path = BUILD / f"{scene['id']}.png"
     img.save(path)
     return path

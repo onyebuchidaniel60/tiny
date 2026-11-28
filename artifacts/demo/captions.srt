@@ -1,47 +1,39 @@
 1
-00:00:00,000 --> 00:00:13,893
-An offline-first teacher tool for rural primary schools. Parents use ordinary SMS. Pupils have no account or app.
+00:00:00,000 --> 00:00:15,742
+An offline-first teacher workspace for a Nigerian primary school. Parents use ordinary SMS. Pupils have no account or app. Synthetic data only.
 
 2
-00:00:13,893 --> 00:00:23,831
-English, Hausa, Yoruba or Igbo. Non-English interface strings are drafts and fall back to English until native review.
+00:00:15,742 --> 00:00:26,965
+Classes, pending work, family messages and an evidence summary: three pupils need attention.
 
 3
-00:00:23,831 --> 00:00:36,008
-A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. SMS stays mocked.
+00:00:26,965 --> 00:00:39,493
+Attendance, assessment scores, teacher observations, follow-ups and evidence confidence in one pupil view.
 
 4
-00:00:36,008 --> 00:00:43,621
-Today's classes, pending sync, parent messages and quick actions in one calm dashboard.
+00:00:39,493 --> 00:00:49,125
+Kofar Primary: two classes, eight pupils, the same guardians, attendance dates, assessments and observations.
 
 5
-00:00:43,621 --> 00:00:50,630
-A teacher can manage more than one class, open a roster, add a class or add a pupil locally.
+00:00:49,125 --> 00:01:03,908
+100% attendance, an 87% assessment average, three assessments and two approved observations. Status and confidence come from the deterministic engine.
 
 6
-00:00:50,630 --> 00:01:05,042
-Only absent pupils create an immediate notification job after server acceptance. Present and late do not.
+00:01:03,908 --> 00:01:13,426
+Plant parts and functions is the common gap. Musa and Tunde need attention. Ngozi improved by twelve points. Every number links back to records.
 
 7
-00:01:05,042 --> 00:01:13,886
-A saved 5E lesson opens offline. It is a teacher-authored scaffold, not a claim of full NERDC coverage.
+00:01:13,426 --> 00:01:22,525
+Suggested from attendance, assessment or observation. The teacher decides what to add, when it is due and when it is done.
 
 8
-00:01:13,886 --> 00:01:34,022
-On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports Source: Cloud Gemini. Curated strategies remain offline.
+00:01:22,525 --> 00:01:42,626
+The SDK reports the actual source, duration, evidence fingerprint and fallback. Verified here: Cloud Gemini. Gemini Nano is not claimed.
 
 9
-00:01:34,022 --> 00:01:43,271
-In this preview the SMS adapter is mocked, so nothing leaves the device.
+00:01:42,626 --> 00:01:52,924
+Deterministic class gaps, attention pupils and evidence-informed lesson planning. AI never blocks the core workflow.
 
 10
-00:01:43,271 --> 00:01:52,694
-A teacher replies from Tiny. Provider acceptance is not the same as delivery.
-
-11
-00:01:52,694 --> 00:02:06,706
-Link a guardian endpoint, verify it in person and record opt-in. A shared endpoint is reused for siblings.
-
-12
-00:02:06,706 --> 00:02:26,642
-Remaining gates: App Distribution, App Check enforcement/Play Integrity, native translation review and a supported on-device AI device.
+00:01:52,924 --> 00:02:13,590
+Remaining gates: a supported on-device Nano device, deployed callables under a paid plan, live SMS, physical-device review and native translation review.
