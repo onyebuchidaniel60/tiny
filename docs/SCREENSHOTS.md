@@ -1,6 +1,6 @@
 # Tiny — Visual Evidence Index
 
-**Status:** 27 November 2026. Screenshots are captured from the working applications with synthetic data. No mockup is presented as a screenshot.
+**Status:** 28 November 2026. Screenshots are captured from the working applications with synthetic data. No mockup is presented as a screenshot.
 
 ## 1. Web application
 
@@ -25,12 +25,19 @@ Total: **60** screenshots (4 languages × 3 viewports × 5 screens).
 
 The Playwright test `web/e2e/i18n-visual.spec.ts` regenerates them and asserts that the document does not overflow horizontally at every captured language/viewport.
 
-Earlier responsive evidence remains in `artifacts/web/`:
+Responsive and intelligence evidence in `artifacts/web/`:
 
 - `desktop-chromium-home.png`, `desktop-chromium-class.png`
 - `mobile-chromium-home.png`, `mobile-chromium-class.png`
 - `tablet-chromium-home.png`, `tablet-chromium-class.png`
+- `desktop|tablet|mobile-chromium-pupils.png` (canonical directory with evidence status)
+- `desktop|tablet|mobile-chromium-pupil-profile.png` (Amina: attendance, assessments, observations, follow-ups, AI diagnostics)
+- `desktop|tablet|mobile-chromium-class-intelligence.png` (P4: 79% / 61% / plant-parts gap / Ngozi improving)
+- `desktop|tablet|mobile-chromium-followups.png`
+- `desktop|tablet|mobile-chromium-intelligence.png`
 - `tiny-web-ai-cloud.png` (hosted AI result with SDK-reported Cloud Gemini)
+
+`web/e2e/visual.spec.ts` regenerates these; `web/e2e/tiny.spec.ts` runs a desktop axe sweep over the five new surfaces.
 
 ## 2. Android application
 
@@ -65,7 +72,7 @@ Curated in `artifacts/emulator/`:
 ```powershell
 cd web
 npm run build
-npx playwright test e2e/i18n-visual.spec.ts
+npx playwright test e2e/i18n-visual.spec.ts e2e/visual.spec.ts
 ```
 
 ## 5. How to regenerate Android evidence

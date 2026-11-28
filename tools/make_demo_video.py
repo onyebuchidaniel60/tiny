@@ -19,6 +19,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 SHOTS = ROOT / "artifacts" / "emulator"
+WEB_SHOTS = ROOT / "artifacts" / "demo" / "screens"
 OUT = ROOT / "artifacts" / "demo"
 BUILD = OUT / "build"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -43,98 +44,87 @@ SCENES = [
     {
         "id": "01-intro",
         "kicker": "Tiny  -  teacher preview",
-        "title": "Big impact.\nSmall requirements.",
-        "body": "An offline-first teacher tool for rural primary schools. Parents use ordinary SMS. Pupils have no account or app.",
-        "shot": "tiny-03-home.png",
-        "narration": "Tiny is an offline-first teacher tool for rural primary schools. Teachers use their Android phone. Parents use ordinary SMS, and pupils have no account or app.",
+        "title": "One school.\nTwo surfaces.",
+        "body": "An offline-first teacher workspace for a Nigerian primary school. Parents use ordinary SMS. Pupils have no account or app. Synthetic data only.",
+        "shot": None,
+        "narration": "Tiny is an offline-first teacher workspace for a Nigerian primary school. Parents use ordinary SMS. Pupils have no account or app. This demonstration uses synthetic data only.",
     },
     {
-        "id": "02-language",
-        "kicker": "Language",
-        "title": "A teacher chooses\nthe language.",
-        "body": "English, Hausa, Yoruba or Igbo. Non-English interface strings are drafts and fall back to English until native review.",
-        "shot": "tiny-01-language.png",
-        "narration": "Teachers can choose English, Hausa, Yoruba, or Igbo. Non-English strings are drafts with English fallback until review.",
-    },
-    {
-        "id": "03-firebase",
-        "kicker": "Firebase verified",
-        "title": "Sign-in and sync.\nNo fake claims.",
-        "body": "A synthetic teacher signs in with a test phone number. Firestore loads a synthetic workspace. SMS stays mocked.",
-        "shot": "tiny-04-authenticated.png",
-        "narration": "Auth and Firestore are verified on a non-production project. A synthetic teacher signs in and loads a synthetic workspace. SMS stays mocked.",
-    },
-    {
-        "id": "04-home",
-        "kicker": "Home",
+        "id": "02-android-home",
+        "kicker": "Android  -  teacher home",
         "title": "The next useful\naction.",
-        "body": "Today's classes, pending sync, parent messages and quick actions in one calm dashboard.",
+        "body": "Classes, pending work, family messages and an evidence summary: three pupils need attention.",
         "shot": "tiny-03-home.png",
-        "narration": "The home screen shows today's classes, pending sync, parent messages, and the next useful action.",
+        "narration": "The Android app is the product. Home shows classes, pending work, family messages, and an evidence summary: three pupils need attention.",
     },
     {
-        "id": "05-classes",
-        "kicker": "Classes",
-        "title": "More than one\nclass.",
-        "body": "A teacher can manage more than one class, open a roster, add a class or add a pupil locally.",
-        "shot": "tiny-04-classes.png",
-        "narration": "Manage more than one class, open a roster, and add a class or pupil locally.",
+        "id": "03-android-pupil",
+        "kicker": "Pupil evidence profile",
+        "title": "Every status is\ntraceable.",
+        "body": "Attendance, assessment scores, teacher observations, follow-ups and evidence confidence in one pupil view.",
+        "shot": "tiny-05a-pupil-profile.png",
+        "narration": "Every pupil has an evidence profile. Attendance, assessment scores, teacher observations, follow-ups and confidence are all traceable to recorded facts.",
     },
     {
-        "id": "06-attendance",
-        "kicker": "Offline attendance",
-        "title": "Mark the register.\nSubmit locally.",
-        "body": "Only absent pupils create an immediate notification job after server acceptance. Present and late do not.",
-        "shot": "tiny-06-attendance.png",
-        "narration": "Attendance works offline. Mark every active pupil, review the register, and submit locally. Only absences create an immediate notification job after server acceptance.",
+        "id": "04-web-home",
+        "kicker": "Web companion  -  same workspace",
+        "title": "The same school.\nThe same records.",
+        "body": "Kofar Primary: two classes, eight pupils, the same guardians, attendance dates, assessments and observations.",
+        "shot": "web-home.png",
+        "wide": True,
+        "narration": "The web companion uses the same canonical workspace: two classes, eight pupils, the same guardians and histories.",
     },
     {
-        "id": "07-lessons",
-        "kicker": "5E lessons",
-        "title": "A plan that opens\nwithout signal.",
-        "body": "A saved 5E lesson opens offline. It is a teacher-authored scaffold, not a claim of full NERDC coverage.",
-        "shot": "tiny-07-lessons.png",
-        "narration": "A saved 5E lesson opens offline. It is a teacher-authored scaffold, not full NERDC coverage.",
+        "id": "05-web-pupil",
+        "kicker": "Amina  -  evidence profile",
+        "title": "Facts first.\nAI second.",
+        "body": "100% attendance, an 87% assessment average, three assessments and two approved observations. Status and confidence come from the deterministic engine.",
+        "shot": "web-pupil-profile.png",
+        "wide": True,
+        "narration": "Amina's profile shows one hundred percent attendance, an eighty-seven percent assessment average, and high-confidence evidence. The status is calculated from records, not chosen by AI.",
     },
     {
-        "id": "08-ai",
-        "kicker": "Optional AI",
-        "title": "Help that never\nblocks the lesson.",
-        "body": "On-device Nano is unavailable on this emulator; the SDK falls back to cloud AI and reports Source: Cloud Gemini. Curated strategies remain offline.",
-        "shot": "tiny-ai-cloud.png",
-        "narration": "AI is optional. On this emulator, Gemini Nano is unavailable. The SDK falls back to cloud AI and reports its source; here it says Cloud Gemini. Curated strategies still work offline, and the core lesson never depends on a model.",
+        "id": "06-web-class",
+        "kicker": "Class intelligence",
+        "title": "See the shared\ngap.",
+        "body": "Plant parts and functions is the common gap. Musa and Tunde need attention. Ngozi improved by twelve points. Every number links back to records.",
+        "shot": "web-class-intelligence.png",
+        "wide": True,
+        "narration": "Class intelligence surfaces the shared plant-parts gap, the pupils who need attention, and Ngozi's twelve-point improvement.",
     },
     {
-        "id": "08-messages",
-        "kicker": "Parent SMS",
-        "title": "Parents reply\nby ordinary SMS.",
-        "body": "In this preview the SMS adapter is mocked, so nothing leaves the device.",
-        "shot": "tiny-08-messages.png",
-        "narration": "Parent messages arrive through the SMS adapter. In this preview it is mocked, so nothing leaves the device.",
+        "id": "07-web-followups",
+        "kicker": "Follow-up actions",
+        "title": "Evidence becomes\na next step.",
+        "body": "Suggested from attendance, assessment or observation. The teacher decides what to add, when it is due and when it is done.",
+        "shot": "web-followups.png",
+        "wide": True,
+        "narration": "Evidence creates follow-up suggestions. The teacher decides what to add, when it is due, and when it is done.",
     },
     {
-        "id": "09-conversation",
-        "kicker": "Teacher reply",
-        "title": "No personal\nphone number.",
-        "body": "A teacher replies from Tiny. Provider acceptance is not the same as delivery.",
-        "shot": "tiny-09-conversation.png",
-        "narration": "A teacher can reply from Tiny without exposing a personal phone number. Provider acceptance is not the same as delivery.",
+        "id": "08-web-ai",
+        "kicker": "Optional AI  -  honest diagnostics",
+        "title": "Requested mode is\nnot the source.",
+        "body": "The SDK reports the actual source, duration, evidence fingerprint and fallback. Verified here: Cloud Gemini. Gemini Nano is not claimed.",
+        "shot": "web-intelligence.png",
+        "wide": True,
+        "narration": "Optional AI receives only de-identified evidence. The screen reports the requested mode, the actual SDK source, duration, evidence fingerprint and fallback. The verified source in this environment is Cloud Gemini. Gemini Nano is not claimed.",
     },
     {
-        "id": "10-guardians",
-        "kicker": "Family contacts",
-        "title": "One pupil.\nSeveral guardians.",
-        "body": "Link a guardian endpoint, verify it in person and record opt-in. A shared endpoint is reused for siblings.",
-        "shot": "tiny-05b-family-contacts.png",
-        "narration": "A pupil can have more than one guardian. Verify an endpoint in person and record opt-in before any child-specific SMS. A shared family contact is reused for siblings.",
+        "id": "09-android-class",
+        "kicker": "Android  -  offline intelligence",
+        "title": "The same rules\non the phone.",
+        "body": "Deterministic class gaps, attention pupils and evidence-informed lesson planning. AI never blocks the core workflow.",
+        "shot": "tiny-05c-class-intelligence.png",
+        "narration": "The same deterministic rules run on the phone, offline. AI never blocks attendance, lessons or parent communication.",
     },
     {
-        "id": "11-final",
+        "id": "10-final",
         "kicker": "The next gates",
         "title": "Big impact.\nSmall requirements.",
-        "body": "Remaining gates: App Distribution, App Check enforcement/Play Integrity, native translation review and a supported on-device AI device.",
+        "body": "Remaining gates: a supported on-device Nano device, deployed callables under a paid plan, live SMS, physical-device review and native translation review.",
         "shot": None,
-        "narration": "Tiny is not finished. Remaining gates are App Distribution, App Check enforcement and Play Integrity, native translation review, and a supported on-device AI device. Big impact. Small requirements. Accessible everywhere.",
+        "narration": "Tiny is not finished. Remaining gates are a supported on-device Nano device, deployed callables under a paid plan, live SMS, physical-device testing, and native translation review. Big impact. Small requirements. Accessible everywhere.",
     },
 ]
 
@@ -194,7 +184,40 @@ def add_phone(img: Image.Image, shot_path: Path) -> None:
     draw.rounded_rectangle((x - 4, y - 4, x + target_w + 4, y + target_h + 4), radius=32, outline=(12, 18, 15), width=3)
 
 
+def make_wide_frame(scene: dict, index: int, total: int) -> Path:
+    """Full-frame web capture with a readable lower-third."""
+    shot_path = WEB_SHOTS / scene["shot"]
+    shot = Image.open(shot_path).convert("RGB")
+    scale = max(W / shot.width, H / shot.height)
+    resized = shot.resize((int(shot.width * scale + 0.5), int(shot.height * scale + 0.5)), Image.Resampling.LANCZOS)
+    left = max(0, (resized.width - W) // 2)
+    top = max(0, (resized.height - H) // 2)
+    img = resized.crop((left, top, left + W, top + H)).convert("RGBA")
+
+    overlay = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    shade = ImageDraw.Draw(overlay)
+    for offset in range(360):
+        alpha = int(222 * (offset / 360) ** 1.15)
+        shade.rectangle((0, H - 360 + offset, W, H - 360 + offset + 1), fill=(10, 18, 14, alpha))
+    shade.rounded_rectangle((60, 52, 430, 106), radius=26, fill=(10, 18, 14, 175), outline=(255, 253, 247, 90), width=1)
+    img = Image.alpha_composite(img, overlay).convert("RGB")
+    draw = ImageDraw.Draw(img)
+    draw.text((86, 68), "Tiny  ·  evidence intelligence", font=font(FONT_SANS_BOLD, 22), fill=PAPER)
+    draw.text((80, 748), scene["kicker"].upper(), font=font(FONT_SANS_BOLD, 22), fill=BUTTER)
+    title = wrap(scene["title"], 42)
+    draw.multiline_text((80, 792), title, font=font(FONT_SERIF, 56), fill=WHITE, spacing=2)
+    body = wrap(scene["body"], 76)
+    draw.multiline_text((82, 920), body, font=font(FONT_SANS, 24), fill=(238, 230, 214), spacing=6)
+    draw.text((W - 230, H - 52), f"{index:02d} / {total:02d}", font=font(FONT_SANS_BOLD, 20), fill=(238, 230, 214))
+    draw.text((80, H - 52), "Synthetic data  ·  no live SMS  ·  no production claim", font=font(FONT_SANS_BOLD, 18), fill=(215, 206, 190))
+    path = BUILD / f"{scene['id']}.png"
+    img.save(path)
+    return path
+
+
 def make_frame(scene: dict, index: int, total: int) -> Path:
+    if scene.get("wide"):
+        return make_wide_frame(scene, index, total)
     img = make_background()
     add_wordmark(img)
     draw = ImageDraw.Draw(img)
@@ -315,11 +338,12 @@ def build() -> None:
 
     notes = f"""# Tiny demo production notes
 
-- Source: actual Android emulator screenshots from the latest GitHub Actions manual smoke run (recorded in AI_HANDOFF.md).
+- Source: real Android emulator screenshots from the latest GitHub Actions manual smoke run plus real Playwright captures of the hosted-capable web build (`artifacts/demo/screens/`). Both use the synthetic Kofar Primary workspace in local/offline mode where applicable.
 - Platform: Windows ffmpeg + Pillow + Windows SAPI (Microsoft Zira Desktop).
 - TTS: local, free, offline fallback. No Google AI TTS credentials/paid service were used.
 - Capture limitation: this is a reviewed screenshot slideshow with narration, not motion screen recording. It does not claim real parent SMS delivery or on-device Gemini Nano inference.
-- Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The judge APK AI screenshot shows the SDK source `Cloud Gemini`. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed.
+- Evidence: Android CI 41 JVM / 19 Functions / 9 rules / 11 backend E2E; web CI 29 Vitest / 40 Playwright passed (5 skipped); canonical dataset guard; signed/aligned APK. Verified AI source is `Cloud Gemini`; Gemini Nano is not claimed.
+- Firebase limitation: Auth/Firestore and the app-level cloud AI fallback are verified separately against a non-production project with synthetic data. The SMS adapter remains mocked. App Check enforcement and Play Integrity are not claimed. Deployed callable sync is unavailable on Spark.
 - Synthetic data only; no real pupil/guardian data.
 - Rendered duration: {total:.1f}s.
 - Output: `artifacts/demo/tiny-demo.mp4`.

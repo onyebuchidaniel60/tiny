@@ -162,3 +162,14 @@ See `docs/WEB_APP.md` for the full browser architecture and manual test guide.
 - **Live private AI:** run [46022015152](https://github.com/onyebuchidaniel60/tiny/actions/runs/46022015152) passed; on-device unavailable, cloud fallback used, SDK source reported; ephemeral APK not uploaded.
 - **Not run:** physical-device installation/TalkBack, native-language review, App Check enforcement, Play Integrity, hosted Functions, live SMS or on-device Nano.
 
+## 9. Shared intelligence and cross-platform evidence (28 November 2026)
+
+- **Canonical dataset guard:** `node tools/check-canonical-dataset.mjs` → `20 Android ids shared with web; 8 pupils, 2 classes, 7 attendance dates, 24 assessments, 10 observations, 4 follow-ups.` Runs in both CI workflows.
+- **Web unit/component:** **29 passed, 0 failed** across 7 files, including 6 deterministic-intelligence tests for attendance, statuses, trends, class gaps, follow-up suggestions, de-identified prompts and parent drafts.
+- **Web browser:** **40 passed, 0 failed, 5 skipped** across desktop 1440, tablet 820 and mobile Pixel 5. New evidence/intelligence screenshots and a desktop axe sweep cover `/pupils`, `/pupils/pupil_amina`, `/classes/class_p4_blue/intelligence`, `/followups` and `/intelligence`. Skips are 3 opt-in live Firebase/AI checks and 2 non-desktop duplicate axe sweeps.
+- **Shared numbers:** both engines return the same whole-number values: Amina 100% / 87% / strong, Musa 43% / 51% / needs attention, Ngozi 70% / +12 points / improving, P4 class 79% attendance / 61% assessment / `plant_parts` gap.
+- **Android JVM:** **41 passed, 0 failed**, including 4 `IntelligenceEngineTest` cases that mirror the web fixtures and assert status, confidence, evidence counts and fingerprint changes.
+- **Functions domain:** **19 passed, 0 failed**. **Rules:** **9 passed, 0 failed**. **Backend emulator E2E:** **11 passed, 0 failed**, adding `lesson.upsert`, `assessment.record`, `followup.upsert` and `followup.status`, accepted replay and a stale-version conflict.
+- **Android build:** lint, JVM tests and `assembleDevDebug` passed; the workflow now runs `zipalign -c` and `apksigner verify --print-certs` and uploads `apk-signing.txt`, `zipalign.txt` and `apk-summary.txt`.
+- **Cross-platform limitation:** a single deployed browser↔Android run is still blocked by emulator-only Functions on Spark. The exact operations verified at the emulator contract layer, and those not run end-to-end, are listed in `docs/CROSS_PLATFORM_SYNC.md` section 6. Do not report the blocked rows as passing.
+

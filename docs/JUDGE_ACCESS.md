@@ -35,10 +35,10 @@ Full architecture, security notes and manual test steps: [`WEB_APP.md`](WEB_APP.
 
 The official hackathon rules require a test build that is free and available through the judging period. A public GitHub Release is the simplest zero-cost route and does not require a Google account.
 
-- Release page: `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.2`
-- APK: `https://github.com/onyebuchidaniel60/tiny/releases/download/v0.1.0-preview.2/tiny-judge-preview.apk`
-- Size: 31,536,119 bytes
-- SHA-256: `8bfdbb3d9479b3b5fc0ef9e8ac5502f3d6211b598e5b36b9c4b8a4790d6d922f`
+- Release page: `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.3`
+- APK: `https://github.com/onyebuchidaniel60/tiny/releases/download/v0.1.0-preview.3/tiny-judge-preview.apk`
+- Size: 31,819,671 bytes
+- SHA-256: `a8cd734a95ce50349fb7ec3140df3585bf05e847d0edcde8acb045536074610d`
 - Source: this public repository, Apache-2.0.
 
 The release APK is a **debug-signed preview** built with a dedicated, registered App Check debug token. The token is intentionally embedded because Firebase AI Logic requires App Check and the hackathon rules accept debug tokens. It is limited to the non-production `tiny-b9f29` project and will be revoked after judging. Do not reuse it for production.
@@ -52,7 +52,7 @@ The release APK is a **debug-signed preview** built with a dedicated, registered
 5. Sign in with the synthetic test account:
    - Phone: `08000000001`
    - Code: `123456`
-6. The app loads the synthetic sample workspace (displayed as `Kofar Primary`) with one class and one pupil.
+6. After sign-in the app loads the synthetic sample workspace. The non-production Firestore preview currently contains a legacy synthetic workspace (one class, one pupil); the canonical Kofar Primary dataset (two classes, eight pupils) is also bundled locally and used by the web offline demo and emulator tests. See `CROSS_PLATFORM_SYNC.md`.
 
 No real pupil/guardian data is used. Do not enter real child, parent or guardian numbers.
 
@@ -62,7 +62,8 @@ No real pupil/guardian data is used. Do not enter real child, parent or guardian
 - Language switching between English, Hausa, Yoruba and Igbo, with persistence across restart.
 - First-use teacher tour, guardian SMS guide and Help centre.
 - Test-phone sign-in and Firestore bootstrap.
-- Firebase AI Logic cloud fallback with SDK-reported source.
+- Pupil directory/profile, class intelligence, assessments, follow-ups and evidence-informed lesson planning.
+- Firebase AI Logic cloud fallback with SDK-reported source, requested mode, duration, evidence fingerprint and honest deterministic fallback.
 - Mock SMS conversations (nothing is sent).
 - Local attendance, lessons and progress.
 

@@ -10,19 +10,22 @@ Tiny is an offline-first Android teacher tool for rural primary schools. Parents
 4. On the phone sign-in screen, use the synthetic Firebase test number:
    - Phone: `08000000001`
    - Code: `123456`
-5. After sign-in, the app loads the synthetic sample workspace (displayed as `Kofar Primary`) with one class and one pupil.
+5. After sign-in, the app loads the synthetic sample workspace. The non-production Firestore preview currently contains a legacy synthetic workspace (one class, one pupil); the canonical Kofar Primary dataset (two classes, eight pupils) is also bundled locally and is used by the web offline demo and by emulator tests. See `docs/CROSS_PLATFORM_SYNC.md` for the exact limitation.
 
 No real pupil or guardian data is used. Do not enter a real child, parent or guardian phone number.
 
 ## What works in this build
 
 - Offline-first teacher flows, local attendance, lessons, progress and mock parent conversations.
+- Pupil directory and evidence profile; class intelligence; assessments; follow-ups; AI evidence review and parent draft.
+- Deterministic intelligence from recorded attendance, assessment and observation evidence, with traceable evidence IDs and confidence.
 - Firebase Phone Auth with the synthetic test account.
 - Firestore read/bootstrap of the synthetic workspace.
-- Firebase AI Logic cloud fallback with SDK-reported source. On-device Gemini Nano is **not** claimed on unsupported phones.
+- Firebase AI Logic with mode selection, SDK-reported source, duration and honest deterministic fallback. On-device Gemini Nano is **not** claimed on unsupported phones.
 - Complete interface localization in English, Hausa, Yoruba and Igbo. Hausa/Yoruba/Igbo are complete drafts pending native review; English remains the fallback.
 - First-use teacher tour (10 steps), guardian SMS guide (4 steps), Help centre and Android 13+ per-app language support.
-- Refreshed dashboard, class/roster, attendance, lesson, progress, family-inbox, sync and settings surfaces; Lucide sprout brand mark and adaptive icon.
+- Refreshed light-first dashboard, class/roster, attendance, lesson, progress, family-inbox, sync and settings surfaces; Lucide sprout brand mark and adaptive icon.
+- A fifth **Pupils** tab plus Intelligence/Follow-up entry points from Home and Settings.
 - The app uses a dedicated App Check debug token for this preview. Firebase AI Logic requires App Check; debug tokens are accepted by the hackathon rules.
 
 ## Known limitations

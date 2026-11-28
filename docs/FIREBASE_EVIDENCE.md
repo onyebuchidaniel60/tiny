@@ -165,14 +165,14 @@ No billing was enabled to initialize or test Auth.
 | App-level AI smoke | Manual run `45950443728`: `AiLogicLiveTest` passed; on-device unavailable, cloud fallback, SDK source `Cloud Gemini`; ephemeral APK not uploaded |
 | Android sync E2E | Manual run `45950447844`: `SyncEmulatorE2ETest` passed; real Android Firebase Functions SDK/`SyncProcessor` against Auth/Firestore/Functions emulators; accepted, idempotent replay, retry and conflict |
 | Judge build | Public prerelease `v0.1.0-preview.1` (historical): `tiny-judge-preview.apk` (31,097,336 bytes; SHA-256 `5c7dc73d6384691ac5714af0240ad826897d28d41f6cdbb84896b4d85c7ea64b`); dedicated App Check debug token; no private CI token |
-| Judge build (current) | Public prerelease `v0.1.0-preview.2`: `tiny-judge-preview.apk` (31,536,119 bytes; SHA-256 `8bfdbb3d9479b3b5fc0ef9e8ac5502f3d6211b598e5b36b9c4b8a4790d6d922f`), built by judge-release run `46013035986`; dedicated App Check debug token; no private CI token |
+| Judge build (current) | Public prerelease `v0.1.0-preview.3`: `tiny-judge-preview.apk` (31,819,671 bytes; SHA-256 `a8cd734a95ce50349fb7ec3140df3585bf05e847d0edcde8acb045536074610d`), built by judge-release run `46094084483`; dedicated App Check debug token; no private CI token |
 | Final regression | Run `45950400565`: all jobs green; normal instrumentation shows the live AI and sync tests skipped when Firebase/emulator config is absent, and the navigation test passed |
 | Browser app | Registered `Tiny web`, app ID `1:1072757481941:web:10a300a3c9756e1520dd5c`; public Web config only |
 | Browser Auth/Firestore | Synthetic Email/Password account signed in; read-only bootstrap of `ws_webdemo0001` (2 classes / 8 pupils / 4 guardians); existing rules unchanged |
 | Browser AI | Hosted `/ai` returned a candidate and SDK source `Cloud Gemini`; no on-device claim; screenshot `artifacts/web/tiny-web-ai-cloud.png` |
 | Browser App Check | Dedicated web debug token registered; value stored only in ignored `web/.env.local` and GitHub secret; enforcement off; revoke after judging |
-| Browser hosting | Firebase Hosting <https://tiny-b9f29.web.app>; Spark; no Functions deployment |
-| Browser tests | Typecheck; 14/14 Vitest; 10 passed/2 skipped Playwright across desktop/mobile; 1/1 live Firebase/AI; 0 serious/critical axe |
+| Browser hosting | Firebase Hosting <https://tiny-b9f29.web.app>; Spark; no Functions deployment. Intelligence UI deployed 28 Nov 2026 and verified with Playwright at `/pupils/pupil_amina` (heading + assessment trend visible). |
+| Browser tests | Typecheck; 29/29 Vitest; 40 passed/5 skipped Playwright across desktop/tablet/mobile; live Firebase/AI manual check; 0 serious/critical axe on Home + five intelligence surfaces |
 | Log redaction | The logcat, browser evidence and AI test artifacts contain no unredacted App Check debug token |
 | Security cleanup | The earlier emulator evidence artifact containing the raw debug token was deleted; that token was revoked. The active private CI token is in GitHub secrets only; the AI APK was not uploaded |
 

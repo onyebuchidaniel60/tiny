@@ -19,12 +19,12 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 
 | Requirement | Current status | Evidence / action |
 |---|---|---|
-| Gen AI app using Firebase AI Logic | **IMPLEMENTED** | Android `AiLogicService` and browser `web/src/ai/service.ts` call Firebase AI Logic at runtime |
+| Gen AI app using Firebase AI Logic | **IMPLEMENTED** | Android `AiLogicService` and browser `web/src/ai/service.ts` call Firebase AI Logic at runtime; evidence-backed pupil/class tasks report requested mode, actual source, duration and fallback |
 | Android + Gemini Nano 4 via AI Logic | **PARTIAL - on-device hardware not verified** | Android and browser use `InferenceMode.PREFER_ON_DEVICE`; cloud fallback verified; supported-device test absent |
 | Browser companion preview | **IMPLEMENTED AND HOSTED** | <https://tiny-b9f29.web.app>; teacher-only synthetic data, local persistence and Firebase AI Logic |
 | Supported Firebase products | **YES** | Auth, Firestore, App Check, AI Logic |
 | App Check with debug token accepted | **YES** | Dedicated judge debug token; private CI token separate |
-| Installable, working test build | **PREPARED AND PUBLISHED** | Browser preview <https://tiny-b9f29.web.app> plus public prerelease `v0.1.0-preview.2`: `tiny-judge-preview.apk`; instructions in `docs/JUDGE_ACCESS.md` |
+| Installable, working test build | **PREPARED AND PUBLISHED** | Browser preview <https://tiny-b9f29.web.app> plus public prerelease `v0.1.0-preview.3`: `tiny-judge-preview.apk`; instructions in `docs/JUDGE_ACCESS.md` |
 | Test access free and unrestricted until judging ends | **YES, if release stays up** | Keep the release and judge token until 16 December 2026 |
 | Public code repository | **YES** | `https://github.com/onyebuchidaniel60/tiny` |
 | Open-source license visible at top | **YES** | Apache-2.0 `LICENSE`; GitHub About detects `Apache License 2.0` |
@@ -32,7 +32,7 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 | Demo video ≤3 minutes, public YouTube link | **LOCAL RENDER READY — NOT UPLOADED** | 146.6s MP4 with captions; operator must upload to YouTube as public and provide the URL |
 | English language / English captions | **YES** | Narration and captions are English |
 | Text description of AI Logic use, features and value | **DRAFTED** | Use this file and README; finalize on Devpost |
-| Testing instructions | **READY** | `docs/JUDGE_ACCESS.md` and `docs/WEB_APP.md` |
+| Testing instructions | **READY** | `docs/JUDGE_ACCESS.md`, `docs/WEB_APP.md`, `docs/CROSS_PLATFORM_SYNC.md` |
 | Summary of what was built during the submission period | **NEEDS FINAL DISCLOSURE** | Implementation was built during the contest period; product handoff/template documents pre-existed. Disclose clearly |
 | No production keys, live secrets or PII in repo/submission | **YES** | Public client config only; judge token is intentionally in the public test APK; no private CI token or real data |
 | Third-party tools/assets authorized | **YES, subject to operator confirmation** | Reference images are reference-only; dependencies use their licenses |
@@ -58,11 +58,11 @@ Contest period ends **30 November 2026, 2:00 P.M. Pacific / 22:00 UTC**. Judging
 - **Platform:** Android, with an operator-requested browser companion preview
 - **Repository:** `https://github.com/onyebuchidaniel60/tiny`
 - **Demo video:** YouTube URL (operator upload required)
-- **Testing links:** browser <https://tiny-b9f29.web.app>; Android `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.2`
+- **Testing links:** browser <https://tiny-b9f29.web.app>; Android `https://github.com/onyebuchidaniel60/tiny/releases/tag/v0.1.0-preview.3`
 - **Test credentials:** browser `judge@tiny-demo.example` / `TinyDemo2026!`; Android phone `08000000001`, code `123456` (synthetic accounts)
 - **Built with:** Kotlin, Jetpack Compose, Vite, React, TypeScript, Firebase Auth, Firestore, App Check, Firebase AI Logic, Gemini Developer API, IndexedDB, PWA, Android SDK, Room/SQLCipher, WorkManager
 - **Description:** offline-first teacher tool for rural Nigerian primary schools; parents use SMS; pupils have no accounts; hybrid AI assists lesson planning without gating core work. The browser companion supports evaluation of the teacher workflows without an install.
-- **AI Logic use:** de-identified Primary 4 science prompt, `PREFER_ON_DEVICE` on Android and browser, cloud fallback, SDK-reported source, curated offline fallback; no PII, no autonomous parent-facing content. The verified browser and Android cloud source is `Cloud Gemini`; on-device is not claimed.
+- **AI Logic use:** de-identified evidence review, parent-update draft, class review and lesson planning prompts; `PREFER_ON_DEVICE` on Android and browser, explicit cloud/on-device modes in diagnostics, cloud fallback, SDK-reported source, deterministic offline fallback; no PII, no autonomous parent-facing content. The verified browser and Android cloud source is `Cloud Gemini`; on-device is not claimed. `docs/FINAL_REPORT.md` records the architecture and exact test evidence.
 
 ## 5. Final operator actions before submission
 
