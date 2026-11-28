@@ -892,4 +892,21 @@
     <string name="teacher_tour_button">Teacher tour</string>
     <string name="open_settings">Open settings</string>
     <string name="reset_local_done">Local sample data reset. This does not delete any Firebase data.</string>
+    <string name="no_attention_flags">No evidence flags.</string>
+    <string name="new_followup">New follow-up</string>
+    <string name="completed_followups">Completed follow-ups</string>
+    <plurals name="assessment_count">
+        <item quantity="one">%1$d assessment</item>
+        <item quantity="other">%1$d assessments</item>
+    </plurals>
+    <string name="class_overview">Class overview</string>
+    <plurals name="observation_count">
+        <item quantity="one">%1$d observation</item>
+        <item quantity="other">%1$d observations</item>
+    </plurals>
+    <plurals name="common_gap_count">
+        <item quantity="one">%1$d learning gap</item>
+        <item quantity="other">%1$d learning gaps</item>
+    </plurals>
+    <string name="pupil_profile_subtitle">Attendance, assessment and observation evidence for this pupil.</string>
 </resources>

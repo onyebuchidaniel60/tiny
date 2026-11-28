@@ -28,3 +28,26 @@ test('captures representative responsive screens', async ({ page }, testInfo) =>
     await expect(page.locator('.sidebar')).toBeVisible();
   }
 });
+
+test('captures evidence and intelligence screens', async ({ page }, testInfo) => {
+  const prefix = testInfo.project.name;
+  await page.goto('/pupils', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /pupil directory/i }).first()).toBeVisible();
+  await page.screenshot({ path: `../artifacts/web/${prefix}-pupils.png`, fullPage: true });
+
+  await page.goto('/pupils/pupil_amina', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: 'Amina Bello', exact: true })).toBeVisible();
+  await page.screenshot({ path: `../artifacts/web/${prefix}-pupil-profile.png`, fullPage: true });
+
+  await page.goto('/classes/class_p4_blue/intelligence', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: 'P4 Blue', exact: true })).toBeVisible();
+  await page.screenshot({ path: `../artifacts/web/${prefix}-class-intelligence.png`, fullPage: true });
+
+  await page.goto('/followups', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /open follow-ups/i }).first()).toBeVisible();
+  await page.screenshot({ path: `../artifacts/web/${prefix}-followups.png`, fullPage: true });
+
+  await page.goto('/intelligence', { waitUntil: 'domcontentloaded' });
+  await expect(page.getByRole('heading', { name: /^Intelligence$/ }).first()).toBeVisible();
+  await page.screenshot({ path: `../artifacts/web/${prefix}-intelligence.png`, fullPage: true });
+});

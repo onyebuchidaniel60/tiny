@@ -120,6 +120,47 @@ jobs:
 
 Do not echo or archive the decoded file.
 
+### Debug signing, APK verification and install reliability
+
+GitHub-hosted runners start without a persistent Android debug keystore. Gradle therefore generates a new debug key on every run. Two CI APKs with the same package name can then fail to upgrade each other:
+
+```text
+INSTALL_FAILED_UPDATE_INCOMPATIBLE: Package ... signatures do not match previously installed version
+```
+
+The install may appear slow before that failure because Android copies and verifies the ~31 MB APK first. This is a signing-identity mismatch, not a corrupt download.
+
+The workflow now verifies every build:
+
+```bash
+BUILD_TOOLS="$ANDROID_HOME/build-tools/36.0.0"
+"$BUILD_TOOLS/zipalign" -c -v 4 app/build/outputs/apk/dev/debug/*.apk
+"$BUILD_TOOLS/apksigner" verify --verbose --print-certs app/build/outputs/apk/dev/debug/*.apk
+sha256sum app/build/outputs/apk/dev/debug/*.apk
+```
+
+The outputs are uploaded as `artifacts/apk-signing.txt`, `artifacts/zipalign.txt` and `artifacts/apk-summary.txt`.
+
+For repeatable upgrades, provision a stable debug keystore (never commit it):
+
+| Secret | Meaning |
+|---|---|
+| `TINY_DEBUG_KEYSTORE_BASE64` | Base64 of a PKCS#12/JKS debug keystore |
+| `TINY_DEBUG_KEYSTORE_PASSWORD` | Store password |
+| `TINY_DEBUG_KEY_ALIAS` | Key alias (default `androiddebugkey`) |
+| `TINY_DEBUG_KEY_PASSWORD` | Key password |
+
+`app/build.gradle.kts` uses that keystore only when `TINY_DEBUG_KEYSTORE_PATH` points to a materialized file. Without the secrets, the normal Android debug key is used and a fresh install is required between different CI runs.
+
+For a physical phone:
+
+```bash
+adb uninstall ng.tiny.education.dev.debug   # only when signatures differ
+adb install -r tiny-dev-debug.apk
+```
+
+If install still stalls, check USB authorization, free storage, and whether a device-owner/MDM policy blocks debug packages. Do not disable signature verification or use `adb install --bypass-low-target-sdk-block`.
+
 ## 3. Firebase App Distribution job
 
 This job is manual and judge-facing. It should run only after the build job passes and the protected `distribution` environment is approved.

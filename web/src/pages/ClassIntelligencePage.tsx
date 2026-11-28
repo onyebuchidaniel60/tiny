@@ -26,7 +26,7 @@ export function ClassIntelligencePage() {
   const { classId } = useParams();
   const navigate = useNavigate();
   const { state, addFollowUp, saveAiAnalysis, saveLesson } = useStore();
-  const { t } = useI18n();
+  const { t, tn } = useI18n();
   const classroom = state.classes.find((item) => item.id === classId);
   const intelligence = classId ? buildClassIntelligence(state, classId) : null;
   const [review, setReview] = useState<AiAnalysis | null>(null);
@@ -94,10 +94,10 @@ export function ClassIntelligencePage() {
         eyebrow={t('class_intelligence')}
         title={`${classroom.gradeLevel} ${classroom.sectionLabel}`}
         subtitle={t('class_intelligence_subtitle')}
-        actions={<div className="button-row"><Link to={`/classes/${classroom.id}`}><Button variant="secondary">{t('class_label')}</Button></Link><Button onClick={planFromEvidence}>{t('plan_from_evidence')}</Button></div>}
+        actions={<div className="button-row"><Link to={`/classes/${classroom.id}`}><Button variant="secondary">{t('class_overview')}</Button></Link><Button onClick={planFromEvidence}>{t('plan_from_evidence')}</Button></div>}
       />
 
-      <div className="metric-card-row">
+      <div className="metric-card-row four-up">
         <div className="card mini-metric"><span className="status-dot status-ok" /><div><strong>{intelligence.attendanceRate}%</strong><small>{t('class_attendance')}</small></div></div>
         <div className="card mini-metric"><span className="status-dot status-warn" /><div><strong>{Math.round(intelligence.assessmentAverage)}%</strong><small>{t('class_assessment')} · {intelligence.assessmentCount}</small></div></div>
         <div className="card mini-metric"><span className="status-dot status-wait" /><div><strong>{intelligence.observationCount}</strong><small>{t('observations')}</small></div></div>
@@ -106,19 +106,22 @@ export function ClassIntelligencePage() {
 
       <div className="two-column wide-left">
         <Card>
-          <div className="card-heading"><div><div className="eyebrow">{t('common_gaps')}</div><h3>{t('class_assessment')}</h3></div><Pill tone="tomato">{intelligence.commonGaps.length}</Pill></div>
+          <div className="card-heading"><div><div className="eyebrow">{t('class_assessment')}</div><h3>{t('common_gaps')}</h3></div><Pill tone="tomato">{intelligence.commonGaps.length}</Pill></div>
           {intelligence.commonGaps.length === 0 ? <p className="muted">{t('insufficient_evidence')}</p> : intelligence.commonGaps.map((gap) => (
             <div className="gap-row" key={gap.objectiveId}>
-              <div><strong>{gap.objectiveLabel}</strong><small>{gap.pupilsBelow} {t('pupils').toLowerCase()} below 50% · {gap.supportObservations} {t('observations').toLowerCase()}</small></div>
+              <div><strong>{gap.objectiveLabel}</strong><small>{gap.pupilsBelow} {t('pupils').toLowerCase()} below 50% · {tn('observation_count', gap.supportObservations)}</small></div>
               <Pill tone="tomato">{Math.round(gap.average)}%</Pill>
             </div>
           ))}
           <Button variant="secondary" onClick={planFromEvidence}>{t('plan_from_evidence')}</Button>
         </Card>
         <Card>
-          <div className="card-heading"><div><div className="eyebrow">{t('class_strengths')}</div><h3>{t('pupils_improving')}</h3></div><Pill tone="forest">{intelligence.strengths.length}</Pill></div>
+          <div className="card-heading"><div><div className="eyebrow">{t('class_strengths')}</div><h3>{t('class_strengths')}</h3></div><Pill tone="forest">{intelligence.strengths.length}</Pill></div>
           {intelligence.strengths.length === 0 ? <p className="muted">{t('insufficient_evidence')}</p> : intelligence.strengths.map((gap) => <div className="gap-row" key={gap.objectiveId}><div><strong>{gap.objectiveLabel}</strong><small>{Math.round(gap.average)}% · {gap.pupilsBelow} {t('profile_needs_attention').toLowerCase()}</small></div><Pill tone="forest">{Math.round(gap.average)}%</Pill></div>)}
-          <div className="chip-list">{intelligence.improvingPupils.map((pupil) => <Link key={pupil.pupilId} to={`/pupils/${pupil.pupilId}`}><Pill tone="cobalt">{pupil.pupilName}</Pill></Link>)}</div>
+          <div className="eyebrow section-gap">{t('pupils_improving')}</div>
+          {intelligence.improvingPupils.length === 0
+            ? <p className="muted">{t('empty_generic')}</p>
+            : <div className="chip-list">{intelligence.improvingPupils.map((pupil) => <Link key={pupil.pupilId} to={`/pupils/${pupil.pupilId}`}><Pill tone="cobalt">{pupil.pupilName}</Pill></Link>)}</div>}
         </Card>
       </div>
 
@@ -146,7 +149,7 @@ export function ClassIntelligencePage() {
 
       <Card className="ai-evidence-card">
         <div className="card-heading"><div><div className="eyebrow">{t('intelligence_title')}</div><h3>{t('class_intelligence')}</h3></div><Button onClick={() => void analyseClass()} disabled={busy}>{busy ? t('ai_thinking') : t('generate_evidence_review')}</Button></div>
-        <p className="muted">{intelligence.pupilCount} {t('pupils').toLowerCase()} · {intelligence.markedAttendance} {t('attendance_title').toLowerCase()} · {intelligence.assessmentCount} {t('assessment_title').toLowerCase()}</p>
+        <p className="muted">{intelligence.pupilCount} {t('pupils').toLowerCase()} · {intelligence.markedAttendance} {t('attendance_title').toLowerCase()} · {tn('assessment_count', intelligence.assessmentCount)}</p>
         {review && (
           <div className="ai-result">
             <div className="source-row"><Pill tone={review.fallback ? 'butter' : review.source === 'On-device Gemini Nano' ? 'forest' : 'cobalt'}>{review.source}</Pill><small>{review.durationMs} ms</small></div>

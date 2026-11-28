@@ -892,4 +892,21 @@
     <string name="teacher_tour_button">Rangadin malami</string>
     <string name="open_settings">Buɗe saiti</string>
     <string name="reset_local_done">An sake saitin bayanan misalin gida. Wannan ba ya share bayanan Firebase.</string>
+    <string name="no_attention_flags">Babu alamun bukatar kulawa.</string>
+    <string name="new_followup">Sabuwar bibiya</string>
+    <string name="completed_followups">Bibiyar da aka kammala</string>
+    <plurals name="assessment_count">
+        <item quantity="one">%1$d tantancewa</item>
+        <item quantity="other">%1$d tantancewa</item>
+    </plurals>
+    <string name="class_overview">Bayanin aji</string>
+    <plurals name="observation_count">
+        <item quantity="one">%1$d lura</item>
+        <item quantity="other">%1$d lura</item>
+    </plurals>
+    <plurals name="common_gap_count">
+        <item quantity="one">%1$d rashi fahimta</item>
+        <item quantity="other">%1$d rashi fahimta</item>
+    </plurals>
+    <string name="pupil_profile_subtitle">Shaidar halarta, tantancewa da lura ga wannan ?alibi.</string>
 </resources>

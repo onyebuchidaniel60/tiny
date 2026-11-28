@@ -867,5 +867,16 @@
   "guardian_tour_button": "Ìtọ́sọ́nà olùtọ́jú",
   "teacher_tour_button": "Ìrìn-àjò olùkọ́",
   "open_settings": "Ṣí ètò",
-  "reset_local_done": "A tún dátà àpẹẹrẹ ibílẹ̀ ṣe. Èyí kò pa dátà Firebase rárá."
+  "reset_local_done": "A tún dátà àpẹẹrẹ ibílẹ̀ ṣe. Èyí kò pa dátà Firebase rárá.",
+  "no_attention_flags": "K? s? ?m? ?fiy?s?.",
+  "new_followup": "?t??l? tuntun",
+  "completed_followups": "?w?n ?t??l? t? ? par?",
+  "assessment_count_one": "{count:d} ?d?nw?",
+  "assessment_count_other": "{count:d} ?d?nw?",
+  "class_overview": "?k?p?? k?l??s?",
+  "observation_count_one": "{count:d} ?k?y?s?",
+  "observation_count_other": "{count:d} ?k?y?s?",
+  "common_gap_count_one": "{count:d} ?l?fo ?k??k????",
+  "common_gap_count_other": "{count:d} ?l?fo ?k??k????",
+  "pupil_profile_subtitle": "??r? ?w? s? k?l??s?, ?d?nw? ?ti ?k?y?s? f?n ak??k???? y??."
 }

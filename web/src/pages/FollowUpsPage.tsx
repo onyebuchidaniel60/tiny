@@ -42,7 +42,7 @@ export function FollowUpsPage() {
         eyebrow={t('followups')}
         title={t('open_followups')}
         subtitle={t('override_note')}
-        actions={<Button onClick={() => setShowForm((value) => !value)}><Icon name="plus" size={16} /> {t('followup_title')}</Button>}
+        actions={<Button onClick={() => setShowForm((value) => !value)}><Icon name="plus" size={16} /> {t('new_followup')}</Button>}
       />
       {showForm && (
         <Card className="form-card">
@@ -85,7 +85,7 @@ export function FollowUpsPage() {
             })}
           </Card>
           <Card className="soft-card">
-            <div className="eyebrow">{t('followup_done')}</div>
+            <div className="eyebrow">{t('completed_followups')}</div>
             {done.length === 0 ? <p className="muted">{t('empty_generic')}</p> : done.map((item) => <div className="analysis-history" key={item.id}><strong>{item.title}</strong><small>{formatDate(item.completedAt ?? item.createdAt)}</small></div>)}
           </Card>
           <Card className="soft-card">

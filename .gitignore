@@ -67,3 +67,8 @@ artifacts/demo/frames/
 # Downloaded CI evidence bundles (curated copies live in artifacts/)
 artifacts/emulator-final/
 artifacts/test-evidence/
+
+# CI-only materialized signing/key files
+.ci/
+*.keystore
+*.jks

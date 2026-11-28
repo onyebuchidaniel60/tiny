@@ -88,7 +88,7 @@ export function DashboardPage() {
             {classInsights.map(({ classroom, intelligence }) => intelligence && (
               <Link key={classroom.id} to={`/classes/${classroom.id}/intelligence`} className="class-row compact-row">
                 <span className="class-avatar">{classroom.gradeLevel}{classroom.sectionLabel.slice(0, 1)}</span>
-                <span className="class-row-main"><strong>{classroom.gradeLevel} {classroom.sectionLabel}</strong><small>{intelligence.attendanceRate}% {t('attendance_rate').toLowerCase()} · {intelligence.commonGaps.length} {t('common_gaps').toLowerCase()}</small></span>
+                <span className="class-row-main"><strong>{classroom.gradeLevel} {classroom.sectionLabel}</strong><small>{intelligence.attendanceRate}% {t('attendance_rate').toLowerCase()} · {tn('common_gap_count', intelligence.commonGaps.length)}</small></span>
                 <Icon name="arrow" size={15} />
               </Link>
             ))}

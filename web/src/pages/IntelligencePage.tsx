@@ -9,7 +9,7 @@ import type { AiAnalysis } from '../types';
 
 export function IntelligencePage() {
   const { state, saveAiAnalysis } = useStore();
-  const { t, formatDate } = useI18n();
+  const { t, tn, formatDate } = useI18n();
   const [mode, setMode] = useState<AiInferenceMode>('prefer_on_device');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<AiAnalysis | null>(null);
@@ -99,7 +99,7 @@ export function IntelligencePage() {
             {strong.map(({ classroom, intelligence }) => intelligence && (
               <Link key={classroom.id} to={`/classes/${classroom.id}/intelligence`} className="class-row">
                 <span className="class-avatar">{classroom.gradeLevel}{classroom.sectionLabel.slice(0, 1)}</span>
-                <span className="class-row-main"><strong>{classroom.gradeLevel} {classroom.sectionLabel}</strong><small>{intelligence.attendanceRate}% {t('attendance_rate').toLowerCase()} · {intelligence.commonGaps.length} {t('common_gaps').toLowerCase()}</small></span>
+                <span className="class-row-main"><strong>{classroom.gradeLevel} {classroom.sectionLabel}</strong><small>{intelligence.attendanceRate}% {t('attendance_rate').toLowerCase()} · {tn('common_gap_count', intelligence.commonGaps.length)}</small></span>
                 <Pill tone={intelligence.attentionPupils.length ? 'tomato' : 'forest'}>{intelligence.attentionPupils.length} {t('profile_needs_attention').toLowerCase()}</Pill>
               </Link>
             ))}
@@ -112,7 +112,7 @@ export function IntelligencePage() {
       </div>
 
       <Card>
-        <div className="card-heading"><div><div className="eyebrow">{t('analysis_saved')}</div><h3>{t('recent_evidence')}</h3></div><Pill tone="muted">{state.aiAnalyses.length}</Pill></div>
+        <div className="card-heading"><div><div className="eyebrow">{t('analysis_diagnostics')}</div><h3>{t('recent_evidence')}</h3></div><Pill tone="muted">{state.aiAnalyses.length}</Pill></div>
         {state.aiAnalyses.length === 0 ? <p className="muted">{t('no_analysis_yet')}</p> : state.aiAnalyses.slice(0, 8).map((analysis) => (
           <div className="outbox-row" key={analysis.id}>
             <span className={`status-dot ${analysis.fallback ? 'status-warn' : 'status-ok'}`} />

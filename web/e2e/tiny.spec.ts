@@ -115,3 +115,23 @@ test('home has no serious or critical accessibility violations', async ({ page }
   const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
   expect(serious.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([]);
 });
+
+test('evidence and intelligence screens have no serious accessibility violations', async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.startsWith('desktop'), 'Desktop axe sweep; layout overflow is covered per viewport.');
+  const routes = [
+    ['/pupils', /pupil directory/i],
+    ['/pupils/pupil_amina', /Amina Bello/],
+    ['/classes/class_p4_blue/intelligence', /P4 Blue/],
+    ['/followups', /open follow-ups/i],
+    ['/intelligence', /^Intelligence$/],
+  ] as const;
+  for (const [route, heading] of routes) {
+    await open(page, route);
+    await expect(page.getByRole('heading', { name: heading }).first()).toBeVisible();
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa'])
+      .analyze();
+    const serious = results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''));
+    expect(serious.map((violation) => `${route} ${violation.id}: ${violation.help}`)).toEqual([]);
+  }
+});

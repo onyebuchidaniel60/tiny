@@ -143,8 +143,9 @@ tap_text_retry "Skip tour" 3 || true
 wait_for_text "Good morning" 20 || true
 screenshot "tiny-03-home"
 
-# Bottom navigation is 1080 px wide on the Pixel 5 emulator profile.
-tap_coord 405 2200
+# Five bottom tabs are 1080 px wide on the Pixel 5 profile: centers 108, 324,
+# 540, 756, 972. The app has Home / Classes / Pupils / Lessons / Messages.
+tap_coord 324 2200
 sleep 3
 dismiss_anr
 screenshot "tiny-04-classes"
@@ -154,13 +155,20 @@ sleep 3
 dismiss_anr
 screenshot "tiny-05-class-detail"
 
+tap_text_retry "Class intelligence" 5 || true
+sleep 3
+dismiss_anr
+screenshot "tiny-05c-class-intelligence"
+adb shell input keyevent 4 || true
+sleep 2
+
 tap_text_retry "Amina Bello" 5 || true
 sleep 3
 dismiss_anr
-screenshot "tiny-05a-progress"
+screenshot "tiny-05a-pupil-profile"
 adb shell input swipe 540 1800 540 500 300 || true
 sleep 1
-screenshot "tiny-05b-family-contacts"
+screenshot "tiny-05b-pupil-evidence"
 adb shell input keyevent 4 || true
 sleep 2
 
@@ -174,7 +182,24 @@ sleep 1
 adb shell input keyevent 4 || true
 sleep 1
 
-tap_coord 690 2200
+tap_coord 540 2200
+sleep 3
+dismiss_anr
+screenshot "tiny-11-pupils"
+tap_text_retry "Open follow-ups" 5 || true
+sleep 2
+dismiss_anr
+screenshot "tiny-12-followups"
+adb shell input keyevent 4 || true
+sleep 2
+tap_text_retry "Amina Bello" 5 || true
+sleep 2
+dismiss_anr
+screenshot "tiny-11a-pupil-intelligence"
+adb shell input keyevent 4 || true
+sleep 2
+
+tap_coord 756 2200
 sleep 3
 dismiss_anr
 screenshot "tiny-07-lessons"
@@ -186,7 +211,7 @@ screenshot "tiny-07a-ai-fallback"
 adb shell input keyevent 4 || true
 sleep 1
 
-tap_coord 945 2200
+tap_coord 972 2200
 sleep 3
 dismiss_anr
 screenshot "tiny-08-messages"

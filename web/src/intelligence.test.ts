@@ -26,18 +26,24 @@ describe('shared intelligence engine', () => {
     const amina = buildPupilIntelligence(state, 'pupil_amina');
     const musa = buildPupilIntelligence(state, 'pupil_musa');
     expect(amina?.status).toBe('strong');
+    expect(amina?.assessments.average).toBe(87);
     expect(musa?.status).toBe('needs_attention');
+    expect(musa?.attendance.rate).toBe(43);
     expect(musa?.nextActions).toContain('action_contact_family');
     const ngozi = buildPupilIntelligence(state, 'pupil_ngozi');
     expect(ngozi?.status).toBe('improving');
-    expect(ngozi?.assessments.trend).toBeGreaterThanOrEqual(8);
+    expect(ngozi?.assessments.average).toBe(70);
+    expect(ngozi?.assessments.trend).toBe(12);
   });
 
   it('identifies a class gap without turning it into an individual fact', () => {
     const classroom = buildClassIntelligence(state, 'class_p4_blue');
     expect(classroom?.pupilCount).toBe(4);
+    expect(classroom?.attendanceRate).toBe(79);
+    expect(classroom?.assessmentAverage).toBe(61);
     expect(classroom?.commonGaps.some((gap) => gap.objectiveId === 'plant_parts')).toBe(true);
-    expect(classroom?.attentionPupils.map((pupil) => pupil.pupilId)).toContain('pupil_musa');
+    expect(classroom?.attentionPupils.map((pupil) => pupil.pupilId)).toEqual(['pupil_musa', 'pupil_tunde']);
+    expect(classroom?.improvingPupils.map((pupil) => pupil.pupilId)).toEqual(['pupil_ngozi']);
   });
 
   it('creates a follow-up suggestion for attendance and low assessment', () => {

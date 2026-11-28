@@ -142,18 +142,18 @@ Both engines implement the same deterministic thresholds. The same source record
 |---|---:|---:|---|---|
 | Amina | 100% | 87% | strong | high |
 | Musa | 43% | 51% | needs_attention (attendance) | high |
-| Ngozi | 100% | 70% | improving (+12 points) | high |
-| Tunde | 71% | 35% | needs_attention (attendance + assessment) | high |
-| Fatima | 100% | 83% | strong | high |
-| Emeka | 71% | 43% | needs_attention (attendance + assessment) | high |
-| Zainab | 100% | 76% | strong | high |
-| Ibrahim | 100% | 55% | making_progress | high |
+| Ngozi | 100% | 70% | improving (+12 points) | medium |
+| Tunde | 71% | 35% | needs_attention (attendance + assessment) | medium |
+| Fatima | 100% | 83% | strong | medium |
+| Emeka | 71% | 43% | needs_attention (attendance + assessment) | medium |
+| Zainab | 100% | 76% | strong | medium |
+| Ibrahim | 100% | 55% | making_progress | medium |
 
 P4 Blue: 4 pupils, 28 marked attendance entries, 79% class attendance, 61% assessment average. Common gap: `plant_parts`. Attention: Musa, Tunde. Improving: Ngozi.
 
 P5 Gold: 4 pupils, 28 marked entries; common gap: `map_reading`; attention: Emeka.
 
-Thresholds: attendance below 75%, assessment average below 45%, two or more `needs_support` observations, or insufficient records. Improvement requires at least an 8-point assessment trend or a recent positive observation after support. "Strong" requires attendance ≥90%, assessment average ≥75% and no support observations. The teacher cannot make the status change by editing the label; only source records change it.
+Thresholds: attendance below 75%, assessment average below 45%, two or more `needs_support` observations, or insufficient records. Confidence is high only with at least 10 evidence records, 2 assessments and 2 observations; medium with at least 4 records; otherwise low. Improvement requires at least an 8-point assessment trend or a recent positive observation after support. "Strong" requires attendance ≥90%, assessment average ≥75% and no support observations. The teacher cannot make the status change by editing the label; only source records change it.
 
 ## 11. Reset and reseed
 

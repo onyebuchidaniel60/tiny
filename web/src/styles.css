@@ -167,7 +167,7 @@ button { cursor: pointer; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(16px, 2.4vw, 22px); box-shadow: var(--shadow-tight); }
 .card-clickable { text-align: left; width: 100%; font: inherit; }
 .card-clickable:hover { border-color: var(--ink-soft); }
-.card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.card-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
 .card-heading h3 { font-size: 1.3rem; }
 .soft-card { background: var(--paper-2); box-shadow: none; }
 .form-card { border-color: color-mix(in srgb, var(--line) 75%, var(--ink-soft)); background: var(--surface-2); }
@@ -208,7 +208,7 @@ button { cursor: pointer; }
 .summary-item span { font-size: .7rem; text-transform: uppercase; letter-spacing: .09em; color: var(--ink-soft); font-weight: 750; }
 .summary-link { background: var(--surface-2); padding: 16px 18px; display: flex; align-items: center; gap: 7px; justify-content: center; font-size: .76rem; font-weight: 750; color: var(--accent-text); min-height: 44px; }
 .summary-link:hover { background: var(--cobalt-soft); }
-.two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
 .two-column.wide-left { grid-template-columns: minmax(0, 1.45fr) minmax(300px, .8fr); }
 .class-list { display: flex; flex-direction: column; gap: 2px; }
 .class-row { display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-radius: 11px; border-bottom: 1px solid var(--line-soft); min-height: 52px; }
@@ -314,6 +314,7 @@ button { cursor: pointer; }
 
 /* Sync */
 .metric-card-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.metric-card-row.four-up { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .mini-metric { display: flex; gap: 10px; align-items: center; padding: 15px; }
 .mini-metric strong { display: block; font-size: .87rem; }
 .mini-metric small { color: var(--ink-soft); font-size: .69rem; }
@@ -518,6 +519,7 @@ button { cursor: pointer; }
   .hero-grid, .two-column, .two-column.wide-left, .conversation-layout, .help-layout, .profile-grid { grid-template-columns: 1fr; }
   .quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metric-card-row { grid-template-columns: 1fr; }
+  .metric-card-row.four-up { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .signin-page { grid-template-columns: 1fr; }
   .signin-brand { min-height: 44vh; }
   .signin-copy h1 { font-size: clamp(2.8rem, 9vw, 4.6rem); }

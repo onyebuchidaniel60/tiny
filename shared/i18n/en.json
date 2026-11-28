@@ -867,5 +867,16 @@
   "guardian_tour_button": "Guardian guide",
   "teacher_tour_button": "Teacher tour",
   "open_settings": "Open settings",
-  "reset_local_done": "Local sample data reset. This does not delete any Firebase data."
+  "reset_local_done": "Local sample data reset. This does not delete any Firebase data.",
+  "no_attention_flags": "No evidence flags.",
+  "new_followup": "New follow-up",
+  "completed_followups": "Completed follow-ups",
+  "assessment_count_one": "{count:d} assessment",
+  "assessment_count_other": "{count:d} assessments",
+  "class_overview": "Class overview",
+  "observation_count_one": "{count:d} observation",
+  "observation_count_other": "{count:d} observations",
+  "common_gap_count_one": "{count:d} learning gap",
+  "common_gap_count_other": "{count:d} learning gaps",
+  "pupil_profile_subtitle": "Attendance, assessment and observation evidence for this pupil."
 }

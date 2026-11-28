@@ -79,7 +79,9 @@ export interface ClassIntelligence {
   coverage: 'low' | 'medium' | 'high';
 }
 
-const percent = (value: number) => Math.round(value * 100) / 100;
+// Keep the web and Android engines numerically identical: both expose
+// whole-number percentages to the UI and to the deterministic text.
+const percent = (value: number) => Math.round(value);
 
 function sortByDate<T extends { schoolDate: string }>(rows: T[]): T[] {
   return [...rows].sort((a, b) => a.schoolDate.localeCompare(b.schoolDate));

@@ -867,5 +867,16 @@
   "guardian_tour_button": "Jagorar mai kula",
   "teacher_tour_button": "Rangadin malami",
   "open_settings": "Buɗe saiti",
-  "reset_local_done": "An sake saitin bayanan misalin gida. Wannan ba ya share bayanan Firebase."
+  "reset_local_done": "An sake saitin bayanan misalin gida. Wannan ba ya share bayanan Firebase.",
+  "no_attention_flags": "Babu alamun bukatar kulawa.",
+  "new_followup": "Sabuwar bibiya",
+  "completed_followups": "Bibiyar da aka kammala",
+  "assessment_count_one": "{count:d} tantancewa",
+  "assessment_count_other": "{count:d} tantancewa",
+  "class_overview": "Bayanin aji",
+  "observation_count_one": "{count:d} lura",
+  "observation_count_other": "{count:d} lura",
+  "common_gap_count_one": "{count:d} rashi fahimta",
+  "common_gap_count_other": "{count:d} rashi fahimta",
+  "pupil_profile_subtitle": "Shaidar halarta, tantancewa da lura ga wannan ?alibi."
 }

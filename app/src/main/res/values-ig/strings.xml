@@ -892,4 +892,21 @@
     <string name="teacher_tour_button">Njem onye nkuzi</string>
     <string name="open_settings">Mepee ntọala</string>
     <string name="reset_local_done">Atọgharịala data atụ atụ mpaghara. Nke a anaghị ehichapụ data Firebase.</string>
+    <string name="no_attention_flags">Enwegh? akara nlebara anya.</string>
+    <string name="new_followup">Nch?k?ta ?h?r?</string>
+    <string name="completed_followups">Nch?k?ta emechara</string>
+    <plurals name="assessment_count">
+        <item quantity="one">%1$d ule</item>
+        <item quantity="other">%1$d ule</item>
+    </plurals>
+    <string name="class_overview">Nch?k?ta klaas?</string>
+    <plurals name="observation_count">
+        <item quantity="one">%1$d nleba anya</item>
+        <item quantity="other">%1$d nleba anya</item>
+    </plurals>
+    <plurals name="common_gap_count">
+        <item quantity="one">%1$d oghere mm?ta</item>
+        <item quantity="other">%1$d oghere mm?ta</item>
+    </plurals>
+    <string name="pupil_profile_subtitle">Ihe akaebe ndek? ?n?n?, ule na nleba anya maka nwa akw?kw? a.</string>
 </resources>

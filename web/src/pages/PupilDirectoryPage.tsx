@@ -24,7 +24,7 @@ const tones: Record<PupilStatus, 'forest' | 'tomato' | 'cobalt' | 'butter' | 'mu
 
 export function PupilDirectoryPage() {
   const { state } = useStore();
-  const { t } = useI18n();
+  const { t, tn } = useI18n();
   const [query, setQuery] = useState('');
   const [classId, setClassId] = useState('all');
   const pupils = useMemo(() => state.pupils
@@ -58,7 +58,7 @@ export function PupilDirectoryPage() {
                 <small>{classroom?.gradeLevel} {classroom?.sectionLabel} · {pupil.localPupilCode}</small>
                 <span className="pupil-facts">
                   <span>{profile!.attendance.rate}% {t('attendance_rate').toLowerCase()}</span>
-                  <span>{profile!.assessments.count} {t('assessment_title').toLowerCase()}</span>
+                  <span>{tn('assessment_count', profile!.assessments.count)}</span>
                 </span>
               </span>
               <span className="pupil-card-status">

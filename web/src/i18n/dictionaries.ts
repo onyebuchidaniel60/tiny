@@ -869,7 +869,18 @@ export const dictionaries = {
     "guardian_tour_button": "Guardian guide",
     "teacher_tour_button": "Teacher tour",
     "open_settings": "Open settings",
-    "reset_local_done": "Local sample data reset. This does not delete any Firebase data."
+    "reset_local_done": "Local sample data reset. This does not delete any Firebase data.",
+    "no_attention_flags": "No evidence flags.",
+    "new_followup": "New follow-up",
+    "completed_followups": "Completed follow-ups",
+    "assessment_count_one": "{count:d} assessment",
+    "assessment_count_other": "{count:d} assessments",
+    "class_overview": "Class overview",
+    "observation_count_one": "{count:d} observation",
+    "observation_count_other": "{count:d} observations",
+    "common_gap_count_one": "{count:d} learning gap",
+    "common_gap_count_other": "{count:d} learning gaps",
+    "pupil_profile_subtitle": "Attendance, assessment and observation evidence for this pupil."
   },
   "ha": {
     "app_name": "Tiny",
@@ -1740,7 +1751,18 @@ export const dictionaries = {
     "guardian_tour_button": "Jagorar mai kula",
     "teacher_tour_button": "Rangadin malami",
     "open_settings": "Buɗe saiti",
-    "reset_local_done": "An sake saitin bayanan misalin gida. Wannan ba ya share bayanan Firebase."
+    "reset_local_done": "An sake saitin bayanan misalin gida. Wannan ba ya share bayanan Firebase.",
+    "no_attention_flags": "Babu alamun bukatar kulawa.",
+    "new_followup": "Sabuwar bibiya",
+    "completed_followups": "Bibiyar da aka kammala",
+    "assessment_count_one": "{count:d} tantancewa",
+    "assessment_count_other": "{count:d} tantancewa",
+    "class_overview": "Bayanin aji",
+    "observation_count_one": "{count:d} lura",
+    "observation_count_other": "{count:d} lura",
+    "common_gap_count_one": "{count:d} rashi fahimta",
+    "common_gap_count_other": "{count:d} rashi fahimta",
+    "pupil_profile_subtitle": "Shaidar halarta, tantancewa da lura ga wannan ?alibi."
   },
   "yo": {
     "app_name": "Tiny",
@@ -2611,7 +2633,18 @@ export const dictionaries = {
     "guardian_tour_button": "Ìtọ́sọ́nà olùtọ́jú",
     "teacher_tour_button": "Ìrìn-àjò olùkọ́",
     "open_settings": "Ṣí ètò",
-    "reset_local_done": "A tún dátà àpẹẹrẹ ibílẹ̀ ṣe. Èyí kò pa dátà Firebase rárá."
+    "reset_local_done": "A tún dátà àpẹẹrẹ ibílẹ̀ ṣe. Èyí kò pa dátà Firebase rárá.",
+    "no_attention_flags": "K? s? ?m? ?fiy?s?.",
+    "new_followup": "?t??l? tuntun",
+    "completed_followups": "?w?n ?t??l? t? ? par?",
+    "assessment_count_one": "{count:d} ?d?nw?",
+    "assessment_count_other": "{count:d} ?d?nw?",
+    "class_overview": "?k?p?? k?l??s?",
+    "observation_count_one": "{count:d} ?k?y?s?",
+    "observation_count_other": "{count:d} ?k?y?s?",
+    "common_gap_count_one": "{count:d} ?l?fo ?k??k????",
+    "common_gap_count_other": "{count:d} ?l?fo ?k??k????",
+    "pupil_profile_subtitle": "??r? ?w? s? k?l??s?, ?d?nw? ?ti ?k?y?s? f?n ak??k???? y??."
   },
   "ig": {
     "app_name": "Tiny",
@@ -3482,7 +3515,18 @@ export const dictionaries = {
     "guardian_tour_button": "Ntụzịaka onye na-elekọta",
     "teacher_tour_button": "Njem onye nkuzi",
     "open_settings": "Mepee ntọala",
-    "reset_local_done": "Atọgharịala data atụ atụ mpaghara. Nke a anaghị ehichapụ data Firebase."
+    "reset_local_done": "Atọgharịala data atụ atụ mpaghara. Nke a anaghị ehichapụ data Firebase.",
+    "no_attention_flags": "Enwegh? akara nlebara anya.",
+    "new_followup": "Nch?k?ta ?h?r?",
+    "completed_followups": "Nch?k?ta emechara",
+    "assessment_count_one": "{count:d} ule",
+    "assessment_count_other": "{count:d} ule",
+    "class_overview": "Nch?k?ta klaas?",
+    "observation_count_one": "{count:d} nleba anya",
+    "observation_count_other": "{count:d} nleba anya",
+    "common_gap_count_one": "{count:d} oghere mm?ta",
+    "common_gap_count_other": "{count:d} oghere mm?ta",
+    "pupil_profile_subtitle": "Ihe akaebe ndek? ?n?n?, ule na nleba anya maka nwa akw?kw? a."
   }
 } as const;
 

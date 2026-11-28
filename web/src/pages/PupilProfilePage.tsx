@@ -143,7 +143,7 @@ export function PupilProfilePage() {
       <PageHeader
         eyebrow={`${classroom?.gradeLevel ?? t('class_label')} ${classroom?.sectionLabel ?? ''} · ${t('pupil_profile')}`}
         title={pupil.displayName}
-        subtitle={`${pupil.localPupilCode || t('no_local_code')} · ${t('intelligence_subtitle')}`}
+        subtitle={`${pupil.localPupilCode || t('no_local_code')} · ${t('pupil_profile_subtitle')}`}
         actions={<div className="button-row"><Link to="/pupils"><Button variant="secondary">{t('pupil_directory')}</Button></Link><Link to={`/progress/${pupil.id}`}><Button variant="ghost"><Icon name="check" size={16} /> {t('record_progress')}</Button></Link></div>}
       />
 
@@ -165,7 +165,7 @@ export function PupilProfilePage() {
 
       <div className="metric-card-row">
         <div className="card mini-metric"><span className="status-dot status-ok" /><div><strong>{profile.attendance.rate}%</strong><small>{t('attendance_rate')} · {tn('marked_count', profile.attendance.marked)}</small></div></div>
-        <div className="card mini-metric"><span className="status-dot status-warn" /><div><strong>{formatScore(profile.assessments.average || null)}</strong><small>{t('assessment_average')} · {tn('entries_count', profile.assessments.count)}</small></div></div>
+        <div className="card mini-metric"><span className="status-dot status-warn" /><div><strong>{formatScore(profile.assessments.average || null)}</strong><small>{t('assessment_average')} · {tn('assessment_count', profile.assessments.count)}</small></div></div>
         <div className="card mini-metric"><span className="status-dot status-wait" /><div><strong>{profile.observations.count}</strong><small>{t('observations')} · {profile.observations.approved} {t('approved').toLowerCase()}</small></div></div>
       </div>
 
@@ -225,7 +225,7 @@ export function PupilProfilePage() {
             <div className="eyebrow">{t('profile_strengths')}</div>
             <div className="chip-list">{profile.strengths.length ? profile.strengths.map((item) => <Pill key={item} tone="forest">{t(item as TranslationKey)}</Pill>) : <span className="muted">{t('insufficient_evidence')}</span>}</div>
             <div className="eyebrow section-gap">{t('profile_needs_attention')}</div>
-            <div className="chip-list">{profile.needsAttention.length ? profile.needsAttention.map((item) => <Pill key={item} tone="tomato">{t(item as TranslationKey)}</Pill>) : <span className="muted">{t('no_open_followups')}</span>}</div>
+            <div className="chip-list">{profile.needsAttention.length ? profile.needsAttention.map((item) => <Pill key={item} tone="tomato">{t(item as TranslationKey)}</Pill>) : <span className="muted">{t('no_attention_flags')}</span>}</div>
             <div className="eyebrow section-gap">{t('next_actions')}</div>
             <ul className="simple-list">{profile.nextActions.map((item) => <li key={item}>{t(item as TranslationKey)}</li>)}</ul>
             <p className="fine-print">{t('override_note')}</p>
@@ -270,7 +270,7 @@ export function PupilProfilePage() {
           </Card>
 
           <Card className="soft-card">
-            <div className="eyebrow">{t('analysis_saved')}</div>
+            <div className="eyebrow">{t('recent_evidence')}</div>
             {pupilAnalyses.length === 0 ? <p className="muted">{t('no_analysis_yet')}</p> : pupilAnalyses.map((analysis) => <div className="analysis-history" key={analysis.id}><strong>{analysis.source}</strong><small>{formatDate(analysis.createdAt)} · {analysis.evidenceIds.length} {t('evidence_used').toLowerCase()}</small></div>)}
           </Card>
         </div>

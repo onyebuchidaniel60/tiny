@@ -867,5 +867,16 @@
   "guardian_tour_button": "Ntụzịaka onye na-elekọta",
   "teacher_tour_button": "Njem onye nkuzi",
   "open_settings": "Mepee ntọala",
-  "reset_local_done": "Atọgharịala data atụ atụ mpaghara. Nke a anaghị ehichapụ data Firebase."
+  "reset_local_done": "Atọgharịala data atụ atụ mpaghara. Nke a anaghị ehichapụ data Firebase.",
+  "no_attention_flags": "Enwegh? akara nlebara anya.",
+  "new_followup": "Nch?k?ta ?h?r?",
+  "completed_followups": "Nch?k?ta emechara",
+  "assessment_count_one": "{count:d} ule",
+  "assessment_count_other": "{count:d} ule",
+  "class_overview": "Nch?k?ta klaas?",
+  "observation_count_one": "{count:d} nleba anya",
+  "observation_count_other": "{count:d} nleba anya",
+  "common_gap_count_one": "{count:d} oghere mm?ta",
+  "common_gap_count_other": "{count:d} oghere mm?ta",
+  "pupil_profile_subtitle": "Ihe akaebe ndek? ?n?n?, ule na nleba anya maka nwa akw?kw? a."
 }

@@ -892,4 +892,21 @@
     <string name="teacher_tour_button">Ìrìn-àjò olùkọ́</string>
     <string name="open_settings">Ṣí ètò</string>
     <string name="reset_local_done">A tún dátà àpẹẹrẹ ibílẹ̀ ṣe. Èyí kò pa dátà Firebase rárá.</string>
+    <string name="no_attention_flags">K? s? ?m? ?fiy?s?.</string>
+    <string name="new_followup">\?t??l? tuntun</string>
+    <string name="completed_followups">\?w?n ?t??l? t? ? par?</string>
+    <plurals name="assessment_count">
+        <item quantity="one">%1$d ?d?nw?</item>
+        <item quantity="other">%1$d ?d?nw?</item>
+    </plurals>
+    <string name="class_overview">\?k?p?? k?l??s?</string>
+    <plurals name="observation_count">
+        <item quantity="one">%1$d ?k?y?s?</item>
+        <item quantity="other">%1$d ?k?y?s?</item>
+    </plurals>
+    <plurals name="common_gap_count">
+        <item quantity="one">%1$d ?l?fo ?k??k????</item>
+        <item quantity="other">%1$d ?l?fo ?k??k????</item>
+    </plurals>
+    <string name="pupil_profile_subtitle">\??r? ?w? s? k?l??s?, ?d?nw? ?ti ?k?y?s? f?n ak??k???? y??.</string>
 </resources>

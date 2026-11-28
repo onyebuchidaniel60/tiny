@@ -48,10 +48,30 @@ android {
         }
     }
 
+    // CI debug APKs normally get a fresh debug keystore on every runner, so a
+    // newer download cannot upgrade an older install. Supplying a stable
+    // keystore makes repeated installs predictable; the file is never
+    // committed. Without it, Android's default debug signing is unchanged.
+    val stableDebugKeystorePath = System.getenv("TINY_DEBUG_KEYSTORE_PATH")
+    val stableDebugKeystore = stableDebugKeystorePath?.takeIf { file(it).exists() }
+    signingConfigs {
+        if (stableDebugKeystore != null) {
+            create("stableDebug") {
+                storeFile = file(stableDebugKeystore)
+                storePassword = System.getenv("TINY_DEBUG_KEYSTORE_PASSWORD") ?: "android"
+                keyAlias = System.getenv("TINY_DEBUG_KEY_ALIAS") ?: "androiddebugkey"
+                keyPassword = System.getenv("TINY_DEBUG_KEY_PASSWORD") ?: "android"
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
             isMinifyEnabled = false
+            if (stableDebugKeystore != null) {
+                signingConfig = signingConfigs.getByName("stableDebug")
+            }
         }
         release {
             isMinifyEnabled = false

@@ -61,6 +61,27 @@ jobs:
             echo "No Firebase client config secret; building local/mock preview."
           fi
 
+      - name: Materialize stable debug keystore (optional)
+        env:
+          TINY_DEBUG_KEYSTORE_BASE64: ${{ secrets.TINY_DEBUG_KEYSTORE_BASE64 }}
+          TINY_DEBUG_KEYSTORE_PASSWORD: ${{ secrets.TINY_DEBUG_KEYSTORE_PASSWORD }}
+          TINY_DEBUG_KEY_ALIAS: ${{ secrets.TINY_DEBUG_KEY_ALIAS }}
+          TINY_DEBUG_KEY_PASSWORD: ${{ secrets.TINY_DEBUG_KEY_PASSWORD }}
+        run: |
+          if [ -n "$TINY_DEBUG_KEYSTORE_BASE64" ]; then
+            mkdir -p .ci
+            printf '%s' "$TINY_DEBUG_KEYSTORE_BASE64" | base64 --decode > .ci/tiny-debug.keystore
+            {
+              echo "TINY_DEBUG_KEYSTORE_PATH=$PWD/.ci/tiny-debug.keystore"
+              echo "TINY_DEBUG_KEYSTORE_PASSWORD=${TINY_DEBUG_KEYSTORE_PASSWORD:-android}"
+              echo "TINY_DEBUG_KEY_ALIAS=${TINY_DEBUG_KEY_ALIAS:-androiddebugkey}"
+              echo "TINY_DEBUG_KEY_PASSWORD=${TINY_DEBUG_KEY_PASSWORD:-android}"
+            } >> "$GITHUB_ENV"
+            echo "Stable debug signing materialized (not printed)."
+          else
+            echo "No stable debug keystore secret; using the runner's default debug key."
+          fi
+
       - name: Set up Node 22
         uses: actions/setup-node@v4
         with:
@@ -87,6 +108,19 @@ jobs:
       - name: Android lint, unit tests and debug APK
         run: ./gradlew lint testDevDebugUnitTest assembleDevDebug --stacktrace
 
+      - name: Verify APK signature and alignment
+        run: |
+          mkdir -p artifacts
+          APK=$(find app/build/outputs/apk/dev/debug -name '*.apk' | head -n 1)
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/36.0.0"
+          "$BUILD_TOOLS/zipalign" -c -v 4 "$APK" | tee artifacts/zipalign.txt
+          "$BUILD_TOOLS/apksigner" verify --verbose --print-certs "$APK" | tee artifacts/apk-signing.txt
+          {
+            echo "apk=$APK"
+            echo "sha256=$(sha256sum "$APK" | cut -d' ' -f1)"
+            echo "bytes=$(stat -c%s "$APK")"
+          } | tee artifacts/apk-summary.txt
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -103,6 +137,7 @@ jobs:
           path: |
             app/build/reports/**
             functions/coverage/**
+            artifacts/*.txt
           if-no-files-found: warn
           retention-days: 14
 

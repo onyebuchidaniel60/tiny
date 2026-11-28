@@ -9,6 +9,8 @@ This guide is updated with verified issues during implementation. Do not expose 
 | Gradle/JDK compatibility error | Installed JDK differs from pinned AGP/Gradle requirements | Read wrapper and version catalog; use documented JDK toolchain; do not upgrade several dependencies at once |
 | Firebase config missing | Wrong flavor/project config | Confirm application ID and correct non-production `google-services.json`; never copy service account JSON into app |
 | Install fails on device | Device API below minSdk or insufficient storage | Check `adb shell getprop ro.build.version.sdk`; current architecture sets minSdk 26; do not bypass without architecture review |
+| `INSTALL_FAILED_UPDATE_INCOMPATIBLE` after downloading a new CI APK | Each GitHub runner generated a different debug signing key, or a Play-store/release build is installed with the same package | Compare `apksigner verify --print-certs`; uninstall the old debug package once, or configure the stable debug keystore secrets in `docs/CI_ANDROID_BUILD.md`. Never change package IDs to hide a signature mismatch |
+| Install appears slow before failing | Android copies/verifies the ~31 MB APK; USB or storage throttling makes this visible | Check cable/port, free storage and USB authorization; compare SHA-256 with `artifacts/apk-summary.txt` before retrying |
 | App crashes after local DB change | Schema migration or SQLCipher issue | Inspect migration test and redacted crash stack; preserve DB before repair; never destructive-reset real data |
 
 ## 2. Authentication
