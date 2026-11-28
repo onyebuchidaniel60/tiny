@@ -21,6 +21,7 @@
   --ok: #2a7857;
   --ok-soft: #e7f3ec;
   --bad: #b4422c;
+  --bad-text: #8f2b1a;
   --warn: #7b500f;
   --warn-soft: #fcf2d8;
   --focus: #2b5aa0;
@@ -62,6 +63,7 @@
     --ok: #7cc7a3;
     --ok-soft: #1d3a2d;
     --bad: #f08a72;
+    --bad-text: #ffb4a1;
     --warn: #e7c675;
     --warn-soft: #3a3220;
     --focus: #9dc0f0;
@@ -194,7 +196,7 @@ button { cursor: pointer; }
 .button-danger { background: var(--tomato-soft); color: var(--ink); border-color: color-mix(in srgb, var(--tomato) 45%, var(--line)); }
 .pill { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 4px 9px; font-size: .64rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; border: 1px solid; white-space: nowrap; }
 .pill-forest { background: var(--ok-soft); color: var(--ok); border-color: color-mix(in srgb, var(--ok) 35%, var(--line)); }
-.pill-tomato { background: var(--tomato-soft); color: var(--bad); border-color: color-mix(in srgb, var(--tomato) 45%, var(--line)); }
+.pill-tomato { background: var(--tomato-soft); color: var(--bad-text); border-color: color-mix(in srgb, var(--tomato) 45%, var(--line)); }
 .pill-cobalt { background: var(--cobalt-soft); color: var(--cobalt); border-color: color-mix(in srgb, var(--cobalt) 35%, var(--line)); }
 .pill-butter { background: var(--butter-soft); color: var(--warn); border-color: color-mix(in srgb, var(--butter) 45%, var(--line)); }
 .pill-muted { background: var(--paper-2); color: var(--ink-soft); border-color: var(--line); }
