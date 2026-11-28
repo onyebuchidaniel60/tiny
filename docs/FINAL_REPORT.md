@@ -224,6 +224,9 @@ Commits in this pass:
 - `5523846` — WCAG contrast fix.
 - `5cda33b` — unified cross-platform dataset/sync contract, command handlers and tests.
 - `53b34fa` — intelligence UI polish, CI dataset/signing guards and docs.
+- `1036f77`, `5ab1eae` — final report, canonical local-demo capture workflow and repo hygiene.
+- `a9f1a9b` — canonical Android home attention shortcuts and plural evidence labels.
+- `0fadf26` — final report, 133.6s demo video, canonical screenshots and release links.
 
 ## 11. Remaining limitations
 
